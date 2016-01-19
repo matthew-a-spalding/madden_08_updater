@@ -1,0 +1,49 @@
+private void CalculateCapHit()
+		{
+			double tempSigningBonus = SigningBonus;
+			double tempSigningBonusPerYear = tempSigningBonus / ContractLength;
+			double tempTotalSalary = TotalSalary;
+			
+			for (int i=0; i < 7; i++)
+			{
+				estYearlySalary[i] = 0;
+				estSigningBonusArray[i] = 0;
+			}
+
+			if (ContractLength == 0 || ContractLength > 7)
+			{
+				return;
+			}
+
+			for (int i = ContractLength; i > 1; i--)
+			{
+				double specval = (tempSigningBonus / tempTotalSalary > 0.2 ? 1.3 : 1 + 1.5 * (tempSigningBonus / tempTotalSalary));
+				double divisor = 1 + specval;
+				
+				for (int j = i - 1; j > 1; j--)
+				{
+					divisor += Math.Pow(specval, j);
+				}
+
+				double tempVal = (double)((tempTotalSalary - tempSigningBonus) / divisor);
+				//Trace.WriteLine("Value is " + tempVal);
+
+				estYearlySalary[ContractLength-i] = tempVal;
+
+				tempSigningBonus -= tempSigningBonusPerYear;
+				tempTotalSalary -= (tempVal + tempSigningBonusPerYear);
+			}
+			//Calculate last year of contract
+			//Round other years first
+			estYearlySalary[ContractLength - 1] = TotalSalary - SigningBonus;
+			estSigningBonusArray[ContractLength - 1] = SigningBonus;
+			for (int i = 0; i < ContractLength - 1; i++)
+			{
+				estYearlySalary[i] = Math.Round(estYearlySalary[i]);
+				estSigningBonusArray[i] = Math.Round(tempSigningBonusPerYear);
+
+				estYearlySalary[ContractLength - 1] = estYearlySalary[ContractLength - 1] - estYearlySalary[i];
+				estSigningBonusArray[ContractLength - 1] = estSigningBonusArray[ContractLength - 1] - estSigningBonusArray[i];
+				//Trace.WriteLine("Rounded = " + tempYearlySalary[i] + " SB: " + tempSigningBonusArray[i]);
+			}
+		}
