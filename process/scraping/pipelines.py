@@ -28,7 +28,7 @@
 
 # ------------------------ NEW WAY - To .csv ------------------------
 import csv
-from scripted.items import NFLPlayer
+from scraping.items import NFLPlayer
 
 
 class PlayerPipeline(object):

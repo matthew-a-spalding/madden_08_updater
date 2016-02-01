@@ -1,12 +1,13 @@
-""" 02_scrape_NFL_and_FBG.py
-
-This script crawls the entirety of the NFL team roster pages and the 
-related FBGRatings.com player pages and generates a CSV file named 
-'NFL and FBG.csv' containing the full list of current NFL players and their 
-biographic and salary data.
-
-See the documentation on running Scrapy from a script here: 
-http://doc.scrapy.org/en/latest/topics/practices.html#run-scrapy-from-a-script
+r""" 02_scrape_NFL_and_FBG.py
+    
+    This script crawls the entirety of the NFL team roster pages and the 
+    related FBGRatings.com player pages and generates a CSV file named 
+    'NFL and FBG.csv' containing the full list of current NFL players and their 
+    biographic and salary data.
+    
+    See the documentation on running Scrapy from a script here: 
+    http://doc.scrapy.org/en/latest/topics/practices.html#
+            run-scrapy-from-a-script
 
 """
 
@@ -26,12 +27,21 @@ from scrapy.utils.project import get_project_settings
 #from scripted import settings
 #import settings
 
-# --------------------------------- SECTION 2 ---------------------------------
-# ----------------------------- Local Variables -------------------------------
+# 4 - Global settings
 
+
+# 5 - Global constants
+
+
+# --------------------------------- SECTION 2 ---------------------------------
+# ---------------------------- Class Declarations -----------------------------
 
 
 # --------------------------------- SECTION 3 ---------------------------------
+# ----------------------------- Helper Functions ------------------------------
+
+
+# --------------------------------- SECTION 4 ---------------------------------
 # ------------------------------ Main Function --------------------------------
 if __name__ == "__main__":
     """ Initialize the spider and do the crawling. 
