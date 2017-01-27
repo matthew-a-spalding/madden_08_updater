@@ -1,7 +1,7 @@
 r""" DLLtest2.py
     
     This was one of the original three DLLTest files. Code from this file which 
-    can be used in the creation of the script "04_update_roster_file.py" will 
+    can be used in the creation of the script "step_5_update_roster_file.py" will 
     be taken and used there. 
     
     This file currently opens the file "latest.ros", calls 

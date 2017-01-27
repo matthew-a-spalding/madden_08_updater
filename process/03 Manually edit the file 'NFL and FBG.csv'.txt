@@ -1,7 +1,0 @@
-This step involves several things:
-
-- Check for any players with position set to CONFLICT or TBD. These will need to be resolved, probably using the latest Madden Ratings file.
-
-- Set the face IDs and skin tones of any new players.
-
-- (See what else we might need to do from the list "Methods for Setting Field Values.xlsx")

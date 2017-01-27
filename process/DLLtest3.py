@@ -178,6 +178,11 @@ for i in range(intNumberOfTables):
 
 # ------------------ WRITE NEW VALUES FOR IMPORTANT ATTRIBUTES OF THE FIRST PLAYER ------------------
 
+# NOTE: Looks like I was testing various values for the "PCPH" field here, probably while trying to determine what 
+# exaactly the field was for. I think the longer section immediately following, commented out in the docstring format, 
+# was the code I used to prove that it was possible to edit a player in the .ros file so completely that he was an 
+# entirely new character. See if that is the case by uncommenting that section and trying to do it again.
+
 for x in range(0, 11):
     SetPlayerIntegerAttribute(x, "PCPH", 0)
 

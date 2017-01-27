@@ -1,65 +1,96 @@
-To setup the necessary environment for running the Python code against Scrapy:
+To setup the necessary environment for running my Python code against Scrapy:
 
-NOTE: After seeing the list of requirements for scrapy from a 'pip install scrapy' AFTER it had been installed, it appears that 
-you should not need to manually pip install the prerequisite packages 'lxml' and 'pyOpenSSL' before installing scrapy, as they are 
-packages that pip can install on its own. However, pywin32 is NOT pip-installable, so the short version for installing Scrapy may 
-just be: 1) Install Python 2.7.x (latest), then 2) pywin32 for that version/bitness, then 3) just 'pip install scrapy'.
-
-In case that doesn't seem to get all of the requirements, here is the long version of instructions, which are what I actually did:
-
-1) Install a version of Python that Scrapy supports. Currently, it does not support 3.x, so try 2.7.x.
-	
-	- Go to: https://www.python.org/downloads/ .
-	(As of the time of writing these setup notes, 2.7.10 was the latest available release.)
-	
-	- Make sure to have the python executable paths added to the system environment variable PATH.
-	(In 2.7.10, it gives the option of having the installer do this, though it is not selected by deafult, so I selected it.)
-	
-	
-2) Install the right pywin32 version (in this case, latest build (219), 32 bit, for python 2.7).
-	
-	- Check which bitness of python has been installed. Open the Python shell GUI (IDLE) and type:
-		>>> import platform
-		>>> platform.architecture()
-	This should report:
-		('32bit', 'WindowsPE')
-	
-	- Go to: http://sourceforge.net/projects/pywin32/files/pywin32/ .
-	
-	- Download and then install the right installer, in this case "pywin32-219.win32-py2.7.exe".
-	
-3) Install LXML.
-	
-	- In a command prompt, check that Python 2.7 correctly installed PIP along with it (no reason it shouldn't, but anyway...)
-		
-		C:\Users\spalding>pip --version
-	
-	Should report:
-		pip [version] from C:\Python27\lib\site-packages (python 2.7)
-	
-	- In the same command prompt, type:
-		
-		C:\Users\spalding>pip install lxml
-	
-	It will install any prerequisites and then lxml.
-	
-	
-4) Make sure OpenSSL is installed (should come with Python 2.7).
-	
-	In the same command prompt, type:
-		C:\Users\spalding>pip list
-	This should list all the packages installed in site-packages, including:
-		...
-		pyOpenSSL (0.15.1)
-		...
-	(Could also use the 'pip show <package>' command, like:
-		C:\Users\spalding>pip show pyOpenSSL
-	Which should give the list of info on that package, if installed.)
-		
-	
-5) Finally, install Scrapy.
-	
-	In the same command prompt, type:
-		C:\Users\spalding>pip install scrapy
-	This should install scrapy and any requirements.
-	
+1) Install a version of Python that Scrapy supports. Currently, it does not support 3.x, so try 
+2.7.x.
+    
+    - Go to: https://www.python.org/downloads/ .
+    (As of the time of writing these setup notes, 2.7.12 was the latest available release.)
+    
+    - Make sure to have the python executable paths added to the system environment variable PATH.
+    (In 2.7.12, it gives the option of having the installer do this, though it is not selected by 
+    deafult, so I selected it. I also unselected the option for Register Extensions, which would  
+    have made 2.7.12 the default Python installation.)
+    
+    - Since I already had Python 3.5.2 installed and on the PATH, I needed to resolve the conflict 
+    between the two versions. At first, I renamed the two EXEs from python.exe to python2.exe and 
+    python3.exe, as well as removing two of the pip files from each installation's "Scripts" 
+    directory, leaving only the files "pip2.exe" and "pip3.exe". However, this made both of the 
+    pip versions not work right, as I suppose they look for the file "python.exe" in their parent 
+    directory, and they could no longer find them. So, I renamed the files back to "python.exe", 
+    and then I did two things to resolve the PATH conflict
+    
+        - First, I made symbolic links to the two "python.exe" files in a new folder I made, 
+        "C:\python_links", by opening a command prompt WITH ADMIN PRIVS (NOT GitBash) and typing:
+            C:\Users\spalding> cd C:\python_links
+            C:\python_links> mklink python2.exe "C:\Program Files (x86)\Python2-7-12\python.exe"
+            C:\python_links> mklink python3.exe "C:\Program Files (x86)\Python35-32\python.exe"
+        
+        - Then I removed "C:\Program Files (x86)\Python2-7-12\;" and 
+        "C:\Program Files (x86)\Python35-32\;" from the System PATH, and added "C:\python_links\;".
+    
+    
+2) Install the right pywin32 version (in this case, latest build (220), 32 bit, for python 2.7).
+    
+    - Check which bitness of python has been installed. Open the Python shell GUI (IDLE) and type:
+        >>> import platform
+        >>> platform.architecture()
+    This should report:
+        ('32bit', 'WindowsPE')
+    
+    - Go to: http://sourceforge.net/projects/pywin32/files/pywin32/ .
+    
+    - Download and then install the right installer, in this case "pywin32-220.win32-py2.7.exe".
+    
+3) Finally, install Scrapy.
+    
+    Open an ADMIN GitBash window and type:
+        $ pip2 install scrapy
+    This should have installed scrapy and any requirements. However, since things are shit, it 
+    failed, with the error message: 
+        error: Microsoft Visual C++ 9.0 is required (Unable to find vcvarsall.bat). Get it from 
+        http://aka.ms/vcpython27
+        
+    So, I went to the site (which redirected me to an official Microsoft site) and downloaded and 
+    installed the MS Visual C++ Compiler Package for Python 2.7. THEN, I tried the pip install of 
+    scrapy again, and this time... it errored out. On lxml. Saying:
+        ERROR: 'xslt-config' is not recognized as an internal or external command,
+        operable program or batch file.
+    
+        ** make sure the development packages of libxml2 and libxslt are installed **
+        
+    SO, I tried:
+        pip2 install lxml
+        
+    And this errored out the same way. SO... I googled the error "'xslt-config' is not recognized 
+    as an internal or external command", and found a StackOverflow page telling me to go get a 
+    wheel file (.whl) for installing lxml, found on the site of some dude named Christoph Gohlke. 
+    Seemed a bit shady, but what the hey. I downloaded the file "lxml-3.6.4-cp27-cp27m-win32.whl" 
+    and opened an ADMIN command prompt, cd'd to the downloads folder (C:\Users\spalding\Downloads), 
+    and did:
+        C:\Users\spalding\Downloads> pip2 install lxml-3.6.4-cp27-cp27m-win32.whl
+        
+    This seemed to work. ("...Successfully installed lxml-3.6.4"). SO now I again tried to:
+        
+        $ pip2 install scrapy
+        
+    in an ADMIN GitBash window, and... It seemed to work. However, I am still having all sorts of 
+    problems running python2/python3 from the command line. I'm scrapping the current installs of 
+    Python 2 AND Python 3, since they are both installed under "C:\Program Files (x86)", which is a 
+    restricted location and causes problems with installations, etc. I'm going to delete them BOTH 
+    and re-install them into:
+        
+        C:\Python2-7-12
+        
+        and
+        
+        C:\Python3-5-2
+        
+4) Ok. So, I deleted both versions of Python using the Add/Remove Programs links, and started the 
+    re-install with Python 3.5.2. In the Setup wizard, I chose Customize Installation, then left 
+    the boxes checked to include the Documentation, pip, tcl/tk & IDLE, Python test suite, and the 
+    py launcher, for all users. In Advanced Options, I left "Associate files with Python" checked, 
+    unchecked "Create shortcuts for installed applications", then also checked "Install for all 
+    users" (which automatically checked "Precompile standard library") and "Add Python to 
+    environment variables". Finally, I chose the new location (C:\Python3-5-2) and let her rip.
+    
+5) Now, on to Python 2.7.12. I created the new folder at C:\Python2-7-12 and ran the installer. 
