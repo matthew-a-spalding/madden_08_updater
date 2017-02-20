@@ -1,8 +1,7 @@
-r""" 02_scrape_NFL_and_FBG.py
+r""" step_3_scrape_NFL_rosters.py
     
-    This script crawls the entirety of the NFL team roster pages and the related FBGRatings.com player pages and 
-    generates a CSV file named 'NFL and FBG.csv' containing the full list of current NFL players and their biographic 
-    and salary data.
+    This script crawls the entirety of the NFL team roster pages and generates a CSV file named 'NFL rosters.csv',
+    containing the full list of current NFL players and their biographic and salary data.
     
     See the documentation on running Scrapy from a script here: 
         http://doc.scrapy.org/en/latest/topics/practices.html#run-scrapy-from-a-script
@@ -46,9 +45,8 @@ if __name__ == "__main__":
     
     NOTE: Running the scraper produces a CSV file that will still need to be modified, so it MUST BE CHECKED MANUALLY 
     afterwards for the following: 
-        1) See if any players were given a position of TBD or CONFLICT. (There may be many TBD, but there shouldn't be 
-            any CONFLICT. The TBDs mean that NFL.com and FBGRatings were in agreement, but neither was specific enough 
-            for Madden - like just LB or RB.) 
+        1) See if any players were given a position of TBD. (The TBDs mean that NFL.com wasn't specific enough for 
+            Madden - like just LB or RB.) 
         2) Some players may be missing their jersey numbers. If I can't find them myself, just choose something 
             reasonable. 
         3) Make sure each team has at least the required number of players at each position. The scripts might create 
@@ -59,7 +57,7 @@ if __name__ == "__main__":
     # Get the settings and initialize the crawler process.
     process = CrawlerProcess(get_project_settings())
     # Let's crawl!
-    process.crawl('nfl_and_fbg')
+    process.crawl('nfl_rosters')
     print('Starting our crawl...')
     process.start()
     # Once the reactor is done, we're done.

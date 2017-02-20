@@ -1,0 +1,56 @@
+- Find the formula used in the Madden Amp source to calculate the breakdown of a player's salary 
+into the individual years.
+
+    ***	There is just a numeric formula, and it relies upon PTSA (Total Salary), PVSB 
+    (Signing Bonus), PCON (Contract Length), and PCYL (Contract Years Left). Don't need to worry 
+    about it. Just set those fields and let the game figure out the breakdown.
+
+- Check on the PVTS field (col CV). See if it always matches the value in PTSA.
+
+    ***	It does. At least in the default roster.	***
+
+- Find out what the other values of Player Role (PROL and PRL2) mean.
+
+    ***	Done.	***
+
+- Fill out the lists of other field values using in-game examples.
+
+    ***	Done.	***
+
+- List all of the fields that I will be setting from the PLAY table in the 'Methods for Setting 
+Field Values' Excel file, and give descriptions of how I intend to set the value for the field. 
+Descriptions can be sentences, mathematical formulae, or pseudo-code.
+
+    ***	Done.	***
+
+- Make a Git repo of the code, and keep old backups in a separate folder, with new backups being 
+made only once in a while off a revision from Git.
+
+    ***	Done.	***
+
+- Finish writing the Scrapy script that will create "NFL and FBG.csv" for use in the final 
+"MaddenUpdater.py" script.
+
+    ***	IN PROGRESS.
+        
+        Figure out:
+            1) if I can currently scrape NFL.com (with or without FBG.com) to get the 
+            "NFL and FBG.csv" file made.
+            2) if and how I can get one player's record updated so it will be usable in-game.
+            3) what each individual Python file is currently doing and make a doctring about it.
+            
+        Then, re-work all the Python files to follow best practices, and move to the next item in 
+        this list, testing the use of the two CSV files together.
+        
+    ***
+
+- Test the import of "NFL and FBG.csv" alongside "Madden Ratings.csv"; write a simple script that 
+uses both in formulating the values to put into a player's fields. Use the Bears, and work out the 
+matching of player names between the Madden and NFL/FBG ratings files.
+
+    ***	TODO	***
+
+- Write the rest of "MaddenUpdater.py" according to the outline in "Methods for Setting Field 
+Values.xlsx". Separate out each position into its own Python module.
+
+    ***	TODO	***

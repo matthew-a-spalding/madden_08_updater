@@ -1,0 +1,200 @@
+To setup the necessary environment for running my Python code against Scrapy, I looked at what I 
+had done previously, when I tried to install two versions of Python (one of 2.x and one of 3.x) 
+alongside each other. That attempt had resulted in problems with running Python, so I had already 
+uninstalled both versions of Python from the "C:\Program Files (x86)" directory, and started an 
+attempt to reinstall them into their own top level folders, C:\Python2-7-12 and C:\Python3-5-2.
+
+I had started with Python 3.5.2, and at the time I began my latest attempt, that version was the 
+only one of the two installed. However, since I still can not find any documents stating that 
+Scrapy is compatible with Python 3.x on Windows, I decided to completely uninstall Python 3.5.2 
+from my Windows machine and ONLY install Python 2.7.x (2.7.13 then being the current version).
+
+1) To start my latest attempt to get Scrapy running, I went to the Settings panel and uninstalled 
+Python 3.5.2 using the Uninstall button under 'Apps & features'. This prompted me with the 
+uninstallation wizard, from which I chose "Completely Uninstall" or whatever it actuall said (as 
+opposed to Change or Configure an Existing Install). After it ran, the folder "C:\Python3-5-2" was 
+completely empty, so I deleted it.
+
+2) I then created the folder "C:\Python2-7-13" and ran the installer for 32-bit Python 2.7.13, 
+which I had downloaded from the Python website. I also checked 'Add python to PATH', so the EXE 
+for python is on the Windows path.
+
+3) Now to install Scrapy! I opened an ADMIN GitBash window and typed:
+    $ which pip
+which said:
+    /c/Python2-7-13/Scripts/pip
+So, since it knew about pip, I did:
+    $ pip install scrapy
+It collected the required packages, tried installing things, and errored out. It said, in part, 
+    ...
+    running build_ext
+    error: Microsoft Visual C++ 9.0 is required. Get it from http://aka.ms/vcpython27
+    ...
+    Command "c:\python2-7-13\python.exe -u -c "import setuptools,  ...   --compile" failed with 
+    error code 1 in c:\users\spalding\appdata\local\temp\pip-build-8he85n\Twisted\
+    
+4) SO, to fix this error, I went to the website mentioned in the first error message. Ran the 
+downloaded MSI. No options, just accept the ToU and install. It seemed to work. (No completion 
+message either.) So I tried this again:
+    $ pip install scrapy
+    
+5) Seeing that this is a familiar tune (see previous attempt, below), I went with the file from 
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml again (this time, using the file named:
+lxml-3.7.2-cp27-cp27m-win32.whl, which looked like the only version there now for Python 2.7).
+That is, in the ADMIN GitBash, I cd'd to the downloads folder (cd /c/Users/spalding/Downloads/), 
+and did:
+    $ pip install lxml-3.7.2-cp27-cp27m-win32.whl
+    
+6) This seemed to work. ("...Successfully installed lxml-3.7.2"). SO now I again tried to:
+    $ pip install scrapy
+in the ADMIN GitBash window, and... It seemed to work!! To check, I did:
+    $ which scrapy
+which said: 
+    /c/Python2-7-13/Scripts/scrapy
+
+7) Huzzah! Now, I tried to run the Scrapy script (after a few modifications because FBGratings.com 
+is no more...), and I got an error about missing win32api:
+    ImportError: No module named win32api
+    Starting our crawl...
+    Crawling stopped.
+    
+8) I Googled "python no module named win32api" and found suggestions to install it using:
+    pip install pypiwin32
+Feeling adventurous (and ignoring my documentation of a previous installation of win32api below), 
+I went ahead and tried that command. It told me:
+    Collecting pypiwin32
+    Downloading pypiwin32-219-cp27-none-win32.whl (6.7MB)
+    Installing collected packages: pypiwin32
+    Successfully installed pypiwin32-219
+
+9) Thinking that this was a success, I tried the "python step_3_scrape_NFL_rosters.py" command 
+once more, and got this:
+    2017-02-20 14:45:37 [scrapy.utils.log] INFO: Scrapy 1.3.2 started (bot: scripted_bot)
+    ...
+    2017-02-20 14:45:43 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+    {'downloader/request_bytes': 25569,
+    'downloader/request_count': 77,
+    'downloader/request_method_count/GET': 77,
+    'downloader/response_bytes': 1725915,
+    'downloader/response_count': 77,
+    'downloader/response_status_count/200': 77,
+    'finish_reason': 'finished',
+    'finish_time': datetime.datetime(2017, 2, 20, 19, 45, 43, 236000),
+    'item_scraped_count': 76,
+    'log_count/INFO': 7,
+    'request_depth_max': 1,
+    'response_received_count': 77,
+    'scheduler/dequeued': 77,
+    'scheduler/dequeued/memory': 77,
+    'scheduler/enqueued': 77,
+    'scheduler/enqueued/memory': 77,
+    'start_time': datetime.datetime(2017, 2, 20, 19, 45, 37, 481000)
+    2017-02-20 14:45:43 [scrapy.core.engine] INFO: Spider closed (finished)
+    Starting our crawl...
+    Crawling stopped.
+    
+10) This seemed very good indeed. It looked like I have found 76 items to scrape. I checked the 
+output folder (C:\Home\Working Files\madden_08_updater\process\outputs), but the file was not 
+there. Since I had not specified the output directory when I created the file, it was placed in 
+directory from which I ran the script, C:\Home\Working Files\madden_08_updater\process. The file 
+did have 76 players in it, all with their names and other attributes correctly in place. 
+
+11) On to develop the rest of the scripts!!
+
+----- DOCUMENTATION OF MY PREVIOUS ATTEMPT TO INSTALL Python 3.x and Python 2.x side-by-side. -----
+
+1) Install a version of Python that Scrapy supports. Currently, it does not support 3.x, so try 
+2.7.x.
+    
+    - Go to: https://www.python.org/downloads/ .
+    (As of the time of writing these setup notes, 2.7.12 was the latest available release.)
+    
+    - Make sure to have the python executable paths added to the system environment variable PATH.
+    (In 2.7.12, it gives the option of having the installer do this, though it is not selected by 
+    deafult, so I selected it. I also unselected the option for Register Extensions, which would  
+    have made 2.7.12 the default Python installation.)
+    
+    - Since I already had Python 3.5.2 installed and on the PATH, I needed to resolve the conflict 
+    between the two versions. At first, I renamed the two EXEs from python.exe to python2.exe and 
+    python3.exe, as well as removing two of the pip files from each installation's "Scripts" 
+    directory, leaving only the files "pip2.exe" and "pip3.exe". However, this made both of the 
+    pip versions not work right, as I suppose they look for the file "python.exe" in their parent 
+    directory, and they could no longer find them. So, I renamed the files back to "python.exe", 
+    and then I did two things to resolve the PATH conflict
+    
+        - First, I made symbolic links to the two "python.exe" files in a new folder I made, 
+        "C:\python_links", by opening a command prompt WITH ADMIN PRIVS (NOT GitBash) and typing:
+            C:\Users\spalding> cd C:\python_links
+            C:\python_links> mklink python2.exe "C:\Program Files (x86)\Python2-7-12\python.exe"
+            C:\python_links> mklink python3.exe "C:\Program Files (x86)\Python35-32\python.exe"
+        
+        - Then I removed "C:\Program Files (x86)\Python2-7-12\;" and 
+        "C:\Program Files (x86)\Python35-32\;" from the System PATH, and added "C:\python_links\;".
+    
+    
+2) Install the right pywin32 version (in this case, latest build (220), 32 bit, for python 2.7).
+    
+    - Check which bitness of python has been installed. Open the Python shell GUI (IDLE) and type:
+        >>> import platform
+        >>> platform.architecture()
+    This should report:
+        ('32bit', 'WindowsPE')
+    
+    - Go to: http://sourceforge.net/projects/pywin32/files/pywin32/ .
+    
+    - Download and then install the right installer, in this case "pywin32-220.win32-py2.7.exe".
+    
+3) Finally, install Scrapy.
+    
+    Open an ADMIN GitBash window and type:
+        $ pip2 install scrapy
+    This should have installed scrapy and any requirements. However, since things are shit, it 
+    failed, with the error message: 
+        error: Microsoft Visual C++ 9.0 is required (Unable to find vcvarsall.bat). Get it from 
+        http://aka.ms/vcpython27
+        
+    So, I went to the site (which redirected me to an official Microsoft site) and downloaded and 
+    installed the MS Visual C++ Compiler Package for Python 2.7. THEN, I tried the pip install of 
+    scrapy again, and this time... it errored out. On lxml. Saying:
+        ERROR: 'xslt-config' is not recognized as an internal or external command,
+        operable program or batch file.
+    
+        ** make sure the development packages of libxml2 and libxslt are installed **
+        
+    SO, I tried:
+        pip2 install lxml
+        
+    And this errored out the same way. SO... I googled the error "'xslt-config' is not recognized 
+    as an internal or external command", and found a StackOverflow page telling me to go get a 
+    wheel file (.whl) for installing lxml, found on the site of some dude named Christoph Gohlke. 
+    Seemed a bit shady, but what the hey. I downloaded the file "lxml-3.6.4-cp27-cp27m-win32.whl" 
+    and opened an ADMIN command prompt, cd'd to the downloads folder (C:\Users\spalding\Downloads), 
+    and did:
+        C:\Users\spalding\Downloads> pip2 install lxml-3.6.4-cp27-cp27m-win32.whl
+        
+    This seemed to work. ("...Successfully installed lxml-3.6.4"). SO now I again tried to:
+        
+        $ pip2 install scrapy
+        
+    in an ADMIN GitBash window, and... It seemed to work. However, I am still having all sorts of 
+    problems running python2/python3 from the command line. I'm scrapping the current installs of 
+    Python 2 AND Python 3, since they are both installed under "C:\Program Files (x86)", which is a 
+    restricted location and causes problems with installations, etc. I'm going to delete them BOTH 
+    and re-install them into:
+        
+        C:\Python2-7-12
+        
+        and
+        
+        C:\Python3-5-2
+        
+4) Ok. So, I deleted both versions of Python using the Add/Remove Programs links, and started the 
+    re-install with Python 3.5.2. In the Setup wizard, I chose Customize Installation, then left 
+    the boxes checked to include the Documentation, pip, tcl/tk & IDLE, Python test suite, and the 
+    py launcher, for all users. In Advanced Options, I left "Associate files with Python" checked, 
+    unchecked "Create shortcuts for installed applications", then also checked "Install for all 
+    users" (which automatically checked "Precompile standard library") and "Add Python to 
+    environment variables". Finally, I chose the new location (C:\Python3-5-2) and let her rip.
+    
+5) Now, on to Python 2.7.12. I created the new folder at C:\Python2-7-12. 
+

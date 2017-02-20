@@ -61,9 +61,3 @@ NFL_TEAMS = [{"[FULL_LOCATION]":"buffalo", "[SHORT_LOCATION]":"buf", "[NICKNAME]
 
 # The RegEx to use to find the links to follow from the NFL roster pages to the player profile pages.
 NFL_PROFILE_LINKS_REGEX = ".+/player/.+/profile$"
-
-# Template used in the NFLandFBGSpider to create the FBG team roster url to follow after the NFL player profile page.
-FBG_ROSTER_LINK_TEMPLATE = "http://www.fbgratings.com/members/viewbyrate.php?team=[NICKNAME]"
-
-# Template used in the NFLandFBGSpider to find the FBG player ratings page.
-FBG_RATINGS_LINK_TEMPLATE = "[LAST_NAME],.+[FIRST_NAME]"
