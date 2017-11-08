@@ -1,3 +1,227 @@
+LATEST SETUP:
+
+2017_11_07:
+I am starting over (in a sense) once again with my Madden Updater, and now, Scrapy's documentation 
+says that it supports Python 2.7 AND Python 3.3+, so I will attempt to install and use Python 3.
+
+- Since Scrapy recommends installing either Anaconda or Miniconda first, I looked at the docs for 
+those packages, which say "The fastest way to obtain conda is to install Miniconda, a mini version 
+of Anaconda that includes only conda and its dependencies. If you prefer to have conda plus over 
+720 open source packages, install Anaconda." Uh, I'll take Miniconda, thanks.
+
+NOTE: (Ana)conda is a full package manager, which installs Python as well as all sorts of other 
+Python libraries/packages. So you DO NOT need to download Python itself from python.org first. 
+JUST download Miniconda and it will download and install the latest Python with it. (Even this 
+installation of Python doesn't seem really necessary, as I will be making an environment for each 
+Python project I work on, like one for my 'madden_08_updater'. Each environment will have its own 
+set of dependencies, listed in a .yml file, which is how conda manages envs.)
+
+- Downloaded Miniconda's 32 bit installer for Windows and installed it. I put it into 
+"C:\Miniconda3".
+
+- (Uninstalled the stand-alone version of Python 3.6.3 which I had installed before I understood 
+what conda is exactly.)
+
+- Added 'C:\Miniconda3', 'C:\Miniconda3\Library\mingw-w64\bin', 'C:\Miniconda3\Library\usr\bin', 
+'C:\Miniconda3\Library\bin', and 'C:\Miniconda3\Scripts' to my system's environment PATH.
+    - Went to Control Panel; searched for 'path'; opened link to 'Edit the system environment 
+    variables'; clicked 'Environment Variables...' at the bottom; double-clicked 'Path' in the 
+    bottom section, 'System variables' (not the top, 'User variables').
+    - Yes, there are no folders 'mingw-64' or 'usr' in 'C:\Miniconda3\Library\', but those paths 
+    were added by the installer when I checked the 'Not Recommended' box to add Miniconda to the 
+    Path during my installation on my work laptop, so I added them at home as well. Shouldn't hurt 
+    anything. Maybe those folders will get added as envs are created? Who knows.
+
+- I realized that I just needed to create a conda env for my Madden Git repo (madden_08_updater), 
+which lives in my Working Files (red) USB thumb drive. So, I started by following the 'Getting 
+Started' guide on the Conda documentation site.
+    - Verified that conda is installed:
+        > conda --version
+        conda 4.3.27
+    - Updated conda:
+        > conda update conda
+        The following packages will be UPDATED:
+        conda: 4.3.27-py36h94e4195_0 --> 4.3.30-py36h404fb56_0
+        Proceed ([y]/n)? y
+        conda-4.3.30-p 100% |###############################| Time: 0:00:00   4.25 MB/s
+    - Created a (test) environment with conda create:
+        > conda create --name testing biopython
+        Fetching package metadata .............
+        Solving package specifications: .
+        Package plan for installation in environment C:\Miniconda3\envs\testing:
+        ...
+    - Activated 'testing' environment:
+        > activate testing
+        (testing) C:\Users\spalding>
+    - Created a new environment which installed a different version of Python, along with 2 
+    packages named Astroid and Babel:
+        > conda create -n bunnies python=3.5 astroid babel
+        Fetching package metadata .............
+        Solving package specifications: .
+        Package plan for installation in environment C:\Miniconda3\envs\bunnies:
+        ...
+    - Displayed the environments I installed so far:
+        > conda info --envs
+        # conda environments:
+        #
+        bunnies                  C:\Miniconda3\envs\bunnies
+        testing               *  C:\Miniconda3\envs\testing
+        root                     C:\Miniconda3
+    - Switched to the 'bunnies' environment:
+        > activate bunnies
+        (bunnies) C:\Users\spalding>
+    - Deactivated the active env (going back to the 'root' env):
+        > deactivate
+        >
+    - Deleted the 'bunnies' environment:
+        > conda remove -n bunnies --all
+        Package plan for package removal in environment C:\Miniconda3\envs\bunnies:
+        The following packages will be REMOVED:
+            astroid:           1.5.3-py35h17c8c86_0
+            babel:             2.5.0-py35h7703712_0
+            ...
+        Proceed ([y]/n)? y
+    - Verified that the 'bunnies' env was removed:
+        > conda info --envs
+        C:\Users\spalding>conda info --envs
+        # conda environments:
+        #
+        testing                  C:\Miniconda3\envs\testing
+        root                  *  C:\Miniconda3
+    - Also removed the 'testing' env:
+        > conda remove -n testing --all
+
+- Now what I wanted to do was to create an env called 'madden_08_updater' with Python 3.6.* and 
+Scrapy 1.4.*. To do this, I first needed to tell conda about the conda-forge channel:
+    > conda config --add channels conda-forge
+    
+- Now, I could create the env with Scrapy, so I ran:
+    > conda create -n madden_08_updater python=3.6 scrapy=1.4
+    
+    Package plan for installation in environment C:\Miniconda3\envs\madden_08_updater:
+    
+    The following NEW packages will be INSTALLED:
+        appdirs:          1.4.3-py_0            conda-forge
+        asn1crypto:       0.22.0-py36_0         conda-forge
+        attrs:            17.2.0-py36_0         conda-forge
+        automat:          0.6.0-py36_0          conda-forge
+        ca-certificates:  2017.7.27.1-0         conda-forge
+        certifi:          2017.7.27.1-py36_0    conda-forge
+        cffi:             1.10.0-py36_0         conda-forge
+        constantly:       15.1.0-py_0           conda-forge
+        cryptography:     2.0.3-py36_0          conda-forge
+        cssselect:        1.0.1-py_0            conda-forge
+        hyperlink:        17.3.1-py_0           conda-forge
+        hypothesis:       3.23.0-py36_0         conda-forge
+        idna:             2.6-py36_1            conda-forge
+        incremental:      17.5.0-py_0           conda-forge
+        libiconv:         1.14-vc14_4           conda-forge [vc14]
+        libxml2:          2.9.5-vc14_1          conda-forge [vc14]
+        libxslt:          1.1.29-vc14_5         conda-forge [vc14]
+        lxml:             4.1.1-py36_0          conda-forge
+        openssl:          1.0.2l-vc14_0         conda-forge [vc14]
+        parsel:           1.2.0-py36_0
+        pip:              9.0.1-py36_0          conda-forge
+        pyasn1:           0.3.7-py_0            conda-forge
+        pyasn1-modules:   0.1.5-py_0            conda-forge
+        pycparser:        2.18-py36_0           conda-forge
+        pydispatcher:     2.0.5-py36_0          conda-forge
+        pympler:          0.5-py36_0            conda-forge
+        pyopenssl:        17.2.0-py36_0         conda-forge
+        python:           3.6.3-1               conda-forge
+        pywin32:          220-py36_1            conda-forge
+        queuelib:         1.4.2-py36_0
+        scrapy:           1.4.0-py36_0          conda-forge
+        service_identity: 17.0.0-py36_0
+        setuptools:       36.6.0-py36_1         conda-forge
+        six:              1.11.0-py36_1         conda-forge
+        twisted:          17.9.0-py36h25c7a4d_0
+        vc:               14-0                  conda-forge
+        vs2015_runtime:   14.0.25420-0          conda-forge
+        w3lib:            1.18.0-py36h709147c_0
+        wheel:            0.30.0-py_1           conda-forge
+        wincertstore:     0.2-py36_0            conda-forge
+        zlib:             1.2.11-vc14_0         conda-forge [vc14]
+        zope:             1.0-py36_0
+        zope.interface:   4.4.3-py36h0e06f40_0
+        
+    Proceed ([y]/n)? y
+    
+- This proceeded to install all of the above packages into C:\Miniconda3\envs\madden_08_updater.
+I checked after the installation, and it appeared to have installed correctly.
+
+- Having created an env from a simple 'conda create ...' command, I wanted to see if my 
+assumptions about how the environment's YML configuration file would look were correct. So I ran: 
+    > conda env export > environment.yml
+to create the 'environment.yml' file, and it created the file (though it created it in the current 
+directory I was in for the CMD window, not in the Madden env itself.) Turned out that the file 
+contained what I had expected to be in there, and then some. It added "- defaults" under 
+"channels:"; it listed ALL of the package dependencies that Scrapy needed (with additional params 
+following each one; for example, Python was listed as "- python=3.6.3=1"; I don't know why the 
+'=1' is added); it had the 'service_identity' package listed as: 
+    - pip:
+        - service-identity==17.0.0
+and on the very last line, it said:
+    prefix: C:\Miniconda3\envs\madden_08_updater
+(I was concerned that this 'prefix' might preclude using this file to create an ENV on systems 
+where Miniconda was not in C:\, but according to StackOverflow, conda ignores that line when 
+creating a new env from an 'environment.yml' file.)
+
+- I then copied that 'environment.yml' file from 'C:\Users\spalding' into my USB thumb drive, at 
+the 'Gaming\madden_08_updater' folder.
+
+- Transferring my development from my work laptop to my home desktop, I made sure that I had the 
+folders for Miniconda in the PC's environment path. Then I simply opened a CMD window, changed to 
+the USB flash drive (just typed "G:" to change in CMD), then 'cd G:\Gaming\madden_08_updater', and 
+ran:
+    > conda env create -f environment.yml
+
+- This command fetched the necessary packages and installed them (without confirmation first). The 
+packages were not installed in alphabetical order (as they had been listed during the first 
+installation above), but I'm guessing they were installed in order of prerequisites. The process 
+also gave some output stating that some requirements were 'already satisfied', but I assume those 
+were simply the result of installing some packages that shared requirements with others. 
+
+- After doing the 'activate madden_08_updater', I was able to find Scrapy with:
+    > where scrapy
+    C:\Miniconda3\envs\madden_08_updater\Scripts\scrapy.exe
+
+- I then immediately cd'd into the 'G:\Gaming\madden_08_updater\process' folder and attempted to 
+run 'python step_3_scrape_NFL_rosters.py'. This gave me an error:
+    File "G:\Gaming\madden_08_updater\process\scraping\spiders\nfl_spider.py", line 57, in __init__
+        for placeholder, value in dictTeamInfo.iteritems():
+    AttributeError: 'dict' object has no attribute 'iteritems'
+    Starting our crawl...
+    Crawling stopped.
+
+- I googled this, thinking it must be related to the move from Python 2 to 3, and confirmed that 
+the 'iteritems' attribute of dicts was removed in 3. I needed to change all dict 'iter*' attribute 
+references to just the later part of the attribute's name (eg. '.iteritems()' to '.items()'). I 
+made the change (finding only the one instance) and tried the command 
+    > python step_3_scrape_NFL_rosters.py
+again.
+
+- This time, I got an error that appeared to be a problem with the CSV output writer:
+    File "G:\Gaming\madden_08_updater\process\scraping\pipelines.py", line 45, in __init__
+        self.writerPlayerAttributeDicts.writeheader()
+    File "C:\Miniconda3\envs\madden_08_updater\lib\csv.py", line 144, in writeheader
+        self.writerow(header)
+    File "C:\Miniconda3\envs\madden_08_updater\lib\csv.py", line 155, in writerow
+        return self.writer.writerow(self._dict_to_list(rowdict))
+    TypeError: a bytes-like object is required, not 'str'
+The solution (Thanks, StackOverflow - as usual) seemed to be to change how I opened the file to 
+which I was attempting to write. In Python 2, I could open a file with 'wb', but in 3 I would need 
+to open it as a textfile instead. So I replaced 'wb' with just 'w' and tried again.
+
+- This time... success! I got an output file 'NFL rosters.csv' at 
+'G:\Gaming\madden_08_updater\process\outputs'. Although, it seemed to get a 404 on one player's 
+page, for no apparent reason. I even tried the URL for his page afterwards, and it was there. So, 
+running it yet again, I got the full 57 players. Not sure what happened the first time, but hey, 
+I'll take it. My setup seems to be working again :^)
+
+===================================================================================================
+OLDER NOTES: 
+
 To setup the necessary environment for running my Python code against Scrapy, I looked at what I 
 had done previously, when I tried to install two versions of Python (one of 2.x and one of 3.x) 
 alongside each other. That attempt had resulted in problems with running Python, so I had already 

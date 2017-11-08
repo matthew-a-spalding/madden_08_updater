@@ -54,7 +54,7 @@ class NFLSpider(CrawlSpider):
             # Put a new copy of the URL template for this team into the list.
             nfl_roster_urls.append(nfl_roster_link_template)
             # Iterate over the keys and values in the current team dict.
-            for placeholder, value in dictTeamInfo.iteritems():
+            for placeholder, value in dictTeamInfo.items():
                 # Replace any instances of the current key (placeholder) with the related value from the team's dict.
                 nfl_roster_urls[index] = nfl_roster_urls[index].replace(placeholder, value)
         

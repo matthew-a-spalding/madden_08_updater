@@ -28,25 +28,26 @@ made only once in a while off a revision from Git.
 
     ***	Done.	***
 
-- Finish writing the Scrapy script that will create "NFL and FBG.csv" for use in the final 
+- Finish writing the Scrapy script that will create "NFL Rosters.csv" for use in the final 
 "MaddenUpdater.py" script.
 
     ***	IN PROGRESS.
         
         Figure out:
-            1) if I can currently scrape NFL.com (with or without FBG.com) to get the 
-            "NFL and FBG.csv" file made.
+            1) if I can currently scrape NFL.com to get the "NFL Rosters.csv" file made.
+                - YES! I can make the file, without FBGratings input.
             2) if and how I can get one player's record updated so it will be usable in-game.
-            3) what each individual Python file is currently doing and make a doctring about it.
+                - CONTINUE HERE
+            3) what each individual Python file is currently doing and make a docstring about it.
             
         Then, re-work all the Python files to follow best practices, and move to the next item in 
         this list, testing the use of the two CSV files together.
         
     ***
 
-- Test the import of "NFL and FBG.csv" alongside "Madden Ratings.csv"; write a simple script that 
+- Test the import of "NFL Rosters.csv" alongside "Madden Ratings.csv"; write a simple script that 
 uses both in formulating the values to put into a player's fields. Use the Bears, and work out the 
-matching of player names between the Madden and NFL/FBG ratings files.
+matching of player names between the Madden and NFL files.
 
     ***	TODO	***
 
