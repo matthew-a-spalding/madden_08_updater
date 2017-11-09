@@ -23,8 +23,8 @@ r""" step_5_update_roster_file.py
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
 # ----------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS ------------------------------------------
 # 1 - Standard library imports
-import os
-import csv
+
+import os, sys, csv
 #import math
 from ctypes import byref, cast, c_bool, c_char, c_char_p, c_float, c_int, POINTER, Structure, WinDLL
 from enum import Enum
@@ -34,6 +34,7 @@ from enum import Enum
 
 
 # 3 - Application-specific imports
+
 #from utilities.helper_functions import *
 
 
@@ -41,9 +42,10 @@ from enum import Enum
 
 
 # 5 - Global constants
-# Set the base path we will use to keep other paths relative, and shorter :^)
-BASE_MADDEN_PATH = r"C:\Home\Working Files\madden_08_updater"
 
+# Set the base path we will use to keep other paths relative, and shorter :^)
+# like "E:\Home\Working Files\madden_08_updater"
+BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
 # ------------------------------------------------ Class Declarations -------------------------------------------------
@@ -186,7 +188,7 @@ TDBAccessDLL.TDBTableGetProperties.restype = c_bool
 
 
 # STEP 2 - OPEN THE ROSTER FILE THROUGH THE DLL.
-intDBIndex = TDBAccessDLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros"))
+intDBIndex = TDBAccessDLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros").encode('utf-8'))
 print("\nintDBIndex = %d" % intDBIndex)
 
 
@@ -241,14 +243,14 @@ print("\n\n")
 # STEP 4 - EDIT PLAYER 0's FIRST NAME.
 
 boolSetValueAsString = TDBAccessDLL.TDBFieldSetValueAsString(
-        intDBIndex, listTDBTablePropertiesStructs[6].Name, "PFNA", 0, "Joe")
+        intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PFNA", 0, b"SOMEONE")
 if boolSetValueAsString:
     # Try getting the new name back out using the Get method.
     stringVal = cast((c_char * 12)(), c_char_p)
     boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(
-            intDBIndex, listTDBTablePropertiesStructs[6].Name, "PFNA", 0, byref(stringVal))
+            intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PFNA", 0, byref(stringVal))
     if boolGotValueAsString:
-        print("We've set the string for player 0's PFNA field to '%s'." % stringVal.value)
+        print("We've set the string for player 0's PFNA field to '%s'." % stringVal.value.decode())
     else:
         print("UNABLE TO GET STRING VALUE FROM FIELD 'PFNA' AFTER SETTING IT.")
 else:
@@ -256,6 +258,26 @@ else:
 
 # Give us some breathing space before the next section.
 print("\n")
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------
+
+# Get the info on the player at index 0.
+stringLastName = cast((c_char * 14)(), c_char_p) # Since PLNA.Size = 104, we need 14 bytes (13*8, +1 for terminator)
+boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(
+        intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PLNA", 0, byref(stringLastName))
+if boolGotValueAsString:
+    print("Player 0's PLNA field is '%s'." % stringLastName.value.decode())
+else:
+    print("UNABLE TO GET STRING VALUE FROM FIELD 'PLNA'.")
+
+#sys.exit()
+
+#----------------------------------------------------------------------------------------------------------------------
+
+
 
 
 # STEP 5 - COMPACT, SAVE, AND CLOSE THE DB.

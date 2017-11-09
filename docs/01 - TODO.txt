@@ -36,8 +36,37 @@ made only once in a while off a revision from Git.
         Figure out:
             1) if I can currently scrape NFL.com to get the "NFL Rosters.csv" file made.
                 - YES! I can make the file, without FBGratings input.
+                
             2) if and how I can get one player's record updated so it will be usable in-game.
-                - CONTINUE HERE
+                
+                a) Determine what DLLtest2.py, DLLtest3.py, read_tables.py, 
+                step_3_scrape_NFL_rosters.py, and step_5_update_roster_file.py do now, and what 
+                use I have for them.
+                
+                    DLLtest2.py: This is the file I use to read all of the player records out of 
+                    the file 'E:\Gaming\madden_08_updater\process\inputs\base.ros' and create the 
+                    CSV file listing them. NOW FIXED FOR PYTHON 3 AND WORKING.
+                    
+    - CONTINUE HERE
+        2017_11_09
+                    DLLtest3.py: 
+                    
+                    
+                    read_tables.py: 
+                    
+                    
+                    step_3_scrape_NFL_rosters.py: This file currently uses Scrapy to get the basic 
+                    info on players from the rosters at NFL.com. It is set up right now to only 
+                    go through the Buffalo Bills roster. NOW FIXED FOR PYTHON 3 AND WORKING.
+                    
+                    
+                    step_5_update_roster_file.py: This file currently edits the first name (PFNA) 
+                    field of the first player in the roster located at 
+                    "E:\Gaming\madden_08_updater\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 
+                    AND WORKING.
+                
+                b) Determine what 
+                
             3) what each individual Python file is currently doing and make a docstring about it.
             
         Then, re-work all the Python files to follow best practices, and move to the next item in 

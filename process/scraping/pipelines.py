@@ -36,7 +36,7 @@ class PlayerPipeline(object):
         # Figure out the path we will use when placing our output file.
         outputDirectory = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'outputs'))
         # Open the file we will write to, and keep it in our object's scope.
-        self.csvNFLRostersFile = open(os.path.join(outputDirectory, "NFL rosters.csv"), "w")
+        self.csvNFLRostersFile = open(os.path.join(outputDirectory, "NFL rosters.csv"), "w", newline='')
         # Create our list of field names.
         listFieldNames = NFLPlayer.fields.keys()
         # Create a DictWriter in our object's scope, with the list of field names as the header row.

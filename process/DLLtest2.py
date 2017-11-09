@@ -9,8 +9,7 @@ r""" DLLtest2.py
 # ----------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS ------------------------------------------
 
 # 1.1 - Standard library imports
-import os
-import csv
+import os, csv
 from ctypes import WinDLL, Structure, c_char_p, c_int, c_bool, cast, c_char, c_float, POINTER, byref
 
 # 1.2 - Third-party imports
@@ -21,7 +20,7 @@ from ctypes import WinDLL, Structure, c_char_p, c_int, c_bool, cast, c_char, c_f
 
 # 1.5 - Global constants
 # Set the base path to our files.
-BASE_MADDEN_PATH = r"C:\Home\Working Files\madden_08_updater"
+BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
@@ -98,7 +97,7 @@ class TDBFieldProperties(Structure):
 TDBAccessDLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbaccess\old\tdbaccess.dll"))
 
 # Open the roster file through the DLL.
-intDBIndex = TDBAccessDLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros"))
+intDBIndex = TDBAccessDLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros").encode('utf-8'))
 print("\nintDBIndex = %d" % intDBIndex)
 
 # Add the argtypes and restype definitions here for the functions we'll use.
@@ -179,8 +178,8 @@ for i in range(listTDBTablePropertiesStructs[6].FieldCount):
     boolGotTableFieldProperties = TDBAccessDLL.TDBFieldGetProperties(intDBIndex, listTDBTablePropertiesStructs[6].Name, i, byref(listTDBTable6FieldPropertiesStructs[i]))
     if boolGotTableFieldProperties:
         # Want to add each field name to our list.
-        listTDBTable6FieldNames.append(listTDBTable6FieldPropertiesStructs[i].Name)
-        print("\nlistTDBTable6FieldPropertiesStructs[%d].Name = %r" % (i, listTDBTable6FieldPropertiesStructs[i].Name))
+        listTDBTable6FieldNames.append(listTDBTable6FieldPropertiesStructs[i].Name.decode())
+        print("\nlistTDBTable6FieldPropertiesStructs[%d].Name = %r" % (i, listTDBTable6FieldNames[i]))
 #        print("listTDBTable6FieldPropertiesStructs[%d].Size = %d" % (i, listTDBTable6FieldPropertiesStructs[i].Size))
 #        print("listTDBTable6FieldPropertiesStructs[%d].FieldType = %d" % (i, listTDBTable6FieldPropertiesStructs[i].FieldType))
     else:
@@ -220,23 +219,23 @@ for i in range(listTDBTablePropertiesStructs[6].RecordCount):
     for j, structFieldProperties in enumerate(listTDBTable6FieldPropertiesStructs):
         if structFieldProperties.FieldType == 0: # tdbString
             # First, create the string where we will hold the value.
-            stringVal = cast((c_char * ((structFieldProperties.Size / 8) + 1))(), c_char_p)
+            stringVal = cast((c_char * ((structFieldProperties.Size // 8) + 1))(), c_char_p)
             boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(intDBIndex, listTDBTablePropertiesStructs[6].Name, structFieldProperties.Name, i, byref(stringVal))
             if boolGotValueAsString:
-                listPlayerAttributeDicts[i][structFieldProperties.Name] = stringVal.value
+                listPlayerAttributeDicts[i][structFieldProperties.Name.decode()] = stringVal.value.decode()
                 if i == 0:
-                    print("%d: stringVal for player 0's %s field = %s" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name]))
+                    print("%d: stringVal for player 0's %s field = %s" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
             else:
                 if i == 0:
                     print("%d: Field %s is a string. UNABLE TO GET STRING VALUE." % (j, structFieldProperties.Name))
         elif structFieldProperties.FieldType == 2 or structFieldProperties.FieldType == 3: # tdbSInt or tdbUInt
             # Just call the function to get an int value.
-            listPlayerAttributeDicts[i][structFieldProperties.Name] = TDBAccessDLL.TDBFieldGetValueAsInteger(intDBIndex, listTDBTablePropertiesStructs[6].Name, structFieldProperties.Name, i)
+            listPlayerAttributeDicts[i][structFieldProperties.Name.decode()] = TDBAccessDLL.TDBFieldGetValueAsInteger(intDBIndex, listTDBTablePropertiesStructs[6].Name, structFieldProperties.Name, i)
             if i == 0:
-                print("%d: Field %s is an int = %d" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name]))
+                print("%d: Field %s is an int = %d" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
 
 # Open a file to write to.
-filePlayersAttributes = open("players_current.csv", "wb")
+filePlayersAttributes = open("players_current.csv", "w", newline='')
 
 # Create our DictWriter.
 writerPlayerAttributeDicts = csv.DictWriter(filePlayersAttributes, listTDBTable6FieldNames)
