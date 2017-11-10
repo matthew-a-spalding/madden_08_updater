@@ -229,7 +229,7 @@ for i in range(listTDBTablePropertiesStructs[6].FieldCount):
     if boolGotTableFieldProperties:
         # Add each field name to our list.
         #listTDBTable6FieldNames.append(listTDBTable6FieldPropertiesStructs[i].Name)
-        print("\nlistTDBTable6FieldPropertiesStructs[%d].Name = %r" % (i, listTDBTable6FieldPropertiesStructs[i].Name))
+        print("\nlistTDBTable6FieldPropertiesStructs[%d].Name = %s" % (i, listTDBTable6FieldPropertiesStructs[i].Name.decode()))
         print("listTDBTable6FieldPropertiesStructs[%d].Size = %d" % (i, listTDBTable6FieldPropertiesStructs[i].Size))
         print("listTDBTable6FieldPropertiesStructs[%d].FieldType = %d" % 
                 (i, listTDBTable6FieldPropertiesStructs[i].FieldType))
@@ -250,14 +250,14 @@ if boolSetValueAsString:
     boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(
             intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PFNA", 0, byref(stringVal))
     if boolGotValueAsString:
-        print("We've set the string for player 0's PFNA field to '%s'." % stringVal.value.decode())
+        print("We've set the string for player 0's PFNA field to %s." % stringVal.value.decode())
     else:
         print("UNABLE TO GET STRING VALUE FROM FIELD 'PFNA' AFTER SETTING IT.")
 else:
     print("UNABLE TO SET STRING VALUE IN FIELD 'PFNA'.")
 
 # Give us some breathing space before the next section.
-print("\n")
+print()
 
 
 
@@ -265,11 +265,11 @@ print("\n")
 #----------------------------------------------------------------------------------------------------------------------
 
 # Get the info on the player at index 0.
-stringLastName = cast((c_char * 14)(), c_char_p) # Since PLNA.Size = 104, we need 14 bytes (13*8, +1 for terminator)
+stringLastName = cast((c_char * 14)(), c_char_p) # Since PLNA.Size = 104, we need 14 bytes (104/8, +1 for terminator)
 boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(
         intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PLNA", 0, byref(stringLastName))
 if boolGotValueAsString:
-    print("Player 0's PLNA field is '%s'." % stringLastName.value.decode())
+    print("Player 0's PLNA field is %s." % stringLastName.value.decode())
 else:
     print("UNABLE TO GET STRING VALUE FROM FIELD 'PLNA'.")
 

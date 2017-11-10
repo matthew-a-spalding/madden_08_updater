@@ -224,7 +224,7 @@ for i in range(listTDBTablePropertiesStructs[6].RecordCount):
             if boolGotValueAsString:
                 listPlayerAttributeDicts[i][structFieldProperties.Name.decode()] = stringVal.value.decode()
                 if i == 0:
-                    print("%d: stringVal for player 0's %s field = %s" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
+                    print("%d: stringVal for player 0's %s field = %s" % (j, structFieldProperties.Name.decode(), listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
             else:
                 if i == 0:
                     print("%d: Field %s is a string. UNABLE TO GET STRING VALUE." % (j, structFieldProperties.Name))
@@ -232,7 +232,7 @@ for i in range(listTDBTablePropertiesStructs[6].RecordCount):
             # Just call the function to get an int value.
             listPlayerAttributeDicts[i][structFieldProperties.Name.decode()] = TDBAccessDLL.TDBFieldGetValueAsInteger(intDBIndex, listTDBTablePropertiesStructs[6].Name, structFieldProperties.Name, i)
             if i == 0:
-                print("%d: Field %s is an int = %d" % (j, structFieldProperties.Name, listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
+                print("%d: Field %s is an int = %d" % (j, structFieldProperties.Name.decode(), listPlayerAttributeDicts[i][structFieldProperties.Name.decode()]))
 
 # Open a file to write to.
 filePlayersAttributes = open("players_current.csv", "w", newline='')
