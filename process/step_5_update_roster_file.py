@@ -20,11 +20,12 @@ r""" step_5_update_roster_file.py
     This script will generate the file "latest.ros" in the folder 'outputs'.
 """
 
+
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
 # ----------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS ------------------------------------------
 # 1 - Standard library imports
 
-import os, sys, csv
+import csv, os, sys
 #import math
 from ctypes import byref, cast, c_bool, c_char, c_char_p, c_float, c_int, POINTER, Structure, WinDLL
 from enum import Enum
@@ -46,6 +47,7 @@ from enum import Enum
 # Set the base path we will use to keep other paths relative, and shorter :^)
 # like "E:\Home\Working Files\madden_08_updater"
 BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
 # ------------------------------------------------ Class Declarations -------------------------------------------------

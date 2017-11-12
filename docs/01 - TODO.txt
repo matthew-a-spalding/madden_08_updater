@@ -43,27 +43,29 @@ made only once in a while off a revision from Git.
                 step_3_scrape_NFL_rosters.py, and step_5_update_roster_file.py do now, and what 
                 use I have for them.
                 
-                    DLLtest2.py: This is the file I use to read all of the player records out of 
-                    the file 'E:\Gaming\madden_08_updater\process\inputs\base.ros' and create the 
-                    CSV file listing them. NOW FIXED FOR PYTHON 3 AND WORKING.
+                    dump_roster_to_csv.py: This is the file I use to read all of the player 
+                    records out of the file '...\process\inputs\base.ros' and create the CSV file 
+                    "current_players.csv" listing them. NOW FIXED FOR PYTHON 3 AND WORKING.
+                    
+                    DLLtest3.py: This file reads the first dict of player attributes from 
+                    "process\inputs\Latest Madden Ratings.csv" and then uses some of those values 
+                    in combination with some hardcoded values to alter the first player record in 
+                    "process\inputs\base.ros", making him into a WR. NOW FIXED FOR PYTHON 3 AND 
+                    WORKING.
                     
     - CONTINUE HERE
-        2017_11_09
-                    DLLtest3.py: 
-                    
-                    
+        2017_11_12
                     read_tables.py: 
                     
                     
                     step_3_scrape_NFL_rosters.py: This file currently uses Scrapy to get the basic 
-                    info on players from the rosters at NFL.com. It is set up right now to only 
+                    info on players from the rosters at NFL.com and write that into the file at 
+                    "...\process\outputs\NFL rosters.csv". It is set up right now to only 
                     go through the Buffalo Bills roster. NOW FIXED FOR PYTHON 3 AND WORKING.
-                    
                     
                     step_5_update_roster_file.py: This file currently edits the first name (PFNA) 
                     field of the first player in the roster located at 
-                    "E:\Gaming\madden_08_updater\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 
-                    AND WORKING.
+                    "...\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 AND WORKING.
                 
                 b) Determine what 
                 
