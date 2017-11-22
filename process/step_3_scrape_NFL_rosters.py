@@ -5,7 +5,6 @@ r""" step_3_scrape_NFL_rosters.py
     
     See the documentation on running Scrapy from a script here: 
         http://doc.scrapy.org/en/latest/topics/practices.html#run-scrapy-from-a-script
-
 """
 
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
@@ -41,17 +40,16 @@ from scrapy.utils.project import get_project_settings
 # ----------------------------------------------------- SECTION 4 -----------------------------------------------------
 # -------------------------------------------------- Main Function ----------------------------------------------------
 if __name__ == "__main__":
-    """ Initialize the spider and do the crawling. 
-    
+    """ 
+    Initialize the spider and do the crawling. 
+
     NOTE: Running the scraper produces a CSV file that will still need to be modified, so it MUST BE CHECKED MANUALLY 
     afterwards for the following: 
-        1) See if any players were given a position of TBD. (The TBDs mean that NFL.com wasn't specific enough for 
-            Madden - like just LB or RB.) 
+        1) Find the appropriate values for any fields that were set to "TBD" or "CONFLICT". (There WILL be some.)
         2) Some players may be missing their jersey numbers. If I can't find them myself, just choose something 
             reasonable. 
         3) Make sure each team has at least the required number of players at each position. The scripts might create 
             too many LEs and not enough REs, for example.
-    
     """
     
     # Get the settings and initialize the crawler process.

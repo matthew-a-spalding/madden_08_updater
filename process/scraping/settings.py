@@ -1,3 +1,7 @@
+r""" settings.py
+    
+    This file contains all of the settings for Scrapy to use with our NFLSpider crawler.
+"""
 # -*- coding: utf-8 -*-
 
 # Scrapy settings for tutorial project
@@ -15,6 +19,7 @@ LOG_LEVEL = "INFO"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "tutorial (+http://www.yourdomain.com)"
 USER_AGENT = "Mozilla/5.0 (Windows; U; MSIE 10.0; Windows NT 9.0; en-US)"
+DOWNLOAD_DELAY = 0.5
 
 # Per docs at http://doc.scrapy.org/en/latest/topics/item-pipeline.html#topics-item-pipeline
 ITEM_PIPELINES = {
@@ -25,7 +30,8 @@ ITEM_PIPELINES = {
 NFL_ROSTER_LINK_TEMPLATE = "http://www.nfl.com/teams/[FULL_LOCATION][NICKNAME]/roster?team=[SHORT_LOCATION]"
 
 # The complete list of NFL team locations, both full and short, and nicknames.
-NFL_TEAMS = [{"[FULL_LOCATION]":"buffalo", "[SHORT_LOCATION]":"buf", "[NICKNAME]":"bills"},
+NFL_TEAMS = [
+#    {"[FULL_LOCATION]":"buffalo", "[SHORT_LOCATION]":"buf", "[NICKNAME]":"bills"},
 #    {"[FULL_LOCATION]":"miami", "[SHORT_LOCATION]":"mia", "[NICKNAME]":"dolphins"},
 #    {"[FULL_LOCATION]":"newengland", "[SHORT_LOCATION]":"ne", "[NICKNAME]":"patriots"},
 #    {"[FULL_LOCATION]":"newyork", "[SHORT_LOCATION]":"nyj", "[NICKNAME]":"jets"},
@@ -55,7 +61,7 @@ NFL_TEAMS = [{"[FULL_LOCATION]":"buffalo", "[SHORT_LOCATION]":"buf", "[NICKNAME]
 #    {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
 #    {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
 #    {"[FULL_LOCATION]":"st.louis", "[SHORT_LOCATION]":"stl", "[NICKNAME]":"rams"},
-#    {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
+    {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
 #    {"[FULL_LOCATION]":"seattle", "[SHORT_LOCATION]":"sea", "[NICKNAME]":"seahawks"},
 ]
 

@@ -31,10 +31,11 @@ made only once in a while off a revision from Git.
 - Finish writing the Scrapy script that will create "NFL Rosters.csv" for use in the final 
 "MaddenUpdater.py" script.
 
-    ***	IN PROGRESS.
+    ***	IN PROGRESS.   ***
         
-        Figure out:
-            1) if I can currently scrape NFL.com to get the "NFL Rosters.csv" file made.
+        - Figure out:
+            1) if I can currently scrape NFL.com to get the first part of the intermediate output 
+            file "NFL Rosters.csv" made.
                 - YES! I can make the file, without FBGratings input.
                 
             2) if and how I can get one player's record updated so it will be usable in-game.
@@ -53,10 +54,10 @@ made only once in a while off a revision from Git.
                     "process\inputs\base.ros", making him into a WR. NOW FIXED FOR PYTHON 3 AND 
                     WORKING.
                     
-    - CONTINUE HERE
-        2017_11_12
-                    read_tables.py: 
-                    
+                    read_tables.py: Just reads the properties of all the tables and then loops 
+                    through them and reads all the properties of all of their fields.
+                    NO LONGER NEEDED. ALL FUNCTIONALITY FROM THIS CODE IS IN OTHER FILES AS WELL.
+                    REMOVING.
                     
                     step_3_scrape_NFL_rosters.py: This file currently uses Scrapy to get the basic 
                     info on players from the rosters at NFL.com and write that into the file at 
@@ -66,23 +67,36 @@ made only once in a while off a revision from Git.
                     step_5_update_roster_file.py: This file currently edits the first name (PFNA) 
                     field of the first player in the roster located at 
                     "...\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 AND WORKING.
-                
-                b) Determine what 
-                
-            3) what each individual Python file is currently doing and make a docstring about it.
+            *** Done. ***
             
-        Then, re-work all the Python files to follow best practices, and move to the next item in 
-        this list, testing the use of the two CSV files together.
+        - Uncomment more fields to expand items.py *** DONE. ***
         
-    ***
-
-- Test the import of "NFL Rosters.csv" alongside "Madden Ratings.csv"; write a simple script that 
-uses both in formulating the values to put into a player's fields. Use the Bears, and work out the 
-matching of player names between the Madden and NFL files.
-
-    ***	TODO	***
-
-- Write the rest of "MaddenUpdater.py" according to the outline in "Methods for Setting Field 
-Values.xlsx". Separate out each position into its own Python module.
+        - Finish moving Reid Ferguson (TE, Bills) and Jeremy Butler (WR, Bills) into the edited 
+        "Madden 18 Player Ratings.xlsx" file.
+            *** Done. ***
+        
+        - Alter the name of the intermediate output file from "NFL rosters.csv" to a formatted 
+        name, like "%d NFL Rosters.csv" so I can more easily keep multiple years.
+            *** Done. ***
+        
+        - Finish coding "nfl_spider.py". This file will read in the contents of "Latest Madden 
+        Ratings.csv", scrape the player profile pages on NFL.com, and then use both in formulating 
+        the values to put into the player's fields when creating "My xxxx NFL Rosters.csv". Use 
+        the Bears to work out the matching of player names between the Madden and NFL files.
+            - Take code from old nfl_spider.py on github and other code from DLLtest3.py
+            *** Done. ***
+            
+        - Figure out whether or not to alter field values from the 2017 Madden ratings file, 
+        specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
+        certain percentage, to account for inflation today?)
+    
+    CONTINUE HERE
+    2017_11_22
+        
+        - Test the code for step_3_ to see how it deals with a player that does not have a jersey number on NFL.com
+        
+- Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
+Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
+'utilities' folder.
 
     ***	TODO	***
