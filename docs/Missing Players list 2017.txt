@@ -1,0 +1,373 @@
+2017-11-24 13:05:52 [root] ERROR:       Unable to find a match for Xavier Woodson-Luster, Oakland Raiders LB.
+- Added
+2017-11-24 13:05:55 [root] ERROR:       Unable to find a match for Duke Thomas, Dallas Cowboys DB.
+- Skipped.
+2017-11-24 13:06:08 [root] ERROR:       Unable to find a match for James Onwualu, Los Angeles Chargers LB.
+- Added.
+2017-11-24 13:06:11 [root] ERROR:       Unable to find a match for Charmeachealle Moore, Los Angeles Chargers LB.
+- Added.
+2017-11-24 13:06:21 [root] ERROR:       Unable to find a match for Austin Ekeler, Los Angeles Chargers RB.
+- Added.
+2017-11-24 13:06:22 [root] ERROR:       Unable to find a match for Michael Davis, Los Angeles Chargers CB.
+- Added.
+2017-11-24 13:06:24 [root] ERROR:       Unable to find a match for Sean Culkin, Los Angeles Chargers TE.
+- Added.
+2017-11-24 13:06:37 [root] ERROR:       Unable to find a match for William Poehls, Jacksonville Jaguars OT.
+- Added.
+2017-11-24 13:06:38 [root] ERROR:       Unable to find a match for Larry Pinkard, Jacksonville Jaguars WR.
+- Added.
+2017-11-24 13:06:43 [root] ERROR:       Unable to find a match for Jaydon Mickens, Jacksonville Jaguars WR.
+- Added.
+2017-11-24 13:06:44 [root] ERROR:       Unable to find a match for I'Tavius Mathers, Jacksonville Jaguars RB.
+- Skipped.
+2017-11-24 13:06:51 [root] ERROR:       Unable to find a match for Jarrod Harper, Jacksonville Jaguars DB.
+- Added.
+2017-11-24 13:06:53 [root] ERROR:       Unable to find a match for Tyler Gaffney, Jacksonville Jaguars RB.
+- Added.
+2017-11-24 13:06:56 [root] ERROR:       Unable to find a match for Keelan Cole, Jacksonville Jaguars WR.
+- Added.
+2017-11-24 13:07:00 [root] ERROR:       Unable to find a match for Justin Blackmon, Jacksonville Jaguars WR.
+- Skipped.
+2017-11-24 13:07:01 [root] ERROR:       Unable to find a match for Eli Ankou, Jacksonville Jaguars DT.
+- Added.
+2017-11-24 13:07:04 [root] ERROR:       Unable to find a match for Cooper Rush, Dallas Cowboys QB.
+- Added.
+2017-11-24 13:07:04 [root] ERROR:       Unable to find a match for Daniel Ross, Dallas Cowboys DE.
+- Added.
+2017-11-24 13:07:19 [root] ERROR:       Unable to find a match for Zac Dysert, Dallas Cowboys QB.
+- Added.
+2017-11-24 13:07:37 [root] ERROR:       Unable to find a match for Nicholas Morrow, Oakland Raiders LB.
+- Added.
+2017-11-24 13:07:38 [root] WARNING:     Using likely match for NFL.com's EJ Manuel, Oakland Raiders QB;
+2017-11-24 13:07:38 [root] WARNING:     Madden CSV name and pos: E.J. Manuel, QB;
+
+2017-11-24 13:08:03 [root] ERROR:       Unable to find a match for Darrelle Revis, Kansas City Chiefs DB.
+- Added.
+2017-11-24 13:08:10 [root] ERROR:       Unable to find a match for Ashton Lampkin, Kansas City Chiefs CB.
+- Skipped.
+2017-11-24 13:08:22 [root] ERROR:       Unable to find a match for Devin Chappell, Kansas City Chiefs DB.
+- Added.
+2017-11-24 13:08:24 [root] ERROR:       Unable to find a match for Keith Baxter, Kansas City Chiefs DB.
+- Skipped.
+2017-11-24 13:08:26 [root] ERROR:       Unable to find a match for Elijah Wilkinson, Denver Broncos OT.
+- Added.
+2017-11-24 13:08:42 [root] ERROR:       Unable to find a match for Joe Jones, Denver Broncos LB.
+- Added.
+2017-11-24 13:08:47 [root] ERROR:       Unable to find a match for Jerrol Garcia-Williams, Denver Broncos LB.
+- Added.
+2017-11-24 13:09:01 [root] ERROR:       Unable to find a match for Tye Smith, Tennessee Titans CB.
+- Added.
+2017-11-24 13:09:26 [root] ERROR:       Unable to find a match for Isaiah Williams, Indianapolis Colts OT.
+- Added.
+2017-11-24 13:09:30 [root] ERROR:       Unable to find a match for Rigoberto Sanchez, Indianapolis Colts P.
+- Added.
+2017-11-24 13:09:33 [root] ERROR:       Unable to find a match for Kenny Moore, Indianapolis Colts DB.
+- Added.
+2017-11-24 13:09:39 [root] ERROR:       Unable to find a match for Kyle Kalis, Indianapolis Colts OG.
+- Added.
+2017-11-24 13:09:45 [root] ERROR:       Unable to find a match for Jermaine Grace, Indianapolis Colts LB.
+- Added.
+2017-11-24 13:09:50 [root] ERROR:       Unable to find a match for Darrell Daniels, Indianapolis Colts TE.
+- Added.
+2017-11-24 13:09:53 [root] ERROR:       Unable to find a match for Deyshawn Bond, Indianapolis Colts C.
+- Added.
+2017-11-24 13:10:14 [root] ERROR:       Unable to find a match for Deante' Gray, Houston Texans WR.
+- Skipped.
+2017-11-24 13:10:14 [root] ERROR:       Unable to find a match for Matt Godin, Houston Texans DE.
+- Skipped.
+2017-11-24 13:10:16 [root] ERROR:       Unable to find a match for Will Fuller, Houston Texans WR.
+- FIXED CODE TO CHECK FOR ' V' IN LAST NAME.
+2017-11-24 13:10:24 [root] ERROR:       Unable to find a match for Chunky Clements, Houston Texans DT.
+- Added.
+2017-11-24 13:10:28 [root] ERROR:       Unable to find a match for Terrell Watson, Pittsburgh Steelers RB.
+- Added.
+2017-11-24 13:10:35 [root] WARNING:     Using likely match for NFL.com's Dan McCullers, Pittsburgh Steelers NT;
+2017-11-24 13:10:35 [root] WARNING:     Madden CSV name and pos: Daniel McCullers, DT;
+
+2017-11-24 13:10:36 [root] ERROR:       Unable to find a match for Mike Matthews, Pittsburgh Steelers C.
+- Skipped.
+2017-11-24 13:10:38 [root] ERROR:       Unable to find a match for Mike Hilton, Pittsburgh Steelers DB.
+- Added.
+2017-11-24 13:10:47 [root] ERROR:       Unable to find a match for Greg Ducre, Pittsburgh Steelers DB.
+- Skipped.
+2017-11-24 13:10:49 [root] ERROR:       Unable to find a match for Antonio Crawford, Pittsburgh Steelers DB.
+- Skipped.
+2017-11-24 13:10:56 [root] WARNING:     Using likely match for NFL.com's JC Tretter, Cleveland Browns C;
+2017-11-24 13:10:56 [root] WARNING:     Madden CSV name and pos: J.C. Tretter, C;
+
+2017-11-24 13:11:00 [root] ERROR:       Unable to find a match for Austin Reiter, Cleveland Browns C.
+- Added.
+2017-11-24 13:11:01 [root] ERROR:       Unable to find a match for Reggie Porter, Cleveland Browns CB.
+- Added.
+2017-11-24 13:11:04 [root] ERROR:       Unable to find a match for Kai Nacua, Cleveland Browns DB.
+- Added.
+2017-11-24 13:11:09 [root] ERROR:       Unable to find a match for Deon King, Cleveland Browns LB.
+- Added.
+2017-11-24 13:11:12 [root] WARNING:     Using likely match for NFL.com's Roderick Johnson, Cleveland Browns OT;
+2017-11-24 13:11:12 [root] WARNING:     Madden CSV name and pos: Rod Johnson, LT;
+
+2017-11-24 13:11:13 [root] ERROR:       Unable to find a match for Darius Jackson, Cleveland Browns RB.
+- Added.
+2017-11-24 13:11:18 [root] ERROR:       Unable to find a match for Matt Dayes, Cleveland Browns RB.
+- Fixed.
+2017-11-24 13:11:18 [root] ERROR:       Unable to find a match for Justin Currie, Cleveland Browns DB.
+- Skipped.
+2017-11-24 13:11:20 [root] ERROR:       Unable to find a match for Trevon Coley, Cleveland Browns DT.
+- Added.
+2017-11-24 13:11:26 [root] ERROR:       Unable to find a match for B.J. Bello, Cleveland Browns LB.
+- Added.
+2017-11-24 13:11:26 [root] ERROR:       Unable to find a match for Chris Barker, Cleveland Browns OG.
+- Added.
+2017-11-24 13:11:37 [root] WARNING:     Using likely match for NFL.com's AJ McCarron, Cincinnati Bengals QB;
+2017-11-24 13:11:37 [root] WARNING:     Madden CSV name and pos: A.J. McCarron, QB;
+
+2017-11-24 13:11:52 [root] ERROR:       Unable to find a match for Tra Carson, Cincinnati Bengals RB.
+- Skipped.
+2017-11-24 13:11:59 [root] ERROR:       Unable to find a match for Tim White, Baltimore Ravens WR.
+- Skipped.
+2017-11-24 13:12:05 [root] ERROR:       Unable to find a match for Matt Skura, Baltimore Ravens OG.
+- Added.
+2017-11-24 13:12:06 [root] ERROR:       Unable to find a match for Maurquice Shakir, Baltimore Ravens OG.
+- Added.
+2017-11-24 13:12:06 [root] ERROR:       Unable to find a match for Patrick Ricard, Baltimore Ravens FB.
+- Added.
+2017-11-24 13:12:13 [root] ERROR:       Unable to find a match for Brandon Kublanow, Baltimore Ravens C.
+- Skipped.
+2017-11-24 13:12:14 [root] ERROR:       Unable to find a match for Matt Judon, Baltimore Ravens OLB.
+- Fixed.
+2017-11-24 13:12:18 [root] ERROR:       Unable to find a match for Jaylen Hill, Baltimore Ravens DB.
+- Added.
+2017-11-24 13:12:25 [root] ERROR:       Unable to find a match for Bam Bradley, Baltimore Ravens LB.
+- Added.
+2017-11-24 13:12:40 [root] ERROR:       Unable to find a match for Doug Middleton, New York Jets DB.
+- Added.
+2017-11-24 13:12:44 [root] ERROR:       Unable to find a match for Bryson Keeton, New York Jets CB.
+- Skipped.
+2017-11-24 13:12:51 [root] ERROR:       Unable to find a match for Brisly Estime, New York Jets WR.
+- Skipped.
+2017-11-24 13:12:55 [root] ERROR:       Unable to find a match for Xavier Coleman, New York Jets CB.
+- Added.
+2017-11-24 13:13:02 [root] WARNING:     Found a player with three name parts: "['Kyle', 'Van', 'Noy']"
+2017-11-24 13:13:09 [root] ERROR:       Unable to find a match for Eric Lee, New England Patriots DE.
+- Added.
+2017-11-24 13:13:13 [root] WARNING:     Found a player with three name parts: "['Ricky', 'Jean', 'Francois']"
+2017-11-24 13:13:14 [root] ERROR:       Unable to find a match for Jacob Hollister, New England Patriots TE.
+- Added.
+2017-11-24 13:13:22 [root] ERROR:       Unable to find a match for Cole Croston, New England Patriots OT.
+- Added.
+2017-11-24 13:13:25 [root] ERROR:       Unable to find a match for Adam Butler, New England Patriots DT.
+- Added.
+2017-11-24 13:13:38 [root] ERROR:       Unable to find a match for Eric Smith, Miami Dolphins OT.
+- Added.
+2017-11-24 13:13:39 [root] ERROR:       Unable to find a match for Maurice Smith, Miami Dolphins DB.
+- Added.
+2017-11-24 13:13:43 [root] ERROR:       Unable to find a match for Torry McTyer, Miami Dolphins DB.
+- Added.
+2017-11-24 13:13:51 [root] ERROR:       Unable to find a match for Matt Haack, Miami Dolphins P.
+- Added.
+2017-11-24 13:13:56 [root] ERROR:       Unable to find a match for Jesse Davis, Miami Dolphins OT.
+- Added.
+2017-11-24 13:14:00 [root] ERROR:       Unable to find a match for Chase Allen, Miami Dolphins OLB.
+- Added.
+2017-11-24 13:14:20 [root] ERROR:       Unable to find a match for Stephen Hauschka, Buffalo Bills K.
+- Fixed.
+2017-11-24 13:14:38 [root] ERROR:       Unable to find a match for Evan Schwan, New York Giants DE.
+- Skipped.
+2017-11-24 13:14:42 [root] ERROR:       Unable to find a match for Zach Wood, New Orleans Saints LS.
+- Added.
+2017-11-24 13:14:43 [root] ERROR:       Unable to find a match for Ronald Zamort, Arizona Cardinals CB.
+- Skipped.
+2017-11-24 13:14:50 [root] ERROR:       Unable to find a match for Tyrus Thompson, Seattle Seahawks OT.
+- Skipped.
+2017-11-24 13:14:55 [root] ERROR:       Unable to find a match for Tyrunn Walker, Los Angeles Rams DE.
+- Added.
+2017-11-24 13:14:56 [root] ERROR:       Unable to find a match for Lenard Tillery, Los Angeles Rams RB.
+- Skipped.
+2017-11-24 13:15:00 [root] ERROR:       Unable to find a match for Kevin Peterson, Los Angeles Rams CB.
+- Added.
+2017-11-24 13:15:04 [root] ERROR:       Unable to find a match for Zach Laskey, Los Angeles Rams FB.
+- Added.
+2017-11-24 13:15:09 [root] ERROR:       Unable to find a match for Dominique Hatfield, Los Angeles Rams DB.
+- Added.
+2017-11-24 13:15:22 [root] ERROR:       Unable to find a match for Jordan Simone, Seattle Seahawks SAF.
+- Skipped.
+2017-11-24 13:15:32 [root] ERROR:       Unable to find a match for Tre Madden, Seattle Seahawks FB.
+- Added.
+2017-11-24 13:15:40 [root] ERROR:       Unable to find a match for Christian French, Seattle Seahawks LB.
+- Added.
+2017-11-24 13:15:56 [root] ERROR:       Unable to find a match for Kaleb Ramsey, San Francisco 49ers DT.
+- Skipped.
+2017-11-24 13:15:58 [root] ERROR:       Unable to find a match for Donavin Newsom, San Francisco 49ers LB.
+- Skipped.
+2017-11-24 13:16:02 [root] ERROR:       Unable to find a match for Erik Magnuson, San Francisco 49ers OT.
+- Added.
+2017-11-24 13:16:02 [root] ERROR:       Unable to find a match for Greg Mabin, San Francisco 49ers CB.
+- Added.
+2017-11-24 13:16:07 [root] ERROR:       Unable to find a match for Chanceller James, San Francisco 49ers DB.
+- Skipped.
+2017-11-24 13:16:08 [root] WARNING:     Found a player with three name parts: "['Prince', 'Charles', 'Iworah']"
+2017-11-24 13:16:10 [root] ERROR:       Unable to find a match for Leon Hall, San Francisco 49ers DB.
+- Added.
+2017-11-24 13:16:12 [root] ERROR:       Unable to find a match for Jimmie Gilbert, San Francisco 49ers LB.
+- Skipped.
+2017-11-24 13:16:20 [root] ERROR:       Unable to find a match for Matt Breida, San Francisco 49ers RB.
+- Added.
+2017-11-24 13:16:20 [root] ERROR:       Unable to find a match for Kendrick Bourne, San Francisco 49ers WR.
+- Added.
+2017-11-24 13:16:33 [root] ERROR:       Unable to find a match for Elijhaa Penny, Arizona Cardinals RB.
+- Added.
+2017-11-24 13:16:53 [root] ERROR:       Unable to find a match for Carlton Agudosi, Arizona Cardinals WR.
+- Added.
+2017-11-24 13:16:55 [root] ERROR:       Unable to find a match for Justin Trattou, Tampa Bay Buccaneers DE.
+- Added.
+2017-11-24 13:17:03 [root] ERROR:       Unable to find a match for Evan Panfil, Tampa Bay Buccaneers DE.
+- Skipped.
+2017-11-24 13:17:04 [root] ERROR:       Unable to find a match for Patrick Murray, Tampa Bay Buccaneers K.
+- Added.
+2017-11-24 13:17:13 [root] ERROR:       Unable to find a match for Cole Gardner, Tampa Bay Buccaneers OT.
+- Added.
+2017-11-24 13:17:21 [root] ERROR:       Unable to find a match for Antony Auclair, Tampa Bay Buccaneers TE.
+- Added.
+2017-11-24 13:17:28 [root] WARNING:     Using likely match for NFL.com's Nate Stupar, New Orleans Saints ILB;
+2017-11-24 13:17:28 [root] WARNING:     Madden CSV name and pos: Nathan Stupar, LOLB;
+2017-11-24 13:17:37 [root] ERROR:       Unable to find a match for Zach Line, New Orleans Saints RB.
+- Added.
+2017-11-24 13:17:37 [root] ERROR:       Unable to find a match for Mitchell Loewen, New Orleans Saints DE.
+- Added.
+2017-11-24 13:17:47 [root] ERROR:       Unable to find a match for Justin Hardee, New Orleans Saints DB.
+- Added.
+2017-11-24 13:17:48 [root] ERROR:       Unable to find a match for Clay Harbor, New Orleans Saints TE.
+- Added.
+2017-11-24 13:17:49 [root] ERROR:       Unable to find a match for Trey Edmunds, New Orleans Saints RB.
+- Added.
+2017-11-24 13:17:52 [root] ERROR:       Unable to find a match for Austin Carr, New Orleans Saints WR.
+- Added.
+2017-11-24 13:17:55 [root] ERROR:       Unable to find a match for Dan Arnold, New Orleans Saints WR.
+- Skipped.
+2017-11-24 13:17:59 [root] WARNING:     Found a player with three name parts: "['Greg', 'Van', 'Roten']"
+2017-11-24 13:18:04 [root] ERROR:       Unable to find a match for Fred Ross, Carolina Panthers WR.
+- Skipped.
+2017-11-24 13:18:09 [root] ERROR:       Unable to find a match for Cole Luke, Carolina Panthers CB.
+- Added.
+2017-11-24 13:18:13 [root] WARNING:     Found a player with three name parts: "['Charles', 'D.', 'Johnson']"
+2017-11-24 13:18:15 [root] ERROR:       Unable to find a match for Drew Iddings, Carolina Panthers DT.
+- Skipped.
+2017-11-24 13:18:23 [root] ERROR:       Unable to find a match for Demetrious Cox, Carolina Panthers DB.
+- Added.
+2017-11-24 13:18:24 [root] ERROR:       Unable to find a match for Jairus Byrd, Carolina Panthers DB.
+- Added.
+2017-11-24 13:18:29 [root] ERROR:       Unable to find a match for Sean Weatherspoon, Atlanta Falcons LB.
+- Added.
+2017-11-24 13:18:39 [root] ERROR:       Unable to find a match for Austin Pasztor, Atlanta Falcons OT.
+- Added.
+2017-11-24 13:18:49 [root] ERROR:       Unable to find a match for Marvin Hall, Atlanta Falcons WR.
+- Added.
+2017-11-24 13:18:59 [root] ERROR:       Unable to find a match for Shaan Washington, Minnesota Vikings LB.
+- Skipped.
+2017-11-24 13:19:01 [root] ERROR:       Unable to find a match for Kyle Sloter, Minnesota Vikings QB.
+- Added.
+2017-11-24 13:19:15 [root] ERROR:       Unable to find a match for C.J. Ham, Minnesota Vikings RB.
+- Added.
+2017-11-24 13:19:28 [root] ERROR:       Unable to find a match for David Talley, Green Bay Packers LB.
+- Added.
+2017-11-24 13:19:29 [root] ERROR:       Unable to find a match for Jacob Schum, Green Bay Packers P.
+- Added.
+2017-11-24 13:19:33 [root] ERROR:       Unable to find a match for Lenzy Pipkins, Green Bay Packers CB.
+- Added.
+2017-11-24 13:19:34 [root] ERROR:       Unable to find a match for Taybor Pepper, Green Bay Packers LS.
+- Added.
+2017-11-24 13:19:34 [root] ERROR:       Unable to find a match for Lucas Patrick, Green Bay Packers OG.
+- Added.
+2017-11-24 13:19:50 [root] WARNING:     Found a player with three name parts: "['Ha', 'Ha', 'Clinton-Dix']"
+2017-11-24 13:19:50 [root] WARNING:     Using likely match for NFL.com's Ha Clinton-Dix, Green Bay Packers FS;
+2017-11-24 13:19:50 [root] WARNING:     Madden CSV name and pos: Ha Ha Clinton-Dix, FS;
+2017-11-24 13:20:00 [root] ERROR:       Unable to find a match for Charles Washington, Detroit Lions DB.
+- Added.
+2017-11-24 13:20:00 [root] WARNING:     Using likely match for NFL.com's Ricky Wagner, Detroit Lions OT;
+2017-11-24 13:20:00 [root] WARNING:     Madden CSV name and pos: Rick Wagner, RT;
+2017-11-24 13:20:01 [root] ERROR:       Unable to find a match for Jeremiah Valoaga, Detroit Lions DE.
+- Added.
+2017-11-24 13:20:13 [root] ERROR:       Unable to find a match for Des Lawrence, Detroit Lions DB.
+- Skipped.
+2017-11-24 13:20:16 [root] ERROR:       Unable to find a match for Mike James, Detroit Lions RB.
+- Skipped.
+2017-11-24 13:20:17 [root] ERROR:       Unable to find a match for Tion Green, Detroit Lions RB.
+- Added.
+2017-11-24 13:20:19 [root] ERROR:       Unable to find a match for Dwight Freeney, Detroit Lions DE.
+- Added.
+2017-11-24 13:20:24 [root] ERROR:       Unable to find a match for Brandon Copeland, Detroit Lions DE.
+- Added.
+2017-11-24 13:20:24 [root] ERROR:       Unable to find a match for Brandon Chubb, Detroit Lions LB.
+- Added.
+2017-11-24 13:20:39 [root] ERROR:       Unable to find a match for Sherrick McManis, Chicago Bears CB.
+- Added.
+2017-11-24 13:20:40 [root] WARNING:     Found a player with three name parts: "['Charles', 'Leno', 'Jr.']"
+2017-11-24 13:20:40 [root] ERROR:       Unable to find a match for Charles Jr., Chicago Bears OT.
+- Fixed.
+2017-11-24 13:20:43 [root] ERROR:       Unable to find a match for Howard Jones, Chicago Bears LB.
+- Added.
+2017-11-24 13:20:44 [root] ERROR:       Unable to find a match for Isaiah Irving, Chicago Bears LB.
+- Added.
+2017-11-24 13:20:50 [root] ERROR:       Unable to find a match for Andrew DePaola, Chicago Bears LS.
+- Added.
+2017-11-24 13:20:54 [root] ERROR:       Unable to find a match for Michael Burton, Chicago Bears FB.
+- Added.
+2017-11-24 13:20:55 [root] ERROR:       Unable to find a match for Daniel Brown, Chicago Bears TE.
+- Added.
+2017-11-24 13:20:55 [root] ERROR:       Unable to find a match for Ben Braunecker, Chicago Bears TE.
+- Added.
+2017-11-24 13:21:00 [root] ERROR:       Unable to find a match for Phillip Taylor, Washington Redskins DT.
+- Added.
+2017-11-24 13:21:04 [root] ERROR:       Unable to find a match for Pete Robertson, Washington Redskins LB.
+- Skipped.
+2017-11-24 13:21:04 [root] ERROR:       Unable to find a match for Nick Rose, Washington Redskins K.
+- Added.
+2017-11-24 13:21:04 [root] ERROR:       Unable to find a match for Demetrius Rhaney, Washington Redskins C.
+- Added.
+2017-11-24 13:21:15 [root] WARNING:     Using likely match for NFL.com's Rob Kelley, Washington Redskins RB;
+2017-11-24 13:21:15 [root] WARNING:     Madden CSV name and pos: Robert Kelley, HB;
+2017-11-24 13:21:16 [root] ERROR:       Unable to find a match for Arthur Jones, Washington Redskins DT.
+- Added.
+2017-11-24 13:21:23 [root] ERROR:       Unable to find a match for LeShun Daniels, Washington Redskins RB.
+- Added.
+2017-11-24 13:21:26 [root] ERROR:       Unable to find a match for Tyler Catalina, Washington Redskins OG.
+- Added.
+2017-11-24 13:21:28 [root] ERROR:       Unable to find a match for Kevin Bowen, Washington Redskins OT.
+- Skipped.
+2017-11-24 13:21:30 [root] ERROR:       Unable to find a match for Dom Williams, Philadelphia Eagles WR.
+- Skipped.
+2017-11-24 13:21:33 [root] ERROR:       Unable to find a match for Halapoulivaati Vaitai, Philadelphia Eagles OT.
+- Fixed.
+2017-11-24 13:21:36 [root] ERROR:       Unable to find a match for Aziz Shittu, Philadelphia Eagles DE.
+- Added.
+2017-11-24 13:21:38 [root] ERROR:       Unable to find a match for DJ Pumphrey, Philadelphia Eagles RB.
+- Skipped.
+2017-11-24 13:21:43 [root] ERROR:       Unable to find a match for Marcus Johnson, Philadelphia Eagles WR.
+- Added.
+2017-11-24 13:21:45 [root] WARNING:     Using likely match for NFL.com's Timmy Jernigan, Philadelphia Eagles DT;
+2017-11-24 13:21:45 [root] WARNING:     Madden CSV name and pos: Tim Jernigan, DT;
+2017-11-24 13:21:48 [root] ERROR:       Unable to find a match for Randall Goforth, Philadelphia Eagles DB.
+- Skipped.
+2017-11-24 13:21:49 [root] WARNING:     Using likely match for NFL.com's Nate Gerry, Philadelphia Eagles LB;
+2017-11-24 13:21:49 [root] WARNING:     Madden CSV name and pos: Nathan Gerry, ROLB;
+2017-11-24 13:21:53 [root] ERROR:       Unable to find a match for Corey Clement, Philadelphia Eagles RB.
+- Added.
+2017-11-24 13:21:57 [root] ERROR:       Unable to find a match for Will Beatty, Philadelphia Eagles OT.
+- Added.
+2017-11-24 13:22:00 [root] ERROR:       Unable to find a match for Ishaq Williams, New York Giants DE.
+- Skipped.
+2017-11-24 13:22:01 [root] ERROR:       Unable to find a match for Chad Wheeler, New York Giants OT.
+- Added.
+2017-11-24 13:22:05 [root] ERROR:       Unable to find a match for Shane Smith, New York Giants TE.
+- Added.
+2017-11-24 13:22:07 [root] ERROR:       Unable to find a match for Kelvin Sheppard, New York Giants LB.
+- Added.
+2017-11-24 13:22:13 [root] ERROR:       Unable to find a match for Calvin Munson, New York Giants MLB.
+- Added.
+2017-11-24 13:22:16 [root] ERROR:       Unable to find a match for Keeon Johnson, New York Giants WR.
+- Skipped.
+2017-11-24 13:22:20 [root] ERROR:       Unable to find a match for Nigel Harris, New York Giants MLB.
+- Added.
+2017-11-24 13:22:25 [root] ERROR:       Unable to find a match for Donte Deayon, New York Giants DB.
+- Added.
+2017-11-24 13:22:29 [root] ERROR:       Unable to find a match for Josh Banks, New York Giants DT.
