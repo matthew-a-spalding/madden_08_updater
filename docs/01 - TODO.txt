@@ -93,7 +93,8 @@ made only once in a while off a revision from Git.
     CONTINUE HERE
     2017_11_22
         
-        - Test the code for step_3_ to see how it deals with a player that does not have a jersey number on NFL.com
+        - Test the code for step_3_ to see how it deals with a player that does not have a jersey 
+        number on NFL.com
         
 - Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 

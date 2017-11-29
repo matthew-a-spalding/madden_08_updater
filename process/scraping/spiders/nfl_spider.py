@@ -110,14 +110,30 @@ class NFLSpider(CrawlSpider):
         # Next up is the player's first and last name.
         # Note: I tested putting a comma into the name fields for a player, and it seemed to be correctly escaped, as 
         # the comma made it from the Latest Madden Ratings file through to the output file, NFL Rosters. 
-        nfl_full_name = response.xpath(
-            "//meta[@id=\"playerName\"]/@content"
-            ).extract()[0].split(None, 1) # eg. ["Andrew", "Luck"]
-        
         # The NFL.com might not be canonical on names, esp. in situations where the Madden file has the suffix for the 
         # player's last name, like "Fowler III", and the NFL.com does not, so put NFL names into temp vars.
+        nfl_full_name = response.xpath(
+            "//meta[@id=\"playerName\"]/@content"
+            ).extract()[0].split() # eg. ["Prince", "Charles", "Iworah"]
+        
+        if len(nfl_full_name) > 2:
+            logging.warning("\tFound a player with three name parts: \"%s\"", nfl_full_name)
+            # If the middle name part is "Van" or "Jean," keep it in the last name.
+            if nfl_full_name[1].lower() == "van" or nfl_full_name[1].lower() == "jean":
+                nfl_last_name = nfl_full_name[1] + " " + nfl_full_name[2]
+            elif ("jr" in nfl_full_name[2].lower() or 
+                  "sr" in nfl_full_name[2].lower() or 
+                  "ii" in nfl_full_name[2].lower() or 
+                  "iv" in nfl_full_name[2].lower() or 
+                  "v" == nfl_full_name[2].lower() or 
+                  "vi" in nfl_full_name[2].lower()):
+                nfl_last_name = nfl_full_name[1]
+            else:
+                nfl_last_name = nfl_full_name[2]
+        else:
+            nfl_last_name = nfl_full_name[1] # eg. "Luck"
+            
         nfl_first_name = nfl_full_name[0] # eg. "Andrew"
-        nfl_last_name = nfl_full_name[1] # eg. "Luck"
         
         # Find the player's jersey number and position. 
         # (If jersey number is empty, there must still be a '#' for this split to work.)
@@ -132,71 +148,6 @@ class NFLSpider(CrawlSpider):
         
         # Since the NFL.com value for position may not be final, save it in a local var, not the player dict.
         nfl_position = number_and_position[1] # eg. "QB"
-        
-        # Now that we have the first name, last name, and position from NFL.com, we can search in Madden for him.
-        # Create the dict into which we'll copy the row from the Madden CSV with this player's info, if we find it.
-        madden_player_dict = {}
-        
-        # Loop over the dicts in the Madden ratings DictReader and see if we can find this player.
-        
-        # Try checking last names for a direct match, and in cases where the Madden name ends with either " II" or 
-        # " III", we should try matching without that part of the last name.
-        for player_dict in self.madden_ratings_dict_reader:
-            if player_dict["Last Name"][-3:] == " II":
-                madden_last_name = player_dict["Last Name"][:-3]
-            elif player_dict["Last Name"][-4:] == " III":
-                madden_last_name = player_dict["Last Name"][:-4]
-            else:
-                madden_last_name = player_dict["Last Name"]
-            if ((player_dict["First Name"] == nfl_first_name) and 
-                    (madden_last_name == nfl_last_name)):
-                #logging.warning("Found a First & Last match for %s %s." % (nfl_first_name, nfl_last_name))
-                # Need to reset our file's record pointer, or else subsequent loops over this dict will start 
-                # where this call left off, and never check any of the records before this record.
-                madden_player_dict = player_dict
-                self.madden_ratings_file.seek(1)
-                break
-        else:
-            # As was necessary in the loop above, we now need to reset our file's record pointer.
-            self.madden_ratings_file.seek(1)
-            logging.info("Unable to find a First & Last match for %s %s.", nfl_first_name, nfl_last_name)
-            
-            # Try finding a record with the same last name and first initial.
-            for player_dict in self.madden_ratings_dict_reader:
-                if (player_dict["Last Name"] == nfl_last_name and 
-                        player_dict["First Name"][0] == nfl_first_name[0]):
-                    
-                    # See if the positions given by NFL.com and Madden are similar enough that the match is likely.
-                    if positions_are_similar(nfl_position, player_dict["Position"]):
-                        logging.warning("\tUsing likely match for NFL.com's %s %s, %s %s;", 
-                                        nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                        logging.warning("\tMadden CSV name and pos: %s %s, %s;", 
-                                        player_dict["First Name"], player_dict["Last Name"], player_dict["Position"])
-                        # Positions are similar enough, so set this record as the player's Madden dict.
-                        madden_player_dict = player_dict
-                        # Once we match last & first initial and position, break the for loop.
-                        self.madden_ratings_file.seek(1)
-                        break
-                        
-                    else:
-                        logging.error("\tFound partial name match, but not position match for %s %s, %s %s.\n" 
-                                      "\t(Madden player pos. was %s).", 
-                                      nfl_first_name, nfl_last_name, player["team"], 
-                                      nfl_position, player_dict["Position"])
-            
-            else:
-                logging.error("\tAlso unable to find a Last & First initial match for %s %s.", 
-                              nfl_first_name, nfl_last_name)
-                # If we got through the entire dict again with no last & first initial match, reset the record pointer.
-                self.madden_ratings_file.seek(1)
-        
-        # Decide on the best position for this player based on the info we have.
-        if not madden_player_dict:
-            # Just use the position on NFL.com as both positions to compare, and call our helper function.
-            player["position"] = choose_best_position(nfl_position, nfl_position)
-        else:
-            player["position"] = choose_best_position(nfl_position, madden_player_dict["Position"])
-        
         
         # All of the remaining NFL.com info (height, weight, age, college, and experience) is found in the div with 
         # class="player-info". However, some players may be missing their birth / age info, which changes how we 
@@ -311,16 +262,92 @@ class NFLSpider(CrawlSpider):
             logging.error("Check the tags in the \"player-info\" div for this url:")
             logging.error(response.url)
         
-        # Now we have all the values we can get from NFL.com. Start comparing them with the values in the record from 
-        # the Madden ratings file to see if they are in agreement, or if we will need to manually reconcile things.
         
+        # Now that we have the first name, last name, and position from NFL.com, we can search in Madden for him.
+        # Create the dict into which we'll copy the row from the Madden CSV with this player's info, if we find it.
+        madden_player_dict = {}
+        
+        # Loop over the dicts in the Madden ratings DictReader and see if we can find this player.
+        
+        # Try checking last names for a direct match, and in cases where the Madden name ends with either " II" or 
+        # " III", we should try matching without that part of the last name.
+        for player_dict in self.madden_ratings_dict_reader:
+            if player_dict["Last Name"][-2:].lower() == " v":
+                madden_last_name = player_dict["Last Name"][:-2]
+            elif (player_dict["Last Name"][-3:].lower() == " ii" or 
+                  player_dict["Last Name"][-3:].lower() == " iv" or 
+                  player_dict["Last Name"][-3:].lower() == " vi" or 
+                  player_dict["Last Name"][-3:].lower() == " jr" or 
+                  player_dict["Last Name"][-3:].lower() == " sr"):
+                madden_last_name = player_dict["Last Name"][:-3]
+            elif (player_dict["Last Name"][-4:].lower() == " iii" or 
+                  player_dict["Last Name"][-4:].lower() == " vii"):
+                madden_last_name = player_dict["Last Name"][:-4]
+            else:
+                madden_last_name = player_dict["Last Name"]
+            if (madden_last_name.lower() == nfl_last_name.lower() and 
+                    player_dict["First Name"].lower() == nfl_first_name.lower() and 
+                    positions_are_similar(nfl_position, player_dict["Position"])):
+                logging.info("Found a full First & Last match for %s %s.", nfl_first_name, nfl_last_name)
+                madden_player_dict = player_dict
+                # Once we match, reset our file record pointer and break the 'for' loop.
+                # (Need to reset our file's record pointer, or else subsequent loops over this dict will start 
+                # where this call left off, and never check any of the records before this record.)
+                self.madden_ratings_file.seek(1)
+                break
+        else:
+            # As was necessary in the loop above, we now need to reset our file's record pointer.
+            self.madden_ratings_file.seek(1)
+            logging.info("Unable to find a full First & Last match for %s %s.", nfl_first_name, nfl_last_name)
+            
+            # Try finding a record with the same last name and first initial.
+            for player_dict in self.madden_ratings_dict_reader:
+                if player_dict["Last Name"][-2:].lower() == " v":
+                    madden_last_name = player_dict["Last Name"][:-2]
+                elif (player_dict["Last Name"][-3:].lower() == " ii" or 
+                      player_dict["Last Name"][-3:].lower() == " iv" or 
+                      player_dict["Last Name"][-3:].lower() == " vi" or 
+                      player_dict["Last Name"][-3:].lower() == " jr" or 
+                      player_dict["Last Name"][-3:].lower() == " sr"):
+                    madden_last_name = player_dict["Last Name"][:-3]
+                elif (player_dict["Last Name"][-4:].lower() == " iii" or 
+                      player_dict["Last Name"][-4:].lower() == " vii"):
+                    madden_last_name = player_dict["Last Name"][:-4]
+                else:
+                    madden_last_name = player_dict["Last Name"]
+                if (madden_last_name.lower() == nfl_last_name.lower() and 
+                        player_dict["First Name"][0].lower() == nfl_first_name[0].lower() and 
+                        positions_are_similar(nfl_position, player_dict["Position"]) and 
+                        abs(int(nfl_age) - int(player_dict["Age"])) < 2 and 
+                        nfl_college[:5].lower() == player_dict["College"][:5].lower()):
+                    logging.warning("\tUsing likely match for NFL.com's %s %s, %s %s;", 
+                                    nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                    logging.warning("\tMadden CSV name and pos: %s %s, %s;", 
+                                    player_dict["First Name"], player_dict["Last Name"], player_dict["Position"])
+                    # Attributes are similar enough, so set this record as the player's Madden dict.
+                    madden_player_dict = player_dict
+                    # Once we match, reset our file record pointer and break the 'for' loop.
+                    self.madden_ratings_file.seek(1)
+                    break
+                
+            else:
+                logging.error("\tUnable to find a match for %s %s, %s %s.", 
+                              nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                # If we got through the entire dict again with no match, reset the record pointer.
+                self.madden_ratings_file.seek(1)
+        
+        
+        # Now we have all the values we need, and a dict from the Madden file if found. Set the player's attributes.
         if madden_player_dict:
             
             # When we have a difference in names, it is usually because Madden included the suffix on the last name, 
             # but the NFL.com did not. In those cases, we want to keep the suffix, so go with Madden.
             player["first_name"] = madden_player_dict["First Name"]
             player["last_name"] = madden_player_dict["Last Name"]
-
+            
+            # Choose the best position for the player using our helper function.
+            player["position"] = choose_best_position(nfl_position, madden_player_dict["Position"])
+            
             # If the difference between the heights is more than 3 inches, we might have a problem.
             if abs(int(nfl_height_inches) - int(madden_player_dict["Height"])) > 3:
                 player["height"] = "CONFLICT"
@@ -345,16 +372,7 @@ class NFLSpider(CrawlSpider):
             else:
                 player["years_pro"] = madden_player_dict["Years Pro"]
             
-        # CONTINUE HERE 
-        # TODO: Set the values for the remaining fields listed in "items.py" as simple pass-throughs from Madden. 
-        # We will use formulae for each position in the script for step 5, once all position conflicts and TBDs have 
-        # been manually resolved.
-            
-        # Set the values for speed, acceleration, strength, agility, awareness, catching, carrying, throw_power, 
-        # throw_accuracy, kick_power, kick_accuracy, run_block, pass_block, tackle, jumping, kick_return, injury, 
-        # stamina, toughness, trucking, elusiveness, run_block_strength, run_block_footwork, pass_block_strength, 
-        # pass_block_footwork, throw_accuracy_short, throw_accuracy_mid, throw_accuracy_deep, throw_on_the_run, 
-        # total_salary, signing_bonus, and handedness.
+            # Set the values for the remaining fields listed in "items.py" as simple pass-throughs from Madden. 
             
             player["speed"] = madden_player_dict["Speed"]
             player["acceleration"] = madden_player_dict["Acceleration"]
@@ -393,6 +411,7 @@ class NFLSpider(CrawlSpider):
             # Use the only values we have, from NFL.com.
             player["first_name"] = nfl_first_name
             player["last_name"] = nfl_last_name
+            player["position"] = choose_best_position(nfl_position, nfl_position)
             player["height"] = nfl_height_inches
             player["weight"] = nfl_weight
             player["age"] = nfl_age
