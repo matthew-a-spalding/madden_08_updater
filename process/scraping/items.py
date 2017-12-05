@@ -15,6 +15,7 @@ class NFLPlayer(Item):
     position = Field()
     height = Field()
     weight = Field()
+    birthdate = Field()
     age = Field()
     college = Field()
     years_pro = Field()

@@ -10,29 +10,6 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting;
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
-# ------------------------------------------------- OLD WAY - To JSON -------------------------------------------------
-#import json
-
-#class PlayerPipeline(object):
-#    def __init__(self):
-        # Open the file we will write to, and keep it in our object's scope.
-#        self.jsonfileNFLandFBGDicts = open("NFL and FBG Dicts.json", "wb")
-#    
-#    def process_item(self, item, spider):
-        # Write this player item as a dict, ending in a newline.
-#        line = json.dumps(dict(item)) + "\n"
-#        self.jsonfileNFLandFBGDicts.write(line)
-        # Per the docs here: 
-        #    http://doc.scrapy.org/en/latest/topics/item-pipeline.html#process_item 
-        # we must either return the item or raise a DropItem execption.
-#        return item
-#    
-#    def spider_closed():
-        # Just close the file.
-#        self.jsonfileNFLandFBGDicts.close()
-
-
-# ------------------------------------------------- NEW WAY - To .csv -------------------------------------------------
 import csv, os
 from datetime import datetime
 from scraping.items import NFLPlayer
@@ -49,7 +26,7 @@ class PlayerPipeline(object):
         # Open the file we will write to, and keep it in our object's scope.
         self.nfl_rosters_file = open(
             os.path.join(
-                output_directory, "My {0} NFL rosters.csv".format(int(datetime.now().year))
+                output_directory, "My {0} NFL Ratings.csv".format(int(datetime.now().year))
             ), "w", newline='')
         # Create our list of field names.
         field_names = NFLPlayer.fields.keys()

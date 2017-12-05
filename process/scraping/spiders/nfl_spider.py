@@ -13,6 +13,7 @@ import csv, logging, math, os, re
 #from urlparse import urljoin
 
 # 2 - Third-party imports
+from scrapy import Request
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 
@@ -58,8 +59,8 @@ class NFLSpider(CrawlSpider):
         NFLSpider.start_urls = nfl_roster_urls
         # eg. ["http://www.nfl.com/teams/philadelphiaeagles/roster?team=phi"]
         
-        # Set our allowed domains to make sure we can visit pages on NFL.com.
-        NFLSpider.allowed_domains = ["nfl.com"]
+        # Set our allowed domains to make sure we can visit pages on NFL.com and overthecap.com.
+        NFLSpider.allowed_domains = ["nfl.com", "overthecap.com"]
         
         # Pass in the filtering regex using allow=() and/or restrict_xpaths=() to get the links for each player 
         # profile page, per documentation at http://doc.scrapy.org/en/latest/topics/link-extractors.html
@@ -67,9 +68,9 @@ class NFLSpider(CrawlSpider):
             LinkExtractor(allow=(settings.NFL_PROFILE_LINKS_REGEX, )), 
             callback="parse_NFL_profile_page"
             )]
-        #logging.warning("NFLSpider initialized with start_urls = %s, 
-        #       \n allow_rule = %s" % 
-        #       (nfl_roster_urls, settings.NFL_PROFILE_LINKS_REGEX))
+        logging.info("NFLSpider initialized.")
+        logging.info("start_urls = %s", nfl_roster_urls)
+        logging.info("allow_rule = %s", settings.NFL_PROFILE_LINKS_REGEX)
         
         # Open the "Latest Madden Ratings.csv" file with all the players and their Madden ratings for reading.
         self.madden_ratings_file = open(
@@ -88,24 +89,25 @@ class NFLSpider(CrawlSpider):
 
     def __del__(self):
         if self.madden_ratings_file:
-            #logging.warning("Closing the file self.madden_ratings_file.")
+            logging.info("Closing the file self.madden_ratings_file.")
             self.madden_ratings_file.close()
             self.madden_ratings_file = None
 
 
     def parse_NFL_profile_page(self, response):
-        #logging.warning("Player profile page url: %s" % response.url)
+        """ Scrapes the NFL.com profile page for a player, putting associated attributes into the player object. """
+        #logging.info("NFL.com: Player profile page url: %s", response.url)
         
         # Create a new item for this player.
         player = NFLPlayer()
         
-    # CHECK AND UPDATE THIS WHOLE SECTION EACH YEAR AS NECESSARY.
+    # CHECK AND UPDATE THIS WHOLE SECTION AS NECESSARY.
     # Make sure the xpath expressions below can be used to find our text in the source of any player profile page.
         
         # Start by populating the team field. The NFL page will be authoritative here; no need to check Madden.
         player["team"] = response.xpath(
             "//div[@class=\"article-decorator\"]/h1/a/text()"
-            ).extract()[0] # eg. "Indianapolis Colts"
+            ).extract()[0].split()[-1] # eg. "Colts"
         
         # Next up is the player's first and last name.
         # Note: I tested putting a comma into the name fields for a player, and it seemed to be correctly escaped, as 
@@ -114,51 +116,39 @@ class NFLSpider(CrawlSpider):
         # player's last name, like "Fowler III", and the NFL.com does not, so put NFL names into temp vars.
         nfl_full_name = response.xpath(
             "//meta[@id=\"playerName\"]/@content"
-            ).extract()[0].split() # eg. ["Prince", "Charles", "Iworah"]
+            ).extract()[0] # eg. "Prince Charles Iworah"
         
-        if len(nfl_full_name) > 2:
-            logging.warning("\tFound a player with three name parts: \"%s\"", nfl_full_name)
-            # If the middle name part is "Van" or "Jean," keep it in the last name.
-            if nfl_full_name[1].lower() == "van" or nfl_full_name[1].lower() == "jean":
-                nfl_last_name = nfl_full_name[1] + " " + nfl_full_name[2]
-            elif ("jr" in nfl_full_name[2].lower() or 
-                  "sr" in nfl_full_name[2].lower() or 
-                  "ii" in nfl_full_name[2].lower() or 
-                  "iv" in nfl_full_name[2].lower() or 
-                  "v" == nfl_full_name[2].lower() or 
-                  "vi" in nfl_full_name[2].lower()):
-                nfl_last_name = nfl_full_name[1]
-            else:
-                nfl_last_name = nfl_full_name[2]
-        else:
-            nfl_last_name = nfl_full_name[1] # eg. "Luck"
-            
-        nfl_first_name = nfl_full_name[0] # eg. "Andrew"
+        if len(nfl_full_name.split()) > 2:
+            logging.info("NFL.com: Found a player with three or more name parts: \"%s\"", nfl_full_name)
+        
+        nfl_first_name = get_first_name(nfl_full_name) # eg. "Prince Charles"
+        nfl_last_name = get_last_name(nfl_full_name) # eg. "Iworah"
         
         # Find the player's jersey number and position. 
         # (If jersey number is empty, there must still be a '#' for this split to work.)
         number_and_position = response.xpath(
             "//span[@class=\"player-number\"]/text()"
             ).extract()[0].split(None, 1) # eg. ["#12", "QB"]
-        #logging.warning("number_and_position = %s" % number_and_position)
+        #logging.info("NFL.com: number_and_position = %s", number_and_position)
         
         # For jersey number, NFL.com is also authoritative (and Madden doesn't always give us that anyway).
         # The [1:] below gets only the chars from position 1 to the end of the string (strings are 0-indexed).
         player["jersey_number"] = number_and_position[0][1:] # eg. "12"
         
-        # Since the NFL.com value for position may not be final, save it in a local var, not the player dict.
+        # For position, since the NFL.com value may not be final, save it in a local var, not the player dict.
         nfl_position = number_and_position[1] # eg. "QB"
         
         # All of the remaining NFL.com info (height, weight, age, college, and experience) is found in the div with 
         # class="player-info". However, some players may be missing their birth / age info, which changes how we 
         # handle that div's contents. First, see if there are 7 or only 5 /p/strong tags in the player-info div.
         player_info_p_strong_tags = response.xpath("//div[@class=\"player-info\"]/p/strong/text()").extract()
-        #logging.warning("player_info_p_tags = %s" % player_info_p_tags)
+        #logging.info("NFL.com: player_info_p_strong_tags = %s", player_info_p_strong_tags)
         
         # Define the variables for height, weight, age, college, and experience, so they exist in all cases.
         nfl_height_inches = ""
         nfl_weight = ""
         nfl_age = ""
+        nfl_birthdate = ""
         nfl_college = ""
         nfl_years_pro = ""
         
@@ -167,30 +157,36 @@ class NFLSpider(CrawlSpider):
             # weight, and age, also has a lot of whitespace chars, some of which are grouped into the first string by 
             # themselves. This is why the first string with real content (the height) is found at ...extract()[1], 
             # not ...extract()[0].
-            height_weight_age_strings = response.xpath("//div[@class=\"player-info\"]/p[3]/text()").extract() 
+            height_weight_age_strings = response.xpath("//div[@class=\"player-info\"]/p[3]/text()").extract()
                 # a list of 4 strings, eg. [u'\r\n\t\t\t\t\t', u': 6-4 \xa0 \r\n\t\t\t\t\t', 
                 # u': 240 \xa0 \r\n\t [...] \t\t\t', u': 25\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\r\n\t\t\t\t']
-            #logging.warning("height_weight_age_strings = %s" %  height_weight_age_strings)
+            #logging.info("NFL.com: height_weight_age_strings = %s", height_weight_age_strings)
+            
+            # The text() inside the fourth <p> tag in the <div class="player-info"> tag contains the birth date as 
+            # well as the location (usually city and state) of birth. The date itself can be found by getting the 
+            # second string in the list extracted, splitting it, and taking the second string from that split.
+            nfl_birthdate = response.xpath("//div[@class=\"player-info\"]/p[4]/text()").extract()[1].split()[1]
+            #logging.info("NFL.com: nfl_birthdate = %s", nfl_birthdate)
             
             height_strings = height_weight_age_strings[1].split() # eg. [":", "6-4"]
             weight_strings = height_weight_age_strings[2].split() # eg. [":", "240"]
             age_strings = height_weight_age_strings[3].split() # eg. [":", "25"]
-            #logging.warning("height_strings = %s" % height_strings)
-            #logging.warning("weight_strings = %s" % weight_strings)
-            #logging.warning("age_strings = %s" % age_strings)
+            #logging.info("NFL.com: height_strings = %s", height_strings)
+            #logging.info("NFL.com: weight_strings = %s", weight_strings)
+            #logging.info("NFL.com: age_strings = %s", age_strings)
             
             # Since the NFL might not be authoritative on the height, weight, or age, don't put these values directly 
             # into the player dict. Also, convert height to inches, since we will likely compare it to what Madden has 
             # for this player, and inches are what we will ultimately need to put into the DB anyway.
             nfl_height_inches = (int(height_strings[1][0]) * 12) + int(height_strings[1][2:])
-            #logging.warning("nfl_height_inches = %d" % nfl_height_inches)
+            #logging.info("NFL.com: nfl_height_inches = %d", nfl_height_inches)
             nfl_weight = weight_strings[1] # eg. "240"
             nfl_age = age_strings[1] # eg. "25"
             
             # Get the player's college. The NFL.com pages report "No College" if they don't have that info.
             college_strings = response.xpath("//div[@class=\"player-info\"]/p[5]/text()").extract()[0].split(None, 1) 
             # eg. [u":", u"Stanford"]
-            #logging.warning("college_strings = %s" % college_strings)
+            #logging.info("NFL.com: college_strings = %s", college_strings)
             nfl_college = college_strings[1] # eg. "Stanford"
             
             # Get the player's number of years of experience.
@@ -198,7 +194,7 @@ class NFLSpider(CrawlSpider):
                 "//div[@class=\"player-info\"]/p[6]/text()"
                 ).extract()[0].split(None, 1)
             # eg. [u':', u'Rookie '] or [u':', u'12th season ']
-            #logging.warning("experience_strings = %s" % experience_strings)
+            #logging.info("NFL.com: experience_strings = %s", experience_strings)
             
             if "ROOKIE" in experience_strings[1].upper():
                 nfl_years_pro = "0"
@@ -206,7 +202,7 @@ class NFLSpider(CrawlSpider):
                 # Need to match the numeric chars at the start of the string.
                 regex_match_object = re.match("\d+", experience_strings[1])
                 # eg. <_sre.SRE_Match object at 0x032D8100>
-                #logging.warning("regex_match_object = %s" % regex_match_object)
+                #logging.info("NFL.com: regex_match_object = %s", regex_match_object)
                 
                 # Since the numbers on NFL.com generally include this season, we want one less than what they say.
                 # ... However, when NFL.com says 1st season, they usually mean second.
@@ -214,8 +210,8 @@ class NFLSpider(CrawlSpider):
                 
         elif len(player_info_p_strong_tags) == 5:
             # The age info is missing, and we have no birth date <p> either.
-            #logging.warning("Check the tags in the \"player-info\" div for this url:")
-            #logging.warning(response.url)
+            #logging.info("NFL.com: Check the tags in the \"player-info\" div for this url:")
+            #logging.info(response.url)
             
             # For height, weight, and age, the text() inside the third <p> tag in the <div class="player-info"> tag 
             # has a lot of whitespace chars, some of which are grouped into the first string by themselves, which is 
@@ -224,12 +220,12 @@ class NFLSpider(CrawlSpider):
             # a list of 3 strings, 
             # eg. [u'\r\n\t\t\t\t\t', u': 6-6 \xa0 \r\n\t\t\t\t\t', 
             # u': 255 \xa0 \r\n\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\r\n\t\t\t\t']
-            #logging.warning("height_weight_strings = %s" % height_weight_strings)
+            logging.info("NFL.com: height_weight_strings = %s", height_weight_strings)
             
             height_strings = height_weight_strings[1].split() # eg. [":", "6-6"]
             weight_strings = height_weight_strings[2].split() # eg. [":", "255"]
-            #logging.warning("height_strings = %s" % height_strings)
-            #logging.warning("weight_strings = %s" % weight_strings)
+            #logging.info("NFL.com: height_strings = %s", height_strings)
+            #logging.info("NFL.com: weight_strings = %s", weight_strings)
             
             nfl_height_inches = (int(height_strings[1][0]) * 12) + int(height_strings[1][2:])
             nfl_weight = weight_strings[1] # eg. "255"
@@ -237,14 +233,14 @@ class NFLSpider(CrawlSpider):
             # Get the player's college. The NFL.com pages currently say "No College" when they don't have that info.
             college_strings = response.xpath("//div[@class=\"player-info\"]/p[4]/text()").extract()[0].split(None, 1) 
             # eg. [u":", u"Stanford"]
-            #logging.warning("college_strings = %s" % college_strings)
+            logging.info("NFL.com: college_strings = %s", college_strings)
             nfl_college = college_strings[1] # eg. "Stanford"
             
             # Get the player's number of years of experience.
             experience_strings = response.xpath(
                 "//div[@class=\"player-info\"]/p[5]/text()"
                 ).extract()[0].split(None, 1) # eg. [u':', u'Rookie '] or [u':', u'12th season ']
-            #logging.warning("experience_strings = %s" % experience_strings)
+            #logging.info("NFL.com: experience_strings = %s", experience_strings)
             
             if "ROOKIE" in experience_strings[1].upper():
                 nfl_years_pro = "0"
@@ -252,92 +248,120 @@ class NFLSpider(CrawlSpider):
                 # Need to match the numeric chars at the start of the string.
                 regex_match_object = re.match("\d+", experience_strings[1])
                 # eg. <_sre.SRE_Match object at 0x032D8100>
-                #logging.warning("regex_match_object = %s" % regex_match_object)
+                #logging.info("NFL.com: regex_match_object = %s", regex_match_object)
                 nfl_years_pro = (int(regex_match_object.group(0)) - 1) if (int(regex_match_object.group(0)) > 1) else 1
         else:
             # We have yet another configuration, which we should investigate.
             logging.error("Found an NFL player profile page where len(player_info_p_strong_tags) == %d, "
-                          "which we have not seen before. ", 
-                          len(player_info_p_strong_tags))
+                          "which we have not seen before. ", len(player_info_p_strong_tags))
             logging.error("Check the tags in the \"player-info\" div for this url:")
             logging.error(response.url)
         
         
-        # Now that we have the first name, last name, and position from NFL.com, we can search in Madden for him.
+        # Now that we have the info from NFL.com, we can search in Madden for this player.
         # Create the dict into which we'll copy the row from the Madden CSV with this player's info, if we find it.
         madden_player_dict = {}
         
         # Loop over the dicts in the Madden ratings DictReader and see if we can find this player.
-        
-        # Try checking last names for a direct match, and in cases where the Madden name ends with either " II" or 
-        # " III", we should try matching without that part of the last name.
-        for player_dict in self.madden_ratings_dict_reader:
-            if player_dict["Last Name"][-2:].lower() == " v":
-                madden_last_name = player_dict["Last Name"][:-2]
-            elif (player_dict["Last Name"][-3:].lower() == " ii" or 
-                  player_dict["Last Name"][-3:].lower() == " iv" or 
-                  player_dict["Last Name"][-3:].lower() == " vi" or 
-                  player_dict["Last Name"][-3:].lower() == " jr" or 
-                  player_dict["Last Name"][-3:].lower() == " sr"):
-                madden_last_name = player_dict["Last Name"][:-3]
-            elif (player_dict["Last Name"][-4:].lower() == " iii" or 
-                  player_dict["Last Name"][-4:].lower() == " vii"):
-                madden_last_name = player_dict["Last Name"][:-4]
-            else:
-                madden_last_name = player_dict["Last Name"]
-            if (madden_last_name.lower() == nfl_last_name.lower() and 
-                    player_dict["First Name"].lower() == nfl_first_name.lower() and 
-                    positions_are_similar(nfl_position, player_dict["Position"])):
-                logging.info("Found a full First & Last match for %s %s.", nfl_first_name, nfl_last_name)
-                madden_player_dict = player_dict
-                # Once we match, reset our file record pointer and break the 'for' loop.
-                # (Need to reset our file's record pointer, or else subsequent loops over this dict will start 
-                # where this call left off, and never check any of the records before this record.)
-                self.madden_ratings_file.seek(1)
-                break
-        else:
-            # As was necessary in the loop above, we now need to reset our file's record pointer.
-            self.madden_ratings_file.seek(1)
-            logging.info("Unable to find a full First & Last match for %s %s.", nfl_first_name, nfl_last_name)
+        # If we have either birthdate or age from NFL.com, try uing those first.
+        if nfl_birthdate or nfl_age:
             
-            # Try finding a record with the same last name and first initial.
             for player_dict in self.madden_ratings_dict_reader:
-                if player_dict["Last Name"][-2:].lower() == " v":
-                    madden_last_name = player_dict["Last Name"][:-2]
-                elif (player_dict["Last Name"][-3:].lower() == " ii" or 
-                      player_dict["Last Name"][-3:].lower() == " iv" or 
-                      player_dict["Last Name"][-3:].lower() == " vi" or 
-                      player_dict["Last Name"][-3:].lower() == " jr" or 
-                      player_dict["Last Name"][-3:].lower() == " sr"):
-                    madden_last_name = player_dict["Last Name"][:-3]
-                elif (player_dict["Last Name"][-4:].lower() == " iii" or 
-                      player_dict["Last Name"][-4:].lower() == " vii"):
-                    madden_last_name = player_dict["Last Name"][:-4]
-                else:
-                    madden_last_name = player_dict["Last Name"]
-                if (madden_last_name.lower() == nfl_last_name.lower() and 
-                        player_dict["First Name"][0].lower() == nfl_first_name[0].lower() and 
+                
+                # We do our comparisons without suffixes.
+                madden_last_name = remove_suffix(player_dict["Last Name"])
+                
+                # The easiest matches are when we have a birth date from both NFL.com and Madden.
+                if nfl_birthdate and player_dict["Birthdate"]:
+                    
+                    # We should be able to match the birthdate, last name, and at least first initial.
+                    if (nfl_last_name.lower() == madden_last_name.lower() and 
+                            nfl_first_name[0].lower() == player_dict["First Name"][0].lower() and 
+                            nfl_birthdate == player_dict["Birthdate"]):
+                        
+                        #logging.info("NFL & Madden: Match by birthdate for %s %s, %s %s.", 
+                        #             nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                        
+                        madden_player_dict = player_dict
+                        
+                        # Once we match, reset our file record pointer and break the 'for' loop.
+                        # (Need to reset our file's record pointer, or else subsequent loops over this dict_reader 
+                        # will start where this call left off, and never check any of the records before this record.)
+                        self.madden_ratings_file.seek(1)
+                        break
+                
+                elif nfl_age:
+                    
+                    # Try matching on full name, age, and position.
+                    if (nfl_last_name.lower() == madden_last_name.lower() and 
+                            nfl_first_name.lower() == player_dict["First Name"].lower() and 
+                            abs(int(nfl_age) - int(player_dict["Age"])) < 2 and 
+                            positions_are_similar(nfl_position, player_dict["Position"])):
+                        
+                        logging.info("NFL & Madden: Match by name, age, & pos. for NFL.com's %s %s, %s %s.", 
+                                     nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                        
+                        madden_player_dict = player_dict
+                        
+                        # As above, once we match, reset our file record pointer and break the 'for' loop.
+                        self.madden_ratings_file.seek(1)
+                        break
+            else:
+                # As was necessary above, we now need to reset our file's record pointer.
+                self.madden_ratings_file.seek(1)
+                
+                # We somehow made it through the whole Madden file, with a birthdate and/or age from NFL.com, but 
+                # still could not find a match. This is a situation we will want to investigate.
+                logging.error("NFL & Madden 1: Unable to find a match for %s %s, %s %s.", 
+                              nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                logging.error("\t\tSkipping player record altogether!")
+            
+        else:
+            logging.info("NFL: No birthdate or age for %s %s, %s %s.", 
+                         nfl_first_name, nfl_last_name, player["team"], nfl_position)
+        
+            # Try finding a record with the same full name, position, and college.
+            for player_dict in self.madden_ratings_dict_reader:
+                
+                # Take any suffix off the last name in Madden when doing our comparisons.
+                madden_last_name = remove_suffix(player_dict["Last Name"])
+                
+                if (nfl_last_name.lower() == madden_last_name.lower() and 
+                        nfl_first_name.lower() == player_dict["First Name"].lower() and 
                         positions_are_similar(nfl_position, player_dict["Position"]) and 
-                        abs(int(nfl_age) - int(player_dict["Age"])) < 2 and 
                         nfl_college[:5].lower() == player_dict["College"][:5].lower()):
-                    logging.warning("\tUsing likely match for NFL.com's %s %s, %s %s;", 
+                    
+                    logging.warning("NFL & Madden: Match by name, pos, & college for NFL.com's %s %s, %s %s;", 
                                     nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                    logging.warning("\tMadden CSV name and pos: %s %s, %s;", 
-                                    player_dict["First Name"], player_dict["Last Name"], player_dict["Position"])
+                    logging.warning("\tMadden CSV values: %s %s, %s %s", 
+                                    player_dict["First Name"], 
+                                    player_dict["Last Name"], 
+                                    player_dict["Team"], 
+                                    player_dict["Position"])
+                    logging.warning("\tNFL college = \"%s\", Madden college = \"%s\"", 
+                                    nfl_college, player_dict["College"])
+                    
                     # Attributes are similar enough, so set this record as the player's Madden dict.
                     madden_player_dict = player_dict
+                    
                     # Once we match, reset our file record pointer and break the 'for' loop.
                     self.madden_ratings_file.seek(1)
                     break
                 
             else:
-                logging.error("\tUnable to find a match for %s %s, %s %s.", 
-                              nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                # If we got through the entire dict again with no match, reset the record pointer.
+                # As was necessary above, we now need to reset our file's record pointer.
                 self.madden_ratings_file.seek(1)
+                
+                logging.error("NFL & Madden 2: Unable to find a match for %s %s, %s %s.", 
+                              nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                logging.error("\t\tSkipping player record altogether!")
         
         
-        # Now we have all the values we need, and a dict from the Madden file if found. Set the player's attributes.
+# REMOVE WHEN DONE TESTING
+        madden_player_dict = {}
+        
+        
+        # Now we have all the values we need, and a dict from the Madden file. Set the player's attributes.
         if madden_player_dict:
             
             # When we have a difference in names, it is usually because Madden included the suffix on the last name, 
@@ -366,7 +390,7 @@ class NFLSpider(CrawlSpider):
             player["age"] = madden_player_dict["Age"]
             player["college"] = madden_player_dict["College"]
             
-            # In cases where we have a conflict over the number of years pro, resolve things manually. 
+            # In cases where we have a conflict over the number of years pro, resolve things later. 
             if int(nfl_years_pro) != int(madden_player_dict["Years Pro"]):
                 player["years_pro"] = "CONFLICT"
             else:
@@ -407,69 +431,300 @@ class NFLSpider(CrawlSpider):
             player["signing_bonus"] = madden_player_dict["Signing Bonus"]
             player["handedness"] = madden_player_dict["Handedness"]
             
+            # Construct the next request, for the 'OverTheCap' contracts list page, and pass it the current player.
+            # NOTE: The 'dont_filter=True' in the assignment below is CRITICAL, as omitting it will mean the spider 
+            # only hits the OTC list once, due to it's default filtering rules preventing duplicates.
+            otc_contracts_list_request = Request(
+                settings.OTC_CONTRACTS_URL, 
+                callback=self.find_contract_page, 
+                dont_filter=True
+            )
+            otc_contracts_list_request.meta["player"] = player
+            return otc_contracts_list_request
+            
         else:
-            # Use the only values we have, from NFL.com.
-            player["first_name"] = nfl_first_name
-            player["last_name"] = nfl_last_name
-            player["position"] = choose_best_position(nfl_position, nfl_position)
-            player["height"] = nfl_height_inches
-            player["weight"] = nfl_weight
-            player["age"] = nfl_age
-            player["college"] = nfl_college
-            player["years_pro"] = nfl_years_pro
+            # Skip this player.
+            player = NFLPlayer()
+            return player
+
+    def find_contract_page(self, response):
+        """ Scrapes the OverTheCap contracts list page to get the link to the player's contract page. """
+        
+        # Get the player object out of the meta data for the response.
+        player = response.meta["player"]
+        
+        logging.info("Inside find_contract_page for %s %s, %s %s.", 
+                     player["first_name"], player["last_name"], player["team"], player["position"])
+        
+        # Fill in the OTC_CONTRACT_LINK_TEMPLATE to get the pattern we will search for in the contracts page.
+        # (The pattern helps when we need to try a first initial match, if the full first name match fails.)
+        otc_link_pattern_regex = settings.OTC_ANCHOR_TEXT_TEMPLATE.replace("[FIRST_NAME]", player["first_name"])
+        
+        # Check last names for the presence of suffixes and remove them when found.
+        last_name_minus_suffix = remove_suffix(player["last_name"])
+        
+        otc_link_pattern_regex = otc_link_pattern_regex.replace("[LAST_NAME]", last_name_minus_suffix)
+        
+        # Get the list of matches for this regex pattern.
+        name_matches_list = response.xpath("//a/text()").re(otc_link_pattern_regex)
+        
+        # If we can't find text in an anchor tag that matches the full name, ...
+        if not name_matches_list:
+            
+            logging.info("OTC: Unable to find full first & last match for %s %s.", 
+                         player["first_name"], player["last_name"])
+            
+            # ... then try matching the last name and the first initial. 
+            # (E.g. Matthew Stafford is called Matt Stafford on OTC.)
+            otc_link_pattern_regex = settings.OTC_ANCHOR_TEXT_TEMPLATE.replace(
+                "[FIRST_NAME]", player["first_name"][0])
+            otc_link_pattern_regex = otc_link_pattern_regex.replace(
+                "[LAST_NAME]", player["last_name"])
+            
+            if not response.xpath("//a/text()").re(otc_link_pattern_regex):
+                
+                logging.error("Unable to find OTC link for %s %s, %s %s.", 
+                              player["first_name"], 
+                              player["last_name"], 
+                              player["team"], 
+                              player["position"])
+                logging.error("Skipping OTC player contract page.")
+                
+                # Return the player to the pipeline for writing to the output file.
+                return player
+                
+            else:
+                
+                # We may have multiple matches for the last name & first initital, so we need to continue to try 
+                # matching the other attributes until we either run out of partial matches, or find a likely match.
+#                while response.xpath("//a/text()").re(otc_link_pattern_regex):
+                logging.info("\tOTC: Found partial match for %s %s.", player["first_name"], player["last_name"])
+                logging.info("OTC WHILE: response.xpath(\"//a/text()\").re(otc_link_pattern_regex) = %s", 
+                             response.xpath("//a/text()").re(otc_link_pattern_regex))
+                
+                # We found a player with the same last name and same first letter of the first name.
+                player_link_text = response.xpath("//a/text()").re(otc_link_pattern_regex)[0]
+                logging.info("\tOTC partial match name text = %s", player_link_text)
+                
+                # See if the positions (in the player object and on OTC) are similar enough that a match is likely.
+                # On OTC, the position for the player is found in the <td> following the <td> which contains our <a> 
+                # tag with this player's name and contract page link.
+                position_xpath = ("//a[contains(text(),\"" + 
+                                  player_link_text + 
+                                  "\")]/parent::*/following-sibling::*/text()")
+                otc_position = response.xpath(position_xpath).extract()[0]
+                logging.info("\tOTC partial name match position = %s", otc_position)
+                
+                # TODO: Check for the various positions on OTC that are not in a format we use, like "43OLB", and 
+                # change change them to usable positions.
+                
+                if positions_are_similar(player["position"], otc_position):
+                    logging.warning("\tOTC: Using likely match for NFL.com's %s %s, %s %s;", 
+                                    player["first_name"], 
+                                    player["last_name"], 
+                                    player["team"], 
+                                    player["position"])
+                    logging.warning("\tOTC partial match name text: %s ;", player_link_text)
+                    logging.warning("\tOTC partial name match position: %s", otc_position)
+                    
+                    # The positions are similar enough, so build the contract page URL for this player from the XPath.
+                    player_link_xpath = "//a[contains(text(),\"" + player_link_text + "\")]/@href"
+                    player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0]) 
+                    # eg. "https://overthecap.com/player/matt-stafford/1060/"
+                    logging.info("\tOTC player_contract_url for %s %s, %s %s was:", 
+                                 player["first_name"], player["last_name"], player["team"], player["position"])
+                    logging.info("\t%s", player_contract_url)
+                    
+                    # Create the request object for this player's contract URL.
+                    player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
+                    # Pass along the player object.
+                    player_contract_request.meta["player"] = player
+                    # Return the request for the player's contract page.
+                    return player_contract_request
+                    
+                # Otherwise, simply pass back the player object as is, without the contract and draft info.
+                logging.error("\tOTC Unable to match %s %s, %s %s.", 
+                              player["first_name"], player["last_name"], player["team"], player["position"])
+                logging.error("\t\tSkipping OTC player contract page.")
+                
+                # Just return the player object.
+                return player
+        else:
+            
+            # We found at least one text (full name) that matches the pattern. Before we jump to the player contract 
+            # page, we need to make sure we either have only one name match or we get the correct one of many.
+            if len(name_matches_list) > 1:
+                
+                # Loop over the matches and get the associated position for each name.
+                for index, name_string in enumerate(name_matches_list):
+                    pass
+                    
+                    
+            # Now use the string the regex matches as the value that the 
+            # anchor tag's text must contain.
+            player_link_text = name_matches_list[0]
+            #logging.info("OTC full name match = %s", player_link_text)
+            
+            # Build the contract page URL for this player from the XPath.
+            player_link_xpath = "//a[contains(text(),\"" + player_link_text + "\")]/@href"
+            player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0])
+            # eg. "https://overthecap.com/player/matt-stafford/1060/"
+            logging.info("OTC player_contract_url for %s %s, %s %s was:", 
+                         player["first_name"], player["last_name"], player["team"], player["position"])
+            logging.info(player_contract_url)
+            
+            # Build the request object, including the player object in the meta.
+            player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
+            player_contract_request.meta["player"] = player
+            
+            # Pass along the next request for our spider to crawl.
+            return player_contract_request
+            
+    def parse_OTC_contract_page(self, response):
+        
+        # Get the player object out of the response's meta data.
+        player = response.meta["player"]
+        #logging.info("Inside parse_OTC_contract_page for %s %s.", player["first_name"], player["last_name"])
+        
+        # Now to grab the contract and draft into for this player.
         
         
+        # Return our player object for writing to the output CSV file.
         return player
-        
 
 # ----------------------------------------------------- SECTION 3 -----------------------------------------------------
 # ------------------------------------------------- Helper Functions --------------------------------------------------
 
-def positions_are_similar(position1, position2):
+def remove_suffix(name):
+    """ Removes any typical suffix (" Jr.", " III", etc.) from a last name. """
+    suffixes = [" jr", " jr.", " sr", " sr.", " ii", " iii", " iv", " v", " vi", " vii", " viii", " ix", " x"]
+    for suffix in suffixes:
+        if name.lower().endswith(suffix):
+            return name[:-len(suffix)]
+    return name
+
+def get_first_name(full_name):
+    """ Pulls the first name out of a string containing a FULL NAME (with first, last, suffix, etc). """
+    
+    # If the full name we are given is empty, we have a problem.
+    if not full_name:
+        logging.error("\nget_first_name: Found an empty full name.")
+        logging.error("\t\tNEED TO FIX WHATEVER CAUSED THIS.\n")
+        return full_name
+    
+    # If we have a name that can't be split on whitespace, something is wrong.
+    if len(full_name.split()) == 1:
+        logging.error("\nget_first_name: Found a full name that splits into only one part: %s", full_name)
+        logging.error("\t\tNEED TO FIX WHATEVER CAUSED THIS.\n")
+        return full_name
+    
+    # When the name has only two parts, we assume they are just the first and last name.
+    if len(full_name.split()) == 2:
+        return full_name.split()[0]
+        
+    # When we have more than 2 name parts, first get rid of any suffixes.
+    split_name_without_suffix = remove_suffix(full_name).split()
+    
+    # If we now have a name with only two parts, assume they are just the first and last name.
+    if len(split_name_without_suffix) == 2:
+        return split_name_without_suffix[0]
+    
+    # Now we must have a name with three parts but no identified suffix.
+    # If the middle name part is "Van," "Vander," or "Jean," treat it as part of the last name.
+    if (split_name_without_suffix[1].lower() == "van" or 
+            split_name_without_suffix[1].lower() == "vander" or 
+            split_name_without_suffix[1].lower() == "jean"):
+        return split_name_without_suffix[0]
+    
+    # In all other cases, treat the middle part as part of the first name.
+    return split_name_without_suffix[0] + " " + split_name_without_suffix[1]
+
+def get_last_name(full_name):
+    """ Pulls the last name out of a string containing a FULL NAME (with first, last, suffix, etc). """
+    
+    # If the full name we are given is empty, we have a problem.
+    if not full_name:
+        logging.error("\nget_first_name: Found an empty full name.")
+        logging.error("\t\tNEED TO FIX WHATEVER CAUSED THIS.\n")
+        return full_name
+    
+    # If we have a name that can't be split on whitespace, something is wrong.
+    if len(full_name.split()) == 1:
+        logging.error("\nget_first_name: Found a full name that splits into only one part: %s", full_name)
+        logging.error("\t\tNEED TO FIX WHATEVER CAUSED THIS.\n")
+        return full_name
+    
+    # When the name has only two parts, we assume they are just the first and last name.
+    if len(full_name.split()) == 2:
+        return full_name.split()[1]
+        
+    # When we have more than 2 name parts, first get rid of any suffixes.
+    split_name_without_suffix = remove_suffix(full_name).split()
+    
+    # If we now have a name with only two parts, assume they are just the first and last name.
+    if len(split_name_without_suffix) == 2:
+        return split_name_without_suffix[1]
+    
+    # Now we must have a name with three parts but no identified suffix.
+    # If the middle name part is "Van," "Vander," or "Jean," treat it as part of the last name.
+    if (split_name_without_suffix[1].lower() == "van" or 
+            split_name_without_suffix[1].lower() == "vander" or 
+            split_name_without_suffix[1].lower() == "jean"):
+        return split_name_without_suffix[1] + " " + split_name_without_suffix[2]
+    
+    # In all other cases, treat the middle as part of the first name, and just return the third part.
+    return split_name_without_suffix[2]
+
+def positions_are_similar(nfl_position, madden_position):
     """
-    This function is used in parse_NFL_profile_page, when the player's name in the "Latest Madden Ratings.csv" file 
-    was not an exact match with the name on NFL.com. It compares the positions of the two player pages to see if they 
-    are similar enough to be considered a match.
+    This function is used in parse_NFL_profile_page, when the player's name on NFL.com was not an exact match with the 
+    name in the "Latest Madden Ratings.csv" file. It compares the positions of the two player pages to see if they are 
+    similar enough to be considered a match.
     """
     # If either position is QB and the other isn't, the answer is no.
-    if position1.upper() == "QB":
-        return bool(position2.upper() == "QB")
+    if nfl_position.upper() == "QB":
+        return bool(madden_position.upper() == "QB")
     
-    # If the first position is RB, HB, FB, WR, or TE, position2 can be: RB, HB, FB, WR, or TE.
-    if position1.upper() in ["RB", "HB", "FB", "WR", "TE"]:
-        return bool(position2.upper() in ["RB", "HB", "FB", "WR", "TE"])
+    # If the NFL's position is RB, HB, FB, WR, or TE, madden_position can be: RB, HB, FB, WR, or TE.
+    if nfl_position.upper() in ["RB", "HB", "FB", "WR", "TE"]:
+        return bool(madden_position.upper() in ["RB", "HB", "FB", "WR", "TE"])
     
-    # If the first position is OL, T, OT, G, OG, LS, LT, LG, C, RG, or RT, 
-    # position2 can be: OL, T, OT, G, OG, LS, LT, LG, C, RG, or RT.
-    if position1.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT"]:
-        return bool(position2.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT"])
+    # If the NFL's position is OL, T, OT, G, OG, LT, LG, C, RG, or RT, 
+    # madden_position can be: OL, T, OT, G, OG, LS, LT, LG, C, RG, or RT.
+    if nfl_position.upper() in ["OL", "T", "OT", "G", "OG", "LT", "LG", "C", "RG", "RT"]:
+        return bool(madden_position.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT"])
+    
+    # If the NFL's position is LS, 
+    # madden_position can be: OL, T, OT, G, OG, LS, LT, LG, C, RG, RT, or TE.
+    if nfl_position.upper() == "LS":
+        return bool(madden_position.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT", "TE"])
     
     # If the first position is DL, DE, LE, or RE, 
-    # position2 can be: DL, DE, LE, RE, DT, NT, LB, OLB, LOLB, ROLB, ILB, or MLB.
-    if position1.upper() in ["DL", "DE", "LE", "RE"]:
-        return bool(position2.upper() in 
+    # madden_position can be: DL, DE, LE, RE, DT, NT, LB, OLB, LOLB, ROLB, ILB, or MLB.
+    if nfl_position.upper() in ["DL", "DE", "LE", "RE"]:
+        return bool(madden_position.upper() in 
                     ["DL", "DE", "LE", "RE", "DT", "NT", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"])
     
-    # If the first position is DT or NT, position2 can be: DL, DE, LE, RE, DT, or NT.
-    if position1.upper() in ["DT", "NT"]:
-        return bool(position2.upper() in ["DL", "DE", "LE", "RE", "DT", "NT"])
+    # If the first position is DT or NT, madden_position can be: DL, DE, LE, RE, DT, or NT.
+    if nfl_position.upper() in ["DT", "NT"]:
+        return bool(madden_position.upper() in ["DL", "DE", "LE", "RE", "DT", "NT"])
     
     # If the first position is LB, OLB, LOLB, ROLB, ILB, or MLB, 
-    # position2 can be: DL, DE, LE, RE, LB, OLB, LOLB, ROLB, ILB, or MLB.
-    if position1.upper() in ["LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-        return bool(position2.upper() in ["DL", "DE", "LE", "RE", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"])
+    # madden_position can be: DL, DE, LE, RE, LB, OLB, LOLB, ROLB, ILB, or MLB.
+    if nfl_position.upper() in ["LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
+        return bool(madden_position.upper() in ["DL", "DE", "LE", "RE", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"])
     
-    # If the first position is DB, CB, S, SAF, FS, or SS, position2 can be: DB, CB, S, SAF, FS, or SS.
-    if position1.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"]:
-        return bool(position2.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"])
+    # If the first position is DB, CB, S, SAF, FS, or SS, madden_position can be: DB, CB, S, SAF, FS, or SS.
+    if nfl_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"]:
+        return bool(madden_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"])
     
     # If either position is K or P and the other isn't one of those, the answer is no.
-    if position1.upper() in ["K", "P"]:
-        return bool(position2.upper() in ["K", "P"])
+    if nfl_position.upper() in ["K", "P"]:
+        return bool(madden_position.upper() in ["K", "P"])
     
-    logging.error("Unknown position1 passed to positions_are_similar:")
-    logging.error("position1.upper() = %s", position1.upper())
-    logging.error("position2.upper() = %s", position2.upper())
+    logging.error("Unknown nfl_position passed to positions_are_similar:")
+    logging.error("nfl_position.upper() = %s", nfl_position.upper())
+    logging.error("madden_position.upper() = %s", madden_position.upper())
     return False
 
 def choose_best_position(position1, position2):
@@ -544,6 +799,8 @@ def choose_best_position(position1, position2):
             return "RG"
         elif position2.upper() == "RT":
             return "RT"
+        elif position2.upper() == "TE":
+            return "TE"
         return "CONFLICT"
     
     # If position1 is LT, just make sure position2 is some sort of generic OL or T.

@@ -1,103 +1,128 @@
 - Find the formula used in the Madden Amp source to calculate the breakdown of a player's salary 
 into the individual years.
-
+    
     ***	There is just a numeric formula, and it relies upon PTSA (Total Salary), PVSB 
     (Signing Bonus), PCON (Contract Length), and PCYL (Contract Years Left). Don't need to worry 
     about it. Just set those fields and let the game figure out the breakdown.
 
 - Check on the PVTS field (col CV). See if it always matches the value in PTSA.
-
+    
     ***	It does. At least in the default roster.	***
 
 - Find out what the other values of Player Role (PROL and PRL2) mean.
-
+    
     ***	Done.	***
 
 - Fill out the lists of other field values using in-game examples.
-
+    
     ***	Done.	***
 
 - List all of the fields that I will be setting from the PLAY table in the 'Methods for Setting 
 Field Values' Excel file, and give descriptions of how I intend to set the value for the field. 
 Descriptions can be sentences, mathematical formulae, or pseudo-code.
-
+    
     ***	Done.	***
 
 - Make a Git repo of the code, and keep old backups in a separate folder, with new backups being 
 made only once in a while off a revision from Git.
-
+    
     ***	Done.	***
 
-- Finish writing the Scrapy script that will create "NFL Rosters.csv" for use in the final 
-"MaddenUpdater.py" script.
-
-    ***	IN PROGRESS.   ***
-        
-        - Figure out:
-            1) if I can currently scrape NFL.com to get the first part of the intermediate output 
-            file "NFL Rosters.csv" made.
-                - YES! I can make the file, without FBGratings input.
-                
-            2) if and how I can get one player's record updated so it will be usable in-game.
-                
-                a) Determine what DLLtest2.py, DLLtest3.py, read_tables.py, 
-                step_3_scrape_NFL_rosters.py, and step_5_update_roster_file.py do now, and what 
-                use I have for them.
-                
-                    dump_roster_to_csv.py: This is the file I use to read all of the player 
-                    records out of the file '...\process\inputs\base.ros' and create the CSV file 
-                    "current_players.csv" listing them. NOW FIXED FOR PYTHON 3 AND WORKING.
-                    
-                    DLLtest3.py: This file reads the first dict of player attributes from 
-                    "process\inputs\Latest Madden Ratings.csv" and then uses some of those values 
-                    in combination with some hardcoded values to alter the first player record in 
-                    "process\inputs\base.ros", making him into a WR. NOW FIXED FOR PYTHON 3 AND 
-                    WORKING.
-                    
-                    read_tables.py: Just reads the properties of all the tables and then loops 
-                    through them and reads all the properties of all of their fields.
-                    NO LONGER NEEDED. ALL FUNCTIONALITY FROM THIS CODE IS IN OTHER FILES AS WELL.
-                    REMOVING.
-                    
-                    step_3_scrape_NFL_rosters.py: This file currently uses Scrapy to get the basic 
-                    info on players from the rosters at NFL.com and write that into the file at 
-                    "...\process\outputs\NFL rosters.csv". It is set up right now to only 
-                    go through the Buffalo Bills roster. NOW FIXED FOR PYTHON 3 AND WORKING.
-                    
-                    step_5_update_roster_file.py: This file currently edits the first name (PFNA) 
-                    field of the first player in the roster located at 
-                    "...\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 AND WORKING.
-            *** Done. ***
-            
-        - Uncomment more fields to expand items.py *** DONE. ***
-        
-        - Finish moving Reid Ferguson (TE, Bills) and Jeremy Butler (WR, Bills) into the edited 
-        "Madden 18 Player Ratings.xlsx" file.
-            *** Done. ***
-        
-        - Alter the name of the intermediate output file from "NFL rosters.csv" to a formatted 
-        name, like "%d NFL Rosters.csv" so I can more easily keep multiple years.
-            *** Done. ***
-        
-        - Finish coding "nfl_spider.py". This file will read in the contents of "Latest Madden 
-        Ratings.csv", scrape the player profile pages on NFL.com, and then use both in formulating 
-        the values to put into the player's fields when creating "My xxxx NFL Rosters.csv". Use 
-        the Bears to work out the matching of player names between the Madden and NFL files.
-            - Take code from old nfl_spider.py on github and other code from DLLtest3.py
-            *** Done. ***
-            
-        - Figure out whether or not to alter field values from the 2017 Madden ratings file, 
-        specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
-        certain percentage, to account for inflation today?)
+- Finish writing the Scrapy script that will create "My %d NFL Rosters.csv" for use in the final 
+"step_5_update_roster_file.py" script.
     
-    CONTINUE HERE
-    2017_11_22
+    ***	Done.   ***
+    
+    - Figure out:
+        1) if I can currently scrape NFL.com to get the first part of the intermediate output 
+        file "NFL Rosters.csv" made.
+            - YES! I can make the file, without FBGratings input.
+            
+        2) if and how I can get one player's record updated so it will be usable in-game.
+            
+            a) Determine what DLLtest2.py, DLLtest3.py, read_tables.py, 
+            step_3_scrape_NFL_rosters.py, and step_5_update_roster_file.py do now, and what 
+            use I have for them.
+            
+                dump_roster_to_csv.py: This is the file I use to read all of the player 
+                records out of the file '...\process\inputs\base.ros' and create the CSV file 
+                "current_players.csv" listing them. NOW FIXED FOR PYTHON 3 AND WORKING.
+                
+                DLLtest3.py: This file reads the first dict of player attributes from 
+                "process\inputs\Latest Madden Ratings.csv" and then uses some of those values 
+                in combination with some hardcoded values to alter the first player record in 
+                "process\inputs\base.ros", making him into a WR. NOW FIXED FOR PYTHON 3 AND 
+                WORKING.
+                
+                read_tables.py: Just reads the properties of all the tables and then loops 
+                through them and reads all the properties of all of their fields.
+                NO LONGER NEEDED. ALL FUNCTIONALITY FROM THIS CODE IS IN OTHER FILES AS WELL.
+                REMOVING.
+                
+                step_3_scrape_NFL_rosters.py: This file currently uses Scrapy to get the basic 
+                info on players from the rosters at NFL.com and write that into the file at 
+                "...\process\outputs\NFL rosters.csv". It is set up right now to only 
+                go through the Buffalo Bills roster. NOW FIXED FOR PYTHON 3 AND WORKING.
+                
+                step_5_update_roster_file.py: This file currently edits the first name (PFNA) 
+                field of the first player in the roster located at 
+                "...\process\inputs\base.ros". NOW FIXED FOR PYTHON 3 AND WORKING.
+                
+        *** Done. ***
         
-        - Test the code for step_3_ to see how it deals with a player that does not have a jersey 
-        number on NFL.com
+    - Uncomment more fields to expand items.py *** DONE. ***
+    
+    - Alter the name of the intermediate output file from "NFL rosters.csv" to a formatted 
+    name, like "My %d NFL Rosters.csv" so I can more easily keep multiple years.
         
+        *** Done. ***
+    
+    - Finish coding "nfl_spider.py". This file will read in the contents of "Latest Madden 
+    Ratings.csv", scrape the player profile pages on NFL.com, and then use both in formulating 
+    the values to put into the player's fields when creating "My xxxx NFL Rosters.csv". Use 
+    the Bears to work out the matching of player names between the Madden and NFL files.
+        - Take code from old nfl_spider.py on github and other code from DLLtest3.py
+        
+        *** Done. ***
+        
+    - Test the code for step_3_ to see how it deals with a player that does not have a jersey 
+    number on NFL.com
+        
+        *** Done. *** - It just puts a blank field into the output CSV file.
+    
+
+CONTINUE HERE
+2017_11_30
+
+- Write up further instructions for future runs of the updating process, including more details on the actions needed 
+for step 3, such as iterating over the run of step_3_scrape_NFL_rosters.py by altering code in 
+process\scraping\settings.py to set the LOG_LEVEL to "INFO" first, then "WARNING", and finally "ERROR" (and only if 
+absolutely neccessary, DEBUG), while choosing which new players not found in the "Latest Madden Ratings.csv" to add or 
+skip.
+    
+    *** TODO    ***
+
+- Figure out whether or not to alter field values from the 2017 Madden ratings file, 
+specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
+certain percentage, to account for inflation today?)
+    
+    *** TODO    ***
+
 - Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
-
+    
     ***	TODO	***
+
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
+alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
+in the output file for this year.
+    
+    *** TODO    ***
+    
+- Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape "https://overthecap.com/contracts" to get links 
+to each player's contract page, for setting the fields "total_salary", "signing_bonus", "draft_pick", "draft_round", 
+"years_pro", "contract_length", "years_left".
+    
+    *** TODO    ***
+    
