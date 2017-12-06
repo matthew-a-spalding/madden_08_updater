@@ -94,6 +94,18 @@ made only once in a while off a revision from Git.
 CONTINUE HERE
 2017_11_30
 
+- Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape "https://overthecap.com/contracts" to get links 
+to each player's contract page, for setting the fields "total_salary", "signing_bonus", "draft_pick", "draft_round", 
+"years_pro" [determined from year (un)drafted], "contract_length", "years_left".
+    
+    *** In Progress.    ***
+    
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
+alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
+in the output file for this year.
+    
+    *** TODO    ***
+    
 - Write up further instructions for future runs of the updating process, including more details on the actions needed 
 for step 3, such as iterating over the run of step_3_scrape_NFL_rosters.py by altering code in 
 process\scraping\settings.py to set the LOG_LEVEL to "INFO" first, then "WARNING", and finally "ERROR" (and only if 
@@ -101,28 +113,16 @@ absolutely neccessary, DEBUG), while choosing which new players not found in the
 skip.
     
     *** TODO    ***
-
+    
 - Figure out whether or not to alter field values from the 2017 Madden ratings file, 
 specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
 certain percentage, to account for inflation today?)
     
     *** TODO    ***
-
+    
 - Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
     
     ***	TODO	***
-
-- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
-alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
-in the output file for this year.
-    
-    *** TODO    ***
-    
-- Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape "https://overthecap.com/contracts" to get links 
-to each player's contract page, for setting the fields "total_salary", "signing_bonus", "draft_pick", "draft_round", 
-"years_pro", "contract_length", "years_left".
-    
-    *** TODO    ***
     

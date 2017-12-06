@@ -356,11 +356,6 @@ class NFLSpider(CrawlSpider):
                               nfl_first_name, nfl_last_name, player["team"], nfl_position)
                 logging.error("\t\tSkipping player record altogether!")
         
-        
-# REMOVE WHEN DONE TESTING
-        madden_player_dict = {}
-        
-        
         # Now we have all the values we need, and a dict from the Madden file. Set the player's attributes.
         if madden_player_dict:
             
@@ -453,116 +448,156 @@ class NFLSpider(CrawlSpider):
         # Get the player object out of the meta data for the response.
         player = response.meta["player"]
         
-        logging.info("Inside find_contract_page for %s %s, %s %s.", 
-                     player["first_name"], player["last_name"], player["team"], player["position"])
-        
-        # Fill in the OTC_CONTRACT_LINK_TEMPLATE to get the pattern we will search for in the contracts page.
-        # (The pattern helps when we need to try a first initial match, if the full first name match fails.)
-        otc_link_pattern_regex = settings.OTC_ANCHOR_TEXT_TEMPLATE.replace("[FIRST_NAME]", player["first_name"])
+        #logging.info("Inside find_contract_page for %s %s, %s %s.", 
+        #             player["first_name"], player["last_name"], player["team"], player["position"])
         
         # Check last names for the presence of suffixes and remove them when found.
         last_name_minus_suffix = remove_suffix(player["last_name"])
         
-        otc_link_pattern_regex = otc_link_pattern_regex.replace("[LAST_NAME]", last_name_minus_suffix)
+        # Fill in the OTC_CONTRACT_LINK_TEMPLATE to get the pattern we will search for in the contracts page.
+        # (The pattern helps when we need to try a first initial match, if the full first name match fails.)
+        otc_anchor_text_regex = settings.OTC_ANCHOR_REGEX_TEMPLATE.replace("[FIRST_NAME]", player["first_name"])
+        otc_anchor_text_regex = otc_anchor_text_regex.replace("[LAST_NAME]", last_name_minus_suffix)
         
         # Get the list of matches for this regex pattern.
-        name_matches_list = response.xpath("//a/text()").re(otc_link_pattern_regex)
+        # WORKING!! This gives us a list of all <tr> tags containing the <td> tags which hold <a> tags where the 
+        # text() matches the regex 
+        name_match_trs_list = response.xpath(
+            "//tr/td/a[re:match(text(), \"" + otc_anchor_text_regex + "\")]/../..", 
+            namespaces={"re": "http://exslt.org/regular-expressions"}
+        ).extract()
+        
+        logging.warning("%s %s: name_match_trs_list = %s", 
+                        player["first_name"], player["last_name"], name_match_trs_list)
         
         # If we can't find text in an anchor tag that matches the full name, ...
-        if not name_matches_list:
+        if not name_match_trs_list:
             
-            logging.info("OTC: Unable to find full first & last match for %s %s.", 
-                         player["first_name"], player["last_name"])
+            logging.warning("OTC: Unable to find full first & last match for %s %s.", 
+                            player["first_name"], player["last_name"])
             
             # ... then try matching the last name and the first initial. 
             # (E.g. Matthew Stafford is called Matt Stafford on OTC.)
-            otc_link_pattern_regex = settings.OTC_ANCHOR_TEXT_TEMPLATE.replace(
+            otc_anchor_text_regex = settings.OTC_ANCHOR_REGEX_TEMPLATE.replace(
                 "[FIRST_NAME]", player["first_name"][0])
-            otc_link_pattern_regex = otc_link_pattern_regex.replace(
-                "[LAST_NAME]", player["last_name"])
+            otc_anchor_text_regex = otc_anchor_text_regex.replace("[LAST_NAME]", last_name_minus_suffix)
             
-            if not response.xpath("//a/text()").re(otc_link_pattern_regex):
+            # Get the list of matches for this regex pattern.
+            name_match_trs_list = response.xpath(
+                "//tr/td/a[re:match(text(), \"" + otc_anchor_text_regex + "\")]/../..", 
+                namespaces={"re": "http://exslt.org/regular-expressions"}
+            ).extract()
+            
+            if not name_match_trs_list:
                 
-                logging.error("Unable to find OTC link for %s %s, %s %s.", 
+                logging.error("Unable to find even partial name match on OTC for %s %s, %s %s.", 
                               player["first_name"], 
                               player["last_name"], 
                               player["team"], 
                               player["position"])
-                logging.error("Skipping OTC player contract page.")
+                logging.error("\t\tSkipping OTC player contract page.")
                 
                 # Return the player to the pipeline for writing to the output file.
                 return player
                 
-            else:
+        # In either case (full name or first initial only), we must have at least one element in our 
+        # name_match_trs_list now. In fact, we will often have multiple matches, so we need to continue to try 
+        # matching the other attributes until we either run out of matches, or find a likely match.
+        
+        for index, table_row in enumerate(name_match_trs_list):
+            
+            # EXAMPLE: name_match_trs_list = 
+            # [
+            # '<tr class="sortable" data-team="CAR" data-position="43DE">
+            #     <td class="sortable">
+            #         <a href="/player/charles-johnson/1150/">Charles Johnson</a>
+            #     </td>
+            #     <td class="sortable">43DE</td>
+            #     <td class="sortable">
+            #         <a class="team-link CAR" href="/salary-cap/carolina-panthers/">Panthers</a>
+            #     </td>
+            #     <td>$8,000,000</td>
+            #     <td>$4,000,000</td>
+            #     <td>$2,500,000</td>
+            #     <td>$1,250,000</td>
+            #     <td>31.3%</td>
+            # </tr>', 
+            # '<tr class="sortable" data-team="CAR" data-position="WR">
+            #     <td class="sortable">
+            #         <a href="/player/charles-johnson/2397/">Charles Johnson</a>
+            #     </td>
+            #     <td class="sortable">WR</td>
+            #     <td class="sortable">
+            #         <a class="team-link CAR" href="/salary-cap/carolina-panthers/">Panthers</a>
+            #     </td>
+            #     <td>$1,500,000</td>
+            #     <td>$1,500,000</td>
+            #     <td>$350,000</td>
+            #     <td>$350,000</td>
+            #     <td>23.3%</td>
+            # </tr>'
+            # ]
+            
+# CONTINUE HERE 2017_12_06
+            
+            # See if the positions (in the player object and on OTC) are similar enough that a match is likely.
+            # On OTC, the position is found in the <td> following the <td> which contains the <a> tag.
+            position_xpath = ("//a[contains(text(),\"" + 
+                              player_name + 
+                              "\")]/parent::*/following-sibling::*/text()")
+            
+            otc_position = response.xpath(position_xpath).extract()[0]
+            
+            logging.info("\tOTC partial name match position = %s", otc_position)
+            
+# TODO: Check for the various positions on OTC that are not in a format we use, like "43OLB", and 
+# change change them to usable positions.
+            
+            if positions_are_similar(player["position"], otc_position):
+                logging.warning("\tOTC: Using likely match for NFL.com's %s %s, %s %s;", 
+                                player["first_name"], 
+                                player["last_name"], 
+                                player["team"], 
+                                player["position"])
+                logging.warning("\tOTC partial match name text: %s ;", player_name)
+                logging.warning("\tOTC partial name match position: %s", otc_position)
                 
-                # We may have multiple matches for the last name & first initital, so we need to continue to try 
-                # matching the other attributes until we either run out of partial matches, or find a likely match.
-#                while response.xpath("//a/text()").re(otc_link_pattern_regex):
-                logging.info("\tOTC: Found partial match for %s %s.", player["first_name"], player["last_name"])
-                logging.info("OTC WHILE: response.xpath(\"//a/text()\").re(otc_link_pattern_regex) = %s", 
-                             response.xpath("//a/text()").re(otc_link_pattern_regex))
+                # The positions are similar enough, so build the contract page URL for this player from the XPath.
+                player_link_xpath = "//a[contains(text(),\"" + player_name + "\")]/@href"
+                player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0]) 
+                # eg. "https://overthecap.com/player/matt-stafford/1060/"
+                logging.info("\tOTC player_contract_url for %s %s, %s %s was:", 
+                             player["first_name"], player["last_name"], player["team"], player["position"])
+                logging.info("\t%s", player_contract_url)
                 
-                # We found a player with the same last name and same first letter of the first name.
-                player_link_text = response.xpath("//a/text()").re(otc_link_pattern_regex)[0]
-                logging.info("\tOTC partial match name text = %s", player_link_text)
+                # Create the request object for this player's contract URL.
+                player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
+                # Pass along the player object.
+                player_contract_request.meta["player"] = player
+                # Return the request for the player's contract page.
+                return player_contract_request
                 
-                # See if the positions (in the player object and on OTC) are similar enough that a match is likely.
-                # On OTC, the position for the player is found in the <td> following the <td> which contains our <a> 
-                # tag with this player's name and contract page link.
-                position_xpath = ("//a[contains(text(),\"" + 
-                                  player_link_text + 
-                                  "\")]/parent::*/following-sibling::*/text()")
-                otc_position = response.xpath(position_xpath).extract()[0]
-                logging.info("\tOTC partial name match position = %s", otc_position)
-                
-                # TODO: Check for the various positions on OTC that are not in a format we use, like "43OLB", and 
-                # change change them to usable positions.
-                
-                if positions_are_similar(player["position"], otc_position):
-                    logging.warning("\tOTC: Using likely match for NFL.com's %s %s, %s %s;", 
-                                    player["first_name"], 
-                                    player["last_name"], 
-                                    player["team"], 
-                                    player["position"])
-                    logging.warning("\tOTC partial match name text: %s ;", player_link_text)
-                    logging.warning("\tOTC partial name match position: %s", otc_position)
-                    
-                    # The positions are similar enough, so build the contract page URL for this player from the XPath.
-                    player_link_xpath = "//a[contains(text(),\"" + player_link_text + "\")]/@href"
-                    player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0]) 
-                    # eg. "https://overthecap.com/player/matt-stafford/1060/"
-                    logging.info("\tOTC player_contract_url for %s %s, %s %s was:", 
-                                 player["first_name"], player["last_name"], player["team"], player["position"])
-                    logging.info("\t%s", player_contract_url)
-                    
-                    # Create the request object for this player's contract URL.
-                    player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
-                    # Pass along the player object.
-                    player_contract_request.meta["player"] = player
-                    # Return the request for the player's contract page.
-                    return player_contract_request
-                    
-                # Otherwise, simply pass back the player object as is, without the contract and draft info.
-                logging.error("\tOTC Unable to match %s %s, %s %s.", 
-                              player["first_name"], player["last_name"], player["team"], player["position"])
-                logging.error("\t\tSkipping OTC player contract page.")
-                
-                # Just return the player object.
-                return player
+            # Otherwise, simply pass back the player object as is, without the contract and draft info.
+            logging.error("\tOTC Unable to match %s %s, %s %s.", 
+                          player["first_name"], player["last_name"], player["team"], player["position"])
+            logging.error("\t\tSkipping OTC player contract page.")
+            
+            # Just return the player object.
+            return player
         else:
             
             # We found at least one text (full name) that matches the pattern. Before we jump to the player contract 
             # page, we need to make sure we either have only one name match or we get the correct one of many.
-            if len(name_matches_list) > 1:
+            if len(name_match_trs_list) > 1:
                 
                 # Loop over the matches and get the associated position for each name.
-                for index, name_string in enumerate(name_matches_list):
+                for index, name_string in enumerate(name_match_trs_list):
                     pass
                     
                     
             # Now use the string the regex matches as the value that the 
             # anchor tag's text must contain.
-            player_link_text = name_matches_list[0]
+            player_link_text = name_match_trs_list[0]
             #logging.info("OTC full name match = %s", player_link_text)
             
             # Build the contract page URL for this player from the XPath.
@@ -581,7 +616,7 @@ class NFLSpider(CrawlSpider):
             return player_contract_request
             
     def parse_OTC_contract_page(self, response):
-        
+        """ Scrapes the OTC page for a player to get details on his contract, years pro, and draft status. """
         # Get the player object out of the response's meta data.
         player = response.meta["player"]
         #logging.info("Inside parse_OTC_contract_page for %s %s.", player["first_name"], player["last_name"])

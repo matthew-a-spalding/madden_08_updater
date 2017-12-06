@@ -56,7 +56,7 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"greenbay", "[SHORT_LOCATION]":"gb", "[NICKNAME]":"packers"},
     # {"[FULL_LOCATION]":"minnesota", "[SHORT_LOCATION]":"min", "[NICKNAME]":"vikings"},
     # {"[FULL_LOCATION]":"atlanta", "[SHORT_LOCATION]":"atl", "[NICKNAME]":"falcons"},
-    # {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
+    {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
     # {"[FULL_LOCATION]":"neworleans", "[SHORT_LOCATION]":"no", "[NICKNAME]":"saints"},
     # {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
     # {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
@@ -72,4 +72,4 @@ NFL_PROFILE_LINKS_REGEX = ".+/player/.+/profile$"
 OTC_CONTRACTS_URL = "https://overthecap.com/contracts"
 
 # The regex template for links on the OverTheCap contracts page.
-OTC_ANCHOR_TEXT_TEMPLATE = "[FIRST_NAME].+[LAST_NAME]"
+OTC_ANCHOR_REGEX_TEMPLATE = "[FIRST_NAME].+[LAST_NAME]"

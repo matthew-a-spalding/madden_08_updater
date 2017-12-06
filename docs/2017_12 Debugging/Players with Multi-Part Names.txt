@@ -1,0 +1,21 @@
+Starting our crawl...
+2017-12-01 20:19:43 [root] ERROR: NFL.com: Found a name with three or more parts: "['Jason', 'Vander', 'Laan']"
+2017-12-01 20:21:58 [root] ERROR: NFL.com: Found a name with three or more parts: "['Kyle', 'Van', 'Noy']"
+2017-12-01 20:22:05 [root] ERROR: NFL.com: Found a name with three or more parts: "['Ricky', 'Jean', 'Francois']"
+2017-12-01 20:23:52 [root] ERROR: NFL.com: Found a name with three or more parts: "['Prince', 'Charles', 'Iworah']"
+2017-12-01 20:25:01 [root] ERROR: NFL.com: Found a name with three or more parts: "['Greg', 'Van', 'Roten']"
+2017-12-01 20:25:11 [root] ERROR: NFL.com: Found a name with three or more parts: "['Charles', 'D.', 'Johnson']"
+2017-12-01 20:26:09 [root] ERROR: NFL.com: Found a name with three or more parts: "['Ha', 'Ha', 'Clinton-Dix']"
+2017-12-01 20:27:02 [root] ERROR: NFL.com: Found a name with three or more parts: "['Charles', 'Leno', 'Jr.']"
+Crawling stopped.
+
+Starting our crawl...
+2017-12-01 22:12:43 [root] WARNING: NFL.com: Found a player with three name parts: "Jason Vander Laan"
+2017-12-01 22:14:57 [root] WARNING: NFL.com: Found a player with three name parts: "Kyle Van Noy"
+2017-12-01 22:15:03 [root] WARNING: NFL.com: Found a player with three name parts: "Ricky Jean Francois"
+2017-12-01 22:16:52 [root] WARNING: NFL.com: Found a player with three name parts: "Prince Charles Iworah"
+2017-12-01 22:17:03 [root] WARNING: NFL.com: Found a player with three name parts: "Greg Van Roten"
+2017-12-01 22:17:12 [root] WARNING: NFL.com: Found a player with three name parts: "Charles D. Johnson"
+2017-12-01 22:19:19 [root] WARNING: NFL.com: Found a player with three name parts: "Ha Ha Clinton-Dix"
+2017-12-01 22:19:32 [root] WARNING: NFL.com: Found a player with three name parts: "Charles Leno Jr."
+Crawling stopped.

@@ -1,0 +1,53 @@
+2017-11-24 13:05:55 [root] ERROR:       Unable to find a match for Duke Thomas, Dallas Cowboys DB.
+2017-11-24 13:06:44 [root] ERROR:       Unable to find a match for I'Tavius Mathers, Jacksonville Jaguars RB.
+2017-11-24 13:07:00 [root] ERROR:       Unable to find a match for Justin Blackmon, Jacksonville Jaguars WR.
+2017-11-24 13:08:10 [root] ERROR:       Unable to find a match for Ashton Lampkin, Kansas City Chiefs CB.
+2017-11-24 13:08:24 [root] ERROR:       Unable to find a match for Keith Baxter, Kansas City Chiefs DB.
+2017-11-24 13:05:55 [root] ERROR:       Unable to find a match for Marcus Rios, Denver Broncos CB.
+2017-11-24 13:10:14 [root] ERROR:       Unable to find a match for Deante' Gray, Houston Texans WR.
+2017-11-24 13:10:14 [root] ERROR:       Unable to find a match for Matt Godin, Houston Texans DE.
+2017-11-24 13:10:36 [root] ERROR:       Unable to find a match for Mike Matthews, Pittsburgh Steelers C.
+2017-11-24 13:10:47 [root] ERROR:       Unable to find a match for Greg Ducre, Pittsburgh Steelers DB.
+2017-11-24 13:10:49 [root] ERROR:       Unable to find a match for Antonio Crawford, Pittsburgh Steelers DB.
+2017-11-24 13:11:52 [root] ERROR:       Unable to find a match for Tra Carson, Cincinnati Bengals RB.
+2017-11-24 13:11:59 [root] ERROR:       Unable to find a match for Tim White, Baltimore Ravens WR.
+2017-11-24 13:12:13 [root] ERROR:       Unable to find a match for Brandon Kublanow, Baltimore Ravens C.
+2017-11-24 13:12:44 [root] ERROR:       Unable to find a match for Bryson Keeton, New York Jets CB.
+2017-11-24 13:12:51 [root] ERROR:       Unable to find a match for Brisly Estime, New York Jets WR.
+2017-11-24 13:21:30 [root] ERROR:       Unable to find a match for Dom Williams, Philadelphia Eagles WR.
+2017-11-24 13:14:43 [root] ERROR:       Unable to find a match for Ronald Zamort, Arizona Cardinals CB.
+2017-11-24 13:14:56 [root] ERROR:       Unable to find a match for Lenard Tillery, Los Angeles Rams RB.
+2017-11-24 13:14:50 [root] ERROR:       Unable to find a match for Tyrus Thompson, Seattle Seahawks OT.
+2017-11-24 13:15:22 [root] ERROR:       Unable to find a match for Jordan Simone, Seattle Seahawks SAF.
+2017-11-29 11:57:00 [root] ERROR:       Unable to find a match for Rodney Coe, Seattle Seahawks DT.
+2017-11-24 13:15:56 [root] ERROR:       Unable to find a match for Darrell Williams, San Francisco 49ers OT.
+2017-11-24 13:15:56 [root] ERROR:       Unable to find a match for Kaleb Ramsey, San Francisco 49ers DT.
+2017-11-24 13:15:58 [root] ERROR:       Unable to find a match for Donavin Newsom, San Francisco 49ers LB.
+2017-11-24 13:15:56 [root] ERROR:       Unable to find a match for Chris Jones, San Francisco 49ers DT.
+2017-11-24 13:16:07 [root] ERROR:       Unable to find a match for Chanceller James, San Francisco 49ers DB.
+2017-11-24 13:16:12 [root] ERROR:       Unable to find a match for Jimmie Gilbert, San Francisco 49ers LB.
+2017-11-29 11:57:55 [root] ERROR:       Unable to find a match for Gabe Martin, Arizona Cardinals LB.
+2017-11-24 13:17:03 [root] ERROR:       Unable to find a match for Evan Panfil, Tampa Bay Buccaneers DE.
+2017-11-24 13:17:55 [root] ERROR:       Unable to find a match for Arthur Maulet, New Orleans Saints CB.
+2017-11-24 13:17:55 [root] ERROR:       Unable to find a match for Garrett Griffin, New Orleans Saints TE.
+2017-11-24 13:17:55 [root] ERROR:       Unable to find a match for Dan Arnold, New Orleans Saints WR.
+2017-11-24 13:18:04 [root] ERROR:       Unable to find a match for Fred Ross, Carolina Panthers WR.
+2017-11-29 11:59:28 [root] ERROR:       Unable to find a match for Charles D. Johnson, Carolina Panthers WR.
+2017-11-24 13:18:15 [root] ERROR:       Unable to find a match for Drew Iddings, Carolina Panthers DT.
+2017-11-24 13:18:59 [root] ERROR:       Unable to find a match for Shaan Washington, Minnesota Vikings LB.
+2017-11-24 13:05:55 [root] ERROR:       Unable to find a match for Michael Clark, Green Bay Packers WR.
+2017-11-29 12:01:26 [root] ERROR:       Unable to find a match for Rolan Milligan, Detroit Lions DB.
+2017-11-24 13:20:13 [root] ERROR:       Unable to find a match for Des Lawrence, Detroit Lions DB.
+2017-11-24 13:20:16 [root] ERROR:       Unable to find a match for Mike James, Detroit Lions RB.
+2017-11-24 13:21:28 [root] ERROR:       Unable to find a match for Kevin Bowen, Washington Redskins OT.
+2017-11-24 13:21:48 [root] ERROR:       Unable to find a match for Randall Goforth, Philadelphia Eagles DB.
+2017-11-24 13:22:00 [root] ERROR:       Unable to find a match for Ishaq Williams, New York Giants DE.
+2017-11-24 13:22:16 [root] ERROR:       Unable to find a match for Keeon Johnson, New York Giants WR.
+2017-11-29 12:03:40 [root] ERROR:       Unable to find a match for Brandon Dixon, New York Giants DB.
+
+
+2017-11-24 13:11:18 [root] ERROR:       Unable to find a match for Justin Currie, Cleveland Browns DB.
+
+2017-11-29 11:54:29 [root] ERROR:       Unable to find a match for Jason King, New England Patriots OG.
+
+2017-11-24 13:21:04 [root] ERROR:       Unable to find a match for Pete Robertson, Washington Redskins LB.
