@@ -9,7 +9,7 @@ r""" nfl_spider.py
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
 # ----------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS ------------------------------------------
 # 1 - Standard library imports
-import csv, logging, math, os, re
+import csv, datetime, logging, math, os, re
 #from urlparse import urljoin
 
 # 2 - Third-party imports
@@ -262,10 +262,10 @@ class NFLSpider(CrawlSpider):
         # Create the dict into which we'll copy the row from the Madden CSV with this player's info, if we find it.
         madden_player_dict = {}
         
-        # Loop over the dicts in the Madden ratings DictReader and see if we can find this player.
         # If we have either birthdate or age from NFL.com, try uing those first.
         if nfl_birthdate or nfl_age:
             
+            # Loop over the rows in the Madden file to compare them with the NFL.com info.
             for player_dict in self.madden_ratings_dict_reader:
                 
                 # We do our comparisons without suffixes.
@@ -319,13 +319,14 @@ class NFLSpider(CrawlSpider):
         else:
             logging.info("NFL: No birthdate or age for %s %s, %s %s.", 
                          nfl_first_name, nfl_last_name, player["team"], nfl_position)
-        
-            # Try finding a record with the same full name, position, and college.
+            
+            # Loop over the rows in the Madden file to compare them with the NFL.com info.
             for player_dict in self.madden_ratings_dict_reader:
                 
                 # Take any suffix off the last name in Madden when doing our comparisons.
                 madden_last_name = remove_suffix(player_dict["Last Name"])
                 
+                # Try finding a record with the same full name, position, and college.
                 if (nfl_last_name.lower() == madden_last_name.lower() and 
                         nfl_first_name.lower() == player_dict["First Name"].lower() and 
                         positions_are_similar(nfl_position, player_dict["Position"]) and 
@@ -365,25 +366,44 @@ class NFLSpider(CrawlSpider):
             player["last_name"] = madden_player_dict["Last Name"]
             
             # Choose the best position for the player using our helper function.
-            player["position"] = choose_best_position(nfl_position, madden_player_dict["Position"])
+            player["position"] = choose_best_position(
+                nfl_position, 
+                madden_player_dict["Position"], 
+                player["first_name"], 
+                player["last_name"]
+            )
             
             # If the difference between the heights is more than 3 inches, we might have a problem.
             if abs(int(nfl_height_inches) - int(madden_player_dict["Height"])) > 3:
-                player["height"] = "CONFLICT"
-            else:
-                # Use the ceiling of the average of the two heights.
-                player["height"] = int(math.ceil((int(nfl_height_inches) + int(madden_player_dict["Height"])) / 2))
+                logging.error("Heights for %s %s in NFL and Madden differ by more than 3 in.", 
+                              player["first_name"], player["last_name"])
+            
+            # Use the ceiling of the average of the two heights.
+            player["height"] = int(math.ceil((int(nfl_height_inches) + int(madden_player_dict["Height"])) / 2))
             
             # If the difference between the weights is more than 30 lbs, we might have a problem.
             if abs(int(nfl_weight) - int(madden_player_dict["Weight"])) > 30:
-                player["weight"] = "CONFLICT"
-            else:
-                # Use the ceiling of the average of the two weights.
-                player["weight"] = int(math.ceil((int(nfl_weight) + int(madden_player_dict["Weight"])) / 2))
+                logging.error("Weights for %s %s in NFL and Madden differ by more than 30 lbs.", 
+                              player["first_name"], player["last_name"])
             
-            # For age and college, we can generally trust the Madden values.
-            player["age"] = madden_player_dict["Age"]
-            player["college"] = madden_player_dict["College"]
+            # Use the ceiling of the average of the two weights.
+            player["weight"] = int(math.ceil((int(nfl_weight) + int(madden_player_dict["Weight"])) / 2))
+            
+            # For birthdate, age and college, try the NFL values first.
+            if nfl_birthdate:
+                player["birthdate"] = nfl_birthdate
+            else:
+                player["birthdate"] = madden_player_dict["Birthdate"]
+            
+            if nfl_age:
+                player["age"] = nfl_age
+            else:
+                player["age"] = madden_player_dict["Age"]
+                
+            if nfl_college:
+                player["college"] = nfl_college
+            else:
+                player["college"] = madden_player_dict["College"]
             
             # In cases where we have a conflict over the number of years pro, resolve things later. 
             if int(nfl_years_pro) != int(madden_player_dict["Years Pro"]):
@@ -431,7 +451,7 @@ class NFLSpider(CrawlSpider):
             # only hits the OTC list once, due to it's default filtering rules preventing duplicates.
             otc_contracts_list_request = Request(
                 settings.OTC_CONTRACTS_URL, 
-                callback=self.find_contract_page, 
+                callback=self.find_contract_pages, 
                 dont_filter=True
             )
             otc_contracts_list_request.meta["player"] = player
@@ -442,13 +462,13 @@ class NFLSpider(CrawlSpider):
             player = NFLPlayer()
             return player
 
-    def find_contract_page(self, response):
-        """ Scrapes the OverTheCap contracts list page to get the link to the player's contract page. """
+    def find_contract_pages(self, response):
+        """ Scrapes the OverTheCap contracts list page to get a list of links to potential matchs' contract pages. """
         
         # Get the player object out of the meta data for the response.
         player = response.meta["player"]
         
-        #logging.info("Inside find_contract_page for %s %s, %s %s.", 
+        #logging.info("Inside find_contract_pages for %s %s, %s %s.", 
         #             player["first_name"], player["last_name"], player["team"], player["position"])
         
         # Check last names for the presence of suffixes and remove them when found.
@@ -460,35 +480,43 @@ class NFLSpider(CrawlSpider):
         otc_anchor_text_regex = otc_anchor_text_regex.replace("[LAST_NAME]", last_name_minus_suffix)
         
         # Get the list of matches for this regex pattern.
+        
         # WORKING!! This gives us a list of all <tr> tags containing the <td> tags which hold <a> tags where the 
-        # text() matches the regex 
-        name_match_trs_list = response.xpath(
-            "//tr/td/a[re:match(text(), \"" + otc_anchor_text_regex + "\")]/../..", 
+        # text() matches the regex.
+        # name_match_trs_list = response.xpath(
+        #     "//tr/td/a[re:match(text(), \"" + otc_anchor_text_regex + "\")]/../..", 
+        #     namespaces={"re": "http://exslt.org/regular-expressions"}
+        # ).extract()
+        # logging.info("%s %s: name_match_trs_list = %s", 
+        #              player["first_name"], player["last_name"], name_match_trs_list)
+        
+        # This gives us the HREFs of the matched <a> tags in a list.
+        urls_for_potential_matches_list = response.xpath(
+            "//a[re:match(text(), \"" + otc_anchor_text_regex + "\", 'i')]/@href", 
             namespaces={"re": "http://exslt.org/regular-expressions"}
         ).extract()
-        
-        logging.warning("%s %s: name_match_trs_list = %s", 
-                        player["first_name"], player["last_name"], name_match_trs_list)
+        #logging.info("%s %s: urls_for_potential_matches_list = %s", 
+        #             player["first_name"], player["last_name"], urls_for_potential_matches_list)
         
         # If we can't find text in an anchor tag that matches the full name, ...
-        if not name_match_trs_list:
+        if not urls_for_potential_matches_list:
             
-            logging.warning("OTC: Unable to find full first & last match for %s %s.", 
-                            player["first_name"], player["last_name"])
+            logging.info("OTC: Unable to find full first & last match for %s %s.", 
+                         player["first_name"], player["last_name"])
             
-            # ... then try matching the last name and the first initial. 
+            # ... then try matching the last name and just the first initial. 
             # (E.g. Matthew Stafford is called Matt Stafford on OTC.)
             otc_anchor_text_regex = settings.OTC_ANCHOR_REGEX_TEMPLATE.replace(
                 "[FIRST_NAME]", player["first_name"][0])
             otc_anchor_text_regex = otc_anchor_text_regex.replace("[LAST_NAME]", last_name_minus_suffix)
             
             # Get the list of matches for this regex pattern.
-            name_match_trs_list = response.xpath(
-                "//tr/td/a[re:match(text(), \"" + otc_anchor_text_regex + "\")]/../..", 
+            urls_for_potential_matches_list = response.xpath(
+                "//a[re:match(text(), \"" + otc_anchor_text_regex + "\", 'i')]/@href",
                 namespaces={"re": "http://exslt.org/regular-expressions"}
             ).extract()
             
-            if not name_match_trs_list:
+            if not urls_for_potential_matches_list:
                 
                 logging.error("Unable to find even partial name match on OTC for %s %s, %s %s.", 
                               player["first_name"], 
@@ -501,132 +529,376 @@ class NFLSpider(CrawlSpider):
                 return player
                 
         # In either case (full name or first initial only), we must have at least one element in our 
-        # name_match_trs_list now. In fact, we will often have multiple matches, so we need to continue to try 
-        # matching the other attributes until we either run out of matches, or find a likely match.
+        # urls_for_potential_matches_list now. (In fact, we will often have multiple matches.) 
         
-        for index, table_row in enumerate(name_match_trs_list):
+        # Request the first link in the list, and pass along the player object and the rest of the list.
+        otc_contract_page_request = Request(
+            "https://overthecap.com" + urls_for_potential_matches_list[0], 
+            callback=self.parse_otc_contract_page, 
+            dont_filter=True
+        )
+        otc_contract_page_request.meta["player"] = player
+        otc_contract_page_request.meta["urls_for_potential_matches_list"] = urls_for_potential_matches_list[1:]
+        return otc_contract_page_request
             
-            # EXAMPLE: name_match_trs_list = 
-            # [
-            # '<tr class="sortable" data-team="CAR" data-position="43DE">
-            #     <td class="sortable">
-            #         <a href="/player/charles-johnson/1150/">Charles Johnson</a>
-            #     </td>
-            #     <td class="sortable">43DE</td>
-            #     <td class="sortable">
-            #         <a class="team-link CAR" href="/salary-cap/carolina-panthers/">Panthers</a>
-            #     </td>
-            #     <td>$8,000,000</td>
-            #     <td>$4,000,000</td>
-            #     <td>$2,500,000</td>
-            #     <td>$1,250,000</td>
-            #     <td>31.3%</td>
-            # </tr>', 
-            # '<tr class="sortable" data-team="CAR" data-position="WR">
-            #     <td class="sortable">
-            #         <a href="/player/charles-johnson/2397/">Charles Johnson</a>
-            #     </td>
-            #     <td class="sortable">WR</td>
-            #     <td class="sortable">
-            #         <a class="team-link CAR" href="/salary-cap/carolina-panthers/">Panthers</a>
-            #     </td>
-            #     <td>$1,500,000</td>
-            #     <td>$1,500,000</td>
-            #     <td>$350,000</td>
-            #     <td>$350,000</td>
-            #     <td>23.3%</td>
-            # </tr>'
-            # ]
-            
-# CONTINUE HERE 2017_12_06
-            
-            # See if the positions (in the player object and on OTC) are similar enough that a match is likely.
-            # On OTC, the position is found in the <td> following the <td> which contains the <a> tag.
-            position_xpath = ("//a[contains(text(),\"" + 
-                              player_name + 
-                              "\")]/parent::*/following-sibling::*/text()")
-            
-            otc_position = response.xpath(position_xpath).extract()[0]
-            
-            logging.info("\tOTC partial name match position = %s", otc_position)
-            
-# TODO: Check for the various positions on OTC that are not in a format we use, like "43OLB", and 
-# change change them to usable positions.
-            
-            if positions_are_similar(player["position"], otc_position):
-                logging.warning("\tOTC: Using likely match for NFL.com's %s %s, %s %s;", 
-                                player["first_name"], 
-                                player["last_name"], 
-                                player["team"], 
-                                player["position"])
-                logging.warning("\tOTC partial match name text: %s ;", player_name)
-                logging.warning("\tOTC partial name match position: %s", otc_position)
-                
-                # The positions are similar enough, so build the contract page URL for this player from the XPath.
-                player_link_xpath = "//a[contains(text(),\"" + player_name + "\")]/@href"
-                player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0]) 
-                # eg. "https://overthecap.com/player/matt-stafford/1060/"
-                logging.info("\tOTC player_contract_url for %s %s, %s %s was:", 
-                             player["first_name"], player["last_name"], player["team"], player["position"])
-                logging.info("\t%s", player_contract_url)
-                
-                # Create the request object for this player's contract URL.
-                player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
-                # Pass along the player object.
-                player_contract_request.meta["player"] = player
-                # Return the request for the player's contract page.
-                return player_contract_request
-                
-            # Otherwise, simply pass back the player object as is, without the contract and draft info.
-            logging.error("\tOTC Unable to match %s %s, %s %s.", 
-                          player["first_name"], player["last_name"], player["team"], player["position"])
-            logging.error("\t\tSkipping OTC player contract page.")
-            
-            # Just return the player object.
-            return player
-        else:
-            
-            # We found at least one text (full name) that matches the pattern. Before we jump to the player contract 
-            # page, we need to make sure we either have only one name match or we get the correct one of many.
-            if len(name_match_trs_list) > 1:
-                
-                # Loop over the matches and get the associated position for each name.
-                for index, name_string in enumerate(name_match_trs_list):
-                    pass
-                    
-                    
-            # Now use the string the regex matches as the value that the 
-            # anchor tag's text must contain.
-            player_link_text = name_match_trs_list[0]
-            #logging.info("OTC full name match = %s", player_link_text)
-            
-            # Build the contract page URL for this player from the XPath.
-            player_link_xpath = "//a[contains(text(),\"" + player_link_text + "\")]/@href"
-            player_contract_url = response.urljoin(response.xpath(player_link_xpath).extract()[0])
-            # eg. "https://overthecap.com/player/matt-stafford/1060/"
-            logging.info("OTC player_contract_url for %s %s, %s %s was:", 
-                         player["first_name"], player["last_name"], player["team"], player["position"])
-            logging.info(player_contract_url)
-            
-            # Build the request object, including the player object in the meta.
-            player_contract_request = Request(player_contract_url, callback=self.parse_OTC_contract_page)
-            player_contract_request.meta["player"] = player
-            
-            # Pass along the next request for our spider to crawl.
-            return player_contract_request
-            
-    def parse_OTC_contract_page(self, response):
-        """ Scrapes the OTC page for a player to get details on his contract, years pro, and draft status. """
+    def parse_otc_contract_page(self, response):
+        """ 
+        Scrapes the OTC contract details page for a player to 1) see if this player is a match for our current player 
+        object and, if so, 2) get details on his contract, years pro, and draft history. 
+        """
         # Get the player object out of the response's meta data.
         player = response.meta["player"]
-        #logging.info("Inside parse_OTC_contract_page for %s %s.", player["first_name"], player["last_name"])
+        # Also need to get the list with other URLs of potential matches for this player.
+        urls_for_potential_matches_list = response.meta["urls_for_potential_matches_list"]
+        #logging.info("Inside parse_otc_contract_page for %s %s.", player["first_name"], player["last_name"])
+        
+        # Initialize our OTC variables so we at least have them, even if they don't get real values.
+        otc_age = ""
+        otc_height_inches = ""
+        otc_weight = ""
+        otc_college = ""
+        otc_first_name = ""
+        otc_last_name = ""
+        otc_position = ""
+        otc_total_salary = ""
+        otc_signing_bonus = ""
+        
+        # Get the values we need to have in order to try and match this page with the player object.
+        # The player's age should be found in the <li class="age">.
+        otc_age_list = response.xpath("//li[@class=\"age\"]/text()").extract()
+        if otc_age_list:
+            # These strings should be something like ['Age:', '28']
+            otc_age_strings = otc_age_list[0].split(" ")
+            if len(otc_age_strings) == 2:
+                # This should give us something like "28".
+                otc_age = otc_age_strings[1]
+                #logging.info("%s %s's OTC age = %s", player["first_name"], player["last_name"], otc_age)
+            else:
+                logging.warning("%s %s's len(otc_age_strings) was NOT 2, it was %d", 
+                                player["first_name"], player["last_name"], len(otc_age_strings))
+        
+        # The player's height should be found in the <li class="height">.
+        otc_height_list = response.xpath("//li[@class=\"height\"]/text()").extract()
+        if otc_height_list:
+            otc_height_strings = otc_height_list[0].split(": ")
+            if len(otc_height_strings) == 2 and len(otc_height_strings[1]) > 3:
+                otc_height_inches = (int(otc_height_strings[1][0]) * 12) + int(otc_height_strings[1][2:-1])
+                #logging.info("%s %s's OTC height in inches = %s", 
+                #             player["first_name"], player["last_name"], otc_height_inches)
+            else:
+                logging.warning("%s %s's otc_height_strings were not long enough. No otc_height for him.", 
+                                player["first_name"], player["last_name"])
+        
+        # The player's weight should be found in the <li class="weight">.
+        otc_weight_list = response.xpath("//li[@class=\"weight\"]/text()").extract()
+        if otc_weight_list:
+            otc_weight_strings = otc_weight_list[0].split(": ")
+            if len(otc_weight_strings) == 2:
+                otc_weight = otc_weight_strings[1]
+                #logging.info("%s %s's OTC weight = %s", player["first_name"], player["last_name"], otc_weight)
+            else:
+                logging.warning("%s %s's len(otc_weight_strings) was NOT 2, it was %d", 
+                                player["first_name"], player["last_name"], len(otc_weight_strings))
+        
+        # The player's college should be found in the <li class="college">.
+        otc_college_list = response.xpath("//li[@class=\"college\"]/text()").extract()
+        if otc_college_list:
+            otc_college_strings = otc_college_list[0].split(": ")
+            if len(otc_college_strings) == 2:
+                otc_college = otc_college_strings[1]
+                #logging.info("%s %s's OTC college = %s", player["first_name"], player["last_name"], otc_college)
+            else:
+                logging.warning("%s %s's len(otc_college_strings) was NOT 2, it was %d", 
+                                player["first_name"], player["last_name"], len(otc_college_strings))
+        
+        # The player's name, position, total_salary ("Total"), and signing_bonus ("Guarantee") are all found inside 
+        # the <div id="player-comparisons-data" ...>, in a nested <code> tag.
+        otc_data_code_list = response.xpath("//div[@id=\"player-comparisons-data\"]/code/text()").extract()
+        #logging.info("%s %s otc_data_code_list = %s", player["first_name"], player["last_name"], otc_data_code_list)
+        
+        if otc_data_code_list:
+            
+            # Furthermore, the <code> contains a comma-separated dict of keys and values.
+            # Split the dict by element (on the commas, not any other delimiters else yet).
+            otc_data_elements_list = otc_data_code_list[0].split('","')
+            #logging.info("%s %s otc_data_elements_list = %s", 
+            #             player["first_name"], player["last_name"], otc_data_elements_list)
+            
+            # The player's name should be in the first element, as '{"Name":"Cam Newton'.
+            if (otc_data_elements_list) and ("NAME" in otc_data_elements_list[0].upper()):
+                
+                # Split the name element on the ":".
+                otc_name_text_list = otc_data_elements_list[0].split(":")
+                
+                if len(otc_name_text_list) == 2:
+                    
+                    # Take the quotes off the front of the name.
+                    otc_full_name = otc_name_text_list[1][1:]
+                    
+                    # Use our helper functions to get the first and last names.
+                    otc_first_name = get_first_name(otc_full_name) # eg. "Prince Charles"
+                    otc_last_name = get_last_name(otc_full_name) # eg. "Iworah"
+                    #logging.info("%s %s's OTC name: %s %s", 
+                    #             player["first_name"], player["last_name"], otc_first_name, otc_last_name)
+                    
+                else:
+                    logging.warning("%s %s's len(otc_name_text_list) was NOT 2, it was %d", 
+                                    player["first_name"], player["last_name"], len(otc_name_text_list))
+            else:
+                logging.warning("No NAME element in %s %s's otc_data_elements_list: %s", 
+                                player["first_name"], player["last_name"], otc_data_elements_list)
+            
+            # The position element should be second, as something like 'Position":"QB'.
+            if len(otc_data_elements_list) > 1:
+                
+                # Split the position element on the ":".
+                otc_pos_text_list = otc_data_elements_list[1].split(":")
+                
+                # The text in the second element should be something like '"QB', so extract it and remove the quotes.
+                if len(otc_pos_text_list) == 2:
+                    otc_position = otc_pos_text_list[1][1:]
+                    #logging.info("%s %s's OTC Position: %s", 
+                    #             player["first_name"], player["last_name"], otc_position)
+                else:
+                    logging.warning("%s %s's len(otc_pos_text_list) was NOT 2, it was %d", 
+                                    player["first_name"], player["last_name"], len(otc_pos_text_list))
+                
+                # Now get the total salary.
+                if len(otc_data_elements_list) > 2:
+                    
+                    # Split the total salary element on the ":".
+                    otc_total_salary_text_list = otc_data_elements_list[2].split(":")
+                    
+                    # The text in the salary element should be something like '"103000000', so remove the quotes.
+                    if len(otc_total_salary_text_list) == 2:
+                        otc_total_salary = otc_total_salary_text_list[1][1:]
+                        #logging.info("%s %s's OTC Total Salary: %s", 
+                        #             player["first_name"], player["last_name"], otc_total_salary)
+                    else:
+                        logging.warning("%s %s's len(otc_total_salary_text_list) was NOT 2, it was %d", 
+                                        player["first_name"], player["last_name"], len(otc_total_salary_text_list))
+                    
+                    # Now look for the signing bonus (guarantee).
+                    if len(otc_data_elements_list) > 4:
+                        
+                        # Split the signing bonus element on the ":".
+                        otc_signing_bonus_text_list = otc_data_elements_list[4].split(":")
+                        
+                        if len(otc_signing_bonus_text_list) == 2:
+                            otc_signing_bonus = otc_signing_bonus_text_list[1][1:]
+                            #logging.info("%s %s's OTC Signing Bonus: %s", 
+                            #             player["first_name"], player["last_name"], otc_signing_bonus)
+                        else:
+                            logging.warning("%s %s's len(otc_signing_bonus_text_list) was NOT 2, it was %d", 
+                                            player["first_name"], 
+                                            player["last_name"], 
+                                            len(otc_signing_bonus_text_list))
+                    
+                    else:
+                        logging.warning("Less than 5 elements in %s %s's otc_data_elements_list = %s", 
+                                        player["first_name"], player["last_name"], otc_data_elements_list)
+                
+                else:
+                    logging.warning("Only 2 elements in %s %s's otc_data_elements_list = %s", 
+                                    player["first_name"], player["last_name"], otc_data_elements_list)
+            
+            else:
+                logging.warning("Only 1 element in %s %s's otc_data_elements_list = %s", 
+                                player["first_name"], player["last_name"], otc_data_elements_list)
+        
+        else:
+            logging.error("%s %s has no otc_data_code_list!", player["first_name"], player["last_name"])
+        
+        # Now to try and make a match between the player object and the values from this page.
+        otc_match = False
+        
+        # First, try to match on full name, age, and position.
+        if otc_first_name and otc_last_name and otc_age and otc_position:
+            
+            if (otc_first_name.lower() == player["first_name"].lower() and 
+                    otc_last_name.lower() == player["last_name"].lower() and 
+                    abs(int(otc_age) - int(player["age"])) < 2 and 
+                    positions_are_similar(otc_position, player["position"])):
+                
+                # Declare a match.
+                otc_match = True
+                #logging.info("OTC Match for %s %s: full name, age, and position.", 
+                #             player["first_name"], player["last_name"])
+        
+        # If we don't have age, try full name, college, and position.
+        if (not otc_match) and (not otc_age) and (otc_first_name and otc_last_name and otc_college and otc_position):
+            
+            if (otc_first_name.lower() == player["first_name"].lower() and 
+                    otc_last_name.lower() == player["last_name"].lower() and 
+                    otc_college[:5].lower() == player["college"][:5].lower() and 
+                    positions_are_similar(otc_position, player["position"])):
+                
+                # Declare a match.
+                otc_match = True
+                #logging.info("OTC Match for %s %s: full name, college, and position.", 
+                #             player["first_name"], player["last_name"])
+        
+        # If full name didn't match, try just age, position, college, height, and weight.
+        if (not otc_match) and (otc_age and otc_position and otc_college and otc_height_inches and otc_weight):
+            
+            if (abs(int(otc_age) - int(player["age"])) < 2 and 
+                    positions_are_similar(otc_position, player["position"]) and 
+                    otc_college[:5].lower() == player["college"][:5].lower() and 
+                    abs(int(otc_height_inches) - int(player["height"])) < 2 and 
+                    abs(int(otc_weight) - int(player["weight"])) < 20):
+                
+                # Declare a match.
+                otc_match = True
+                #logging.info("OTC Match for %s %s: age, position, college, height, and weight.", 
+                #             player["first_name"], player["last_name"])
+        
+        # If we don't have an age, but we have the other attributes, try with the other values.
+        if (not otc_match) and (not otc_age) and (otc_position and otc_college and otc_height_inches and otc_weight):
+            
+            if (positions_are_similar(otc_position, player["position"]) and 
+                    otc_college[:5].lower() == player["college"][:5].lower() and 
+                    abs(int(otc_height_inches) - int(player["height"])) < 2 and 
+                    abs(int(otc_weight) - int(player["weight"])) < 20):
+                
+                # Declare a match.
+                otc_match = True
+                #logging.info("OTC Match for %s %s: position, college, height, and weight.", 
+                #                player["first_name"], player["last_name"])
+        
+        # If we STILL can't make a match, maybe it's time to concede that this page is not the page we're looking for.
+        if not otc_match:
+            
+            # If we have more potential matches, build the request object with the necessary meta objects.
+            if urls_for_potential_matches_list:
+                next_contract_url = urls_for_potential_matches_list[0]
+                next_contract_request = Request(
+                    "https://overthecap.com" + next_contract_url, 
+                    callback=self.parse_otc_contract_page, 
+                    dont_filter=True
+                )
+                next_contract_request.meta["player"] = player
+                next_contract_request.meta["urls_for_potential_matches_list"] = []
+                if len(urls_for_potential_matches_list) > 1:
+                    next_contract_request.meta["urls_for_potential_matches_list"] = \
+                            urls_for_potential_matches_list[1:]
+                
+                # Pass along the next request for our spider to crawl.
+                return next_contract_request
+            
+            # We are at the end of the list of potential matches, and couldn't find a match.
+            else:
+                
+                logging.error("No OTC contract page match found for %s %s!", 
+                              player["first_name"], player["last_name"])
+                return player
+        
+        # At this point, we have found a match. Before doing anything else, let the user know if there was missing 
+        # information on this player's page.
+        if not otc_age:
+            logging.info("%s %s has no age on OTC.", otc_first_name, otc_last_name)
+        
+        if not otc_height_inches:
+            logging.info("%s %s has no height on OTC.", otc_first_name, otc_last_name)
+        
+        if not otc_weight:
+            logging.info("%s %s has no weight on OTC.", otc_first_name, otc_last_name)
+        
+        if not otc_college:
+            logging.info("%s %s has no college on OTC.", otc_first_name, otc_last_name)
         
         # Now to grab the contract and draft into for this player.
+        # Start with the total salary on this deal which we should have grabbed earlier.
+        if otc_total_salary:
+            player["total_salary"] = otc_total_salary
         
+        # We also shuold have the signing bonus total from the otc_data_elements_list above.
+        if otc_signing_bonus:
+            player["signing_bonus"] = otc_signing_bonus
         
+        # Get the <li class="league-entry">. This and subsequent <li>s have draft, year signed, and contract info.
+        league_entry_li_list = response.xpath("//li[@class=\"league-entry\"]/text()").extract()
+        #logging.info("%s %s's OTC league_entry_li_list = %s", 
+        #            player["first_name"], player["last_name"], league_entry_li_list)
+        
+        if not league_entry_li_list:
+            logging.warning("%s %s's OTC league_entry_li_list is empty!", player["first_name"], player["last_name"])
+            logging.warning("\t\tSkipping draft_pick, draft_round, years_pro, contract_length, and years_left.")
+            return player
+        
+        # When not empty, the text is the first (and only) element in the list.
+        otc_draft_text = league_entry_li_list[0]
+        
+        # First, see when this player was drafted, or if he is listed as having been undrafted.
+        if "UNDRAFTED" in otc_draft_text.upper():
+            # For the Madden roster file, undrafted requires draft round = 15 and draft pick = 63.
+            player["draft_round"] = "15"
+            #logging.info("%s %s's OTC draft_round = %s", 
+            #             player["first_name"], player["last_name"], player["draft_round"])
+            player["draft_pick"] = "63"
+            #logging.info("%s %s's OTC draft_pick = %s", 
+            #             player["first_name"], player["last_name"], player["draft_pick"])
+        else:
+            # Split the string on commas.
+            otc_draft_strings_list = otc_draft_text.split(",")
+            # We should have three strings in the list.
+            if len(otc_draft_strings_list) != 3:
+                logging.warning("%s %s's OTC len(otc_draft_strings_list) = %d", 
+                                player["first_name"], player["last_name"], len(otc_draft_strings_list))
+                logging.warning("\t\tSkipping his draft info.")
+            else:
+                # The draft round number should be in the second element, last character.
+                player["draft_round"] = otc_draft_strings_list[1][-1:]
+                #logging.info("%s %s's OTC draft_round = %s", 
+                #             player["first_name"], player["last_name"], player["draft_round"])
+                
+                # The draft pick number should be in the third string - all chars except the first one in the 
+                # first element of the list made when we strip the string and split it on spaces.
+                otc_pick_number = otc_draft_strings_list[2].strip().split(" ")[0][1:]
+                # The number Madden expects is not the overall pick number, but the number in the given round.
+                # So subtract (number of previous rounds * 32) from the pick to get Madden's number. 
+                player["draft_pick"] = int(otc_pick_number) - ((int(otc_draft_strings_list[1][-1:]) - 1) * 32)
+                #logging.info("%s %s's OTC draft_pick = %s", 
+                #             player["first_name"], player["last_name"], player["draft_pick"])
+        
+        # Get this player's number of years pro by calculating the differnce between this (football) year 
+        # and the year he was (un)drafted.
+        this_football_year = datetime.datetime.now().year if (datetime.datetime.now().month > 4) else \
+                (datetime.datetime.now().year - 1)
+        # The player's year of entry is always the second string in the text when split on whitespace.
+        player["years_pro"] = this_football_year - int(otc_draft_text.split()[1])
+        
+        # The year this player will be a free agent is in the third <li> after the one with class="league-entry".
+        otc_year_free_agency_list = response.xpath(
+            "//li[@class=\"league-entry\"]/following-sibling::*[3]/text()"
+        ).extract()
+        if otc_year_free_agency_list:
+            otc_year_free_agency = otc_year_free_agency_list[0].split()[2]
+            # If this string has a comma on the end, ut it off.
+            if len(otc_year_free_agency) == 5:
+                otc_year_free_agency = otc_year_free_agency[:-1]
+            
+            # The year the current contract was signed is in the first <li> after the one with class="eague-entry".
+            otc_year_contract_signed_list = response.xpath(
+                "//li[@class=\"league-entry\"]/following-sibling::*[1]/text()"
+            ).extract()
+            if otc_year_contract_signed_list:
+                otc_year_contract_signed = otc_year_contract_signed_list[0].split()[2]
+                # The contract length is found by calculating the difference between the year of free agency and 
+                # the year the contract was signed.
+                player["contract_length"] = int(otc_year_free_agency) - int(otc_year_contract_signed)
+                #logging.info("%s %s's OTC contract_length = %s", 
+                #             player["first_name"], player["last_name"], player["contract_length"])
+                
+                # The number of years left on the contract is found by calculating the difference between the year 
+                # of free agency and the current (football) year.
+                player["contract_years_left"] = int(otc_year_free_agency) - this_football_year
+                #logging.info("%s %s's OTC contract_years_left = %s", 
+                #             player["first_name"], player["last_name"], player["contract_years_left"])
+            
         # Return our player object for writing to the output CSV file.
         return player
-
+        
+        
 # ----------------------------------------------------- SECTION 3 -----------------------------------------------------
 # ------------------------------------------------- Helper Functions --------------------------------------------------
 
@@ -710,336 +982,189 @@ def get_last_name(full_name):
     # In all other cases, treat the middle as part of the first name, and just return the third part.
     return split_name_without_suffix[2]
 
-def positions_are_similar(nfl_position, madden_position):
+def positions_are_similar(nfl_or_otc_position, madden_position):
     """
-    This function is used in parse_NFL_profile_page, when the player's name on NFL.com was not an exact match with the 
-    name in the "Latest Madden Ratings.csv" file. It compares the positions of the two player pages to see if they are 
-    similar enough to be considered a match.
+    This function compares the value of either the NFL.com or OTC.com's position string to the value in a Madden 
+    record to see if they are similar enough to be considered a match.
     """
     # If either position is QB and the other isn't, the answer is no.
-    if nfl_position.upper() == "QB":
+    if nfl_or_otc_position.upper() == "QB":
         return bool(madden_position.upper() == "QB")
     
-    # If the NFL's position is RB, HB, FB, WR, or TE, madden_position can be: RB, HB, FB, WR, or TE.
-    if nfl_position.upper() in ["RB", "HB", "FB", "WR", "TE"]:
-        return bool(madden_position.upper() in ["RB", "HB", "FB", "WR", "TE"])
+    # If the first position is RB, HB, FB, WR, or TE, madden_position can be: HB, FB, WR, or TE.
+    if nfl_or_otc_position.upper() in ["RB", "HB", "FB", "WR", "TE"]:
+        return bool(madden_position.upper() in ["HB", "FB", "WR", "TE"])
     
-    # If the NFL's position is OL, T, OT, G, OG, LT, LG, C, RG, or RT, 
-    # madden_position can be: OL, T, OT, G, OG, LS, LT, LG, C, RG, or RT.
-    if nfl_position.upper() in ["OL", "T", "OT", "G", "OG", "LT", "LG", "C", "RG", "RT"]:
-        return bool(madden_position.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT"])
+    # If the first position is OL, T, OT, G, OG, LT, LG, C, RG, or RT, 
+    # madden_position can be: LT, LG, C, RG, or RT.
+    if nfl_or_otc_position.upper() in ["OL", "T", "OT", "G", "OG", "LT", "LG", "C", "RG", "RT"]:
+        return bool(madden_position.upper() in ["LT", "LG", "C", "RG", "RT"])
     
-    # If the NFL's position is LS, 
-    # madden_position can be: OL, T, OT, G, OG, LS, LT, LG, C, RG, RT, or TE.
-    if nfl_position.upper() == "LS":
-        return bool(madden_position.upper() in ["OL", "T", "OT", "G", "OG", "LS", "LT", "LG", "C", "RG", "RT", "TE"])
+    # If the first position is LS, 
+    # madden_position can be: LT, LG, C, RG, RT, or TE.
+    if nfl_or_otc_position.upper() == "LS":
+        return bool(madden_position.upper() in ["LT", "LG", "C", "RG", "RT", "TE"])
     
-    # If the first position is DL, DE, LE, or RE, 
-    # madden_position can be: DL, DE, LE, RE, DT, NT, LB, OLB, LOLB, ROLB, ILB, or MLB.
-    if nfl_position.upper() in ["DL", "DE", "LE", "RE"]:
-        return bool(madden_position.upper() in 
-                    ["DL", "DE", "LE", "RE", "DT", "NT", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"])
+    # If the first position is DL, DE, LE, RE, 34DE, 43DE,
+    # madden_position can be: LE, RE, DT, LOLB, ROLB, or MLB.
+    if nfl_or_otc_position.upper() in ["DL", "DE", "LE", "RE", "34DE", "43DE"]:
+        return bool(madden_position.upper() in ["LE", "RE", "DT", "LOLB", "ROLB", "MLB"])
     
-    # If the first position is DT or NT, madden_position can be: DL, DE, LE, RE, DT, or NT.
-    if nfl_position.upper() in ["DT", "NT"]:
-        return bool(madden_position.upper() in ["DL", "DE", "LE", "RE", "DT", "NT"])
+    # If the first position is DT, NT, 34DT, or 43DT, madden_position can be: LE, RE, or DT.
+    if nfl_or_otc_position.upper() in ["DT", "NT", "34DT", "43DT"]:
+        return bool(madden_position.upper() in ["LE", "RE", "DT"])
     
-    # If the first position is LB, OLB, LOLB, ROLB, ILB, or MLB, 
-    # madden_position can be: DL, DE, LE, RE, LB, OLB, LOLB, ROLB, ILB, or MLB.
-    if nfl_position.upper() in ["LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-        return bool(madden_position.upper() in ["DL", "DE", "LE", "RE", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"])
+    # If the first position is LB, OLB, LOLB, ROLB, ILB, MLB, 34OLB, 43OLB
+    # madden_position can be: LE, RE, LOLB, ROLB, or MLB.
+    if nfl_or_otc_position.upper() in ["LB", "OLB", "LOLB", "ROLB", "ILB", "MLB", "34OLB", "43OLB"]:
+        return bool(madden_position.upper() in ["LE", "RE", "LOLB", "ROLB", "MLB"])
     
-    # If the first position is DB, CB, S, SAF, FS, or SS, madden_position can be: DB, CB, S, SAF, FS, or SS.
-    if nfl_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"]:
-        return bool(madden_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"])
+    # If the first position is DB, CB, S, SAF, FS, or SS, madden_position can be: CB, FS, or SS.
+    if nfl_or_otc_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"]:
+        return bool(madden_position.upper() in ["CB", "FS", "SS"])
     
     # If either position is K or P and the other isn't one of those, the answer is no.
-    if nfl_position.upper() in ["K", "P"]:
+    if nfl_or_otc_position.upper() in ["K", "P"]:
         return bool(madden_position.upper() in ["K", "P"])
     
-    logging.error("Unknown nfl_position passed to positions_are_similar:")
-    logging.error("nfl_position.upper() = %s", nfl_position.upper())
+    logging.error("Unknown nfl_or_otc_position passed to positions_are_similar:")
+    logging.error("nfl_or_otc_position.upper() = %s", nfl_or_otc_position.upper())
     logging.error("madden_position.upper() = %s", madden_position.upper())
     return False
 
-def choose_best_position(position1, position2):
+def report_position_disagreement(severity, nfl_position, madden_position, first_name, last_name):
     """
-    This function takes in the two position strings for a player (found on NFL.com and in the latest Madden ratings) 
-    and uses them in determining which Madden position to assign this player. If no determination can be made, but the 
-    input positions were in general agreement, we assign "TBD" (to be determined). If the positions are not in 
-    agreement, we assign "CONFLICT". Both "TBD" and "CONFLICT" will require manual replacing later.
+    This function is called when the function "choose_best_position" receives two position identifiers which are not 
+    in full agreement. It prints a message as either a warning or an error (depending on the severity of the conflict) 
+    and includes details on the player's name and reported positions.
+    """
+    if severity.upper() == "INFO":
+        logging.info("choose_best_position: NFL and Madden in general agreement, but not matching for %s %s.", 
+                     first_name, last_name)
+        logging.info("nfl_position.upper() = %s", nfl_position.upper())
+        logging.info("madden_position.upper() = %s", madden_position.upper())
+    else:
+        logging.error("choose_best_position: NFL and Madden are in conflict for %s %s.", 
+                      first_name, last_name)
+        logging.error("nfl_position.upper() = %s", nfl_position.upper())
+        logging.error("madden_position.upper() = %s", madden_position.upper())
+
+
+def choose_best_position(nfl_position, madden_position, first_name, last_name):
+    """
+    This function takes in two position strings for a player (found on NFL.com and in the latest Madden ratings) and 
+    uses them in determining which Madden position to assign to this player. If no determination can be made, but the 
+    input positions were in general agreement, we assign the Madden position, and raise a warning. If the positions 
+    are not in agreement, we assign "CONFLICT" and raise an error, since any "CONFLICT"s will require manual 
+    reconciliation later.
     """
     # QB is easy.
-    if position1.upper() == "QB":
-        if position2.upper() == "QB":
+    if nfl_position.upper() == "QB":
+        if madden_position.upper() == "QB":
             return "QB"
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is RB, try to go off of what we have in position2.
-    if position1.upper() == "RB":
-        if position2.upper() in ["RB", "WR", "TE"]:
-            return "TBD"
-        elif position2.upper() == "HB":
-            return "HB"
-        elif position2.upper() == "FB":
-            return "FB"
-        return "CONFLICT"
-    
-    # If position1 is HB, we are similar to WR and TE, and can be specific with RB, HB, and FB.
-    if position1.upper() == "HB":
-        if position2.upper() in ["WR", "TE"]:
-            return "TBD"
-        elif position2.upper() in ["RB", "HB"]:
-            return "HB"
-        # FB is special - assume it is correct even over HB.
-        elif position2.upper() == "FB":
-            return "FB"
+    # If nfl_position is RB or HB, try to go off of what we have in madden_position.
+    if nfl_position.upper() == "RB" or nfl_position.upper() == "HB":
+        if madden_position.upper() in ["HB", "FB"]:
+            return madden_position.upper()
+        elif madden_position.upper() in ["WR", "TE"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
     # FB is special - assume it is correct even over HB; also similar enough to WR and TE.
-    if position1.upper() == "FB":
-        if position2.upper() in ["WR", "TE"]:
-            return "TBD"
-        if position2.upper() in ["RB", "HB", "FB"]:
+    if nfl_position.upper() == "FB":
+        if madden_position.upper() in ["WR", "TE"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
             return "FB"
+        if madden_position.upper() in ["HB", "FB"]:
+            return "FB"
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is WR, we are similar to RB, HB, FB, and TE, and can be specific with WR.
-    if position1.upper() == "WR":
-        if position2.upper() in ["RB", "HB", "FB", "TE"]:
-            return "TBD"
-        elif position2.upper() == "WR":
-            return "WR"
+    # If nfl_position is WR, we are similar to HB and FB, and in agreement with WR and TE.
+    if nfl_position.upper() == "WR":
+        if madden_position.upper() in ["HB", "FB"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        elif madden_position.upper() in ["WR", "TE"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is TE, we are similar to RB, HB, FB, and WR, and can be specific with TE.
-    if position1.upper() == "TE":
-        if position2.upper() in ["RB", "HB", "FB", "WR"]:
-            return "TBD"
-        elif position2.upper() == "TE":
-            return "TE"
+    # If nfl_position is TE, we are similar to HB and WR, and in agreement with FB and TE.
+    if nfl_position.upper() == "TE":
+        if madden_position.upper() in ["HB", "WR"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        elif madden_position.upper() in ["FB", "TE"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is T, G, OT, OG, OL, or LS, try to go off of what we have in position2.
-    if position1.upper() in ["T", "G", "OT", "OG", "OL", "LS"]:
-        if position2.upper() in ["T", "G", "OT", "OG", "OL", "LS"]:
-            return "TBD"
-        elif position2.upper() == "LT":
-            return "LT"
-        elif position2.upper() == "LG":
-            return "LG"
-        elif position2.upper() == "C":
-            return "C"
-        elif position2.upper() == "RG":
-            return "RG"
-        elif position2.upper() == "RT":
-            return "RT"
-        elif position2.upper() == "TE":
-            return "TE"
+    # If nfl_position is any OL or LS, try to go off of what we have in madden_position.
+    if nfl_position.upper() in ["T", "OT", "LT", "RT", "G", "OG", "LG", "RG", "C", "OL", "LS"]:
+        if madden_position.upper() in ["LT", "LG", "C", "RG", "RT", "TE"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is LT, just make sure position2 is some sort of generic OL or T.
-    if position1.upper() == "LT":
-        if position2.upper() in ["LT", "T", "OT", "OL"]:
-            return "LT"
-        # If position2 is a different specific OL position, we have a TBD.
-        elif position2.upper() in ["G", "OG", "LS", "LG", "C", "RG", "RT"]:
-            return "TBD"
+    # If nfl_position is DL, try to go off of what we have in madden_position.
+    if nfl_position.upper() in ["DL", "DE", "LE", "RE", "DT", "NT"]:
+        if madden_position.upper() in ["LOLB", "ROLB", "MLB"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        elif madden_position.upper() in ["LE", "RE", "DT"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is LG, just make sure position2 is some sort of generic OL or G.
-    if position1.upper() == "LG":
-        if position2.upper() in ["LG", "G", "OG", "OL"]:
-            return "LG"
-        # If position2 is a different specific OL position, we have a TBD.
-        elif position2.upper() in ["T", "OT", "LS", "LT", "C", "RG", "RT"]:
-            return "TBD"
+    # If nfl_position is LB, try to go off of what we have in madden_position.
+    if nfl_position.upper() in ["LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
+        if madden_position.upper() in ["LE", "RE"]:
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        elif madden_position.upper() in ["LOLB", "ROLB", "MLB"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    # If position1 is C, just make sure position2 is some sort of generic OL or C.
-    if position1.upper() == "C":
-        if position2.upper() in ["C", "G", "OG", "OL"]:
-            return "C"
-        # If position2 is a different specific OL position, we have a TBD.
-        elif position2.upper() in ["T", "OT", "LS", "LT", "LG", "RG", "RT"]:
-            return "TBD"
-        return "CONFLICT"
-    
-    # If position1 is RG, just make sure position2 is some sort of generic OL or G.
-    if position1.upper() == "RG":
-        if position2.upper() in ["RG", "G", "OG", "OL"]:
-            return "RG"
-        # If position2 is a different specific OL position, we have a TBD.
-        elif position2.upper() in ["T", "OT", "LS", "LT", "LG", "C", "RT"]:
-            return "TBD"
-        return "CONFLICT"
-    
-    # If position1 is RT, just make sure position2 is some sort of generic OL or T.
-    if position1.upper() == "RT":
-        if position2.upper() in ["RT", "T", "OT", "OL"]:
-            return "RT"
-        # If position2 is a different specific OL position, we have a TBD.
-        elif position2.upper() in ["G", "OG", "LS", "LT", "LG", "C", "RG"]:
-            return "TBD"
-        return "CONFLICT"
-    
-    # If position1 is DL, try to go off of what we have in position2.
-    if position1.upper() == "DL":
-        if position2.upper() in ["DL", "DE", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() == "LE":
-            return "LE"
-        elif position2.upper() == "RE":
-            return "RE"
-        elif position2.upper() in ["DT", "NT"]:
-            return "DT"
-        return "CONFLICT"
-    
-    # If position1 is DE, try to go off of what we have in position2.
-    if position1.upper() == "DE":
-        if position2.upper() in ["DL", "DE", "DT", "NT", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() == "LE":
-            return "LE"
-        elif position2.upper() == "RE":
-            return "RE"
-        return "CONFLICT"
-    
-    # If position1 is LE, most others will be a TBD, except for DL, DE, or LE.
-    if position1.upper() == "LE":
-        if position2.upper() in ["RE", "DT", "NT", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() in ["DL", "DE", "LE"]:
-            return "LE"
-        return "CONFLICT"
-    
-    # If position1 is RE, most others will be a TBD, except for DL, DE, or RE.
-    if position1.upper() == "RE":
-        if position2.upper() in ["LE", "DT", "NT", "LB", "OLB", "LOLB", "ROLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() in ["DL", "DE", "RE"]:
-            return "RE"
-        return "CONFLICT"
-    
-    # If position1 is DT or NT, we can match DT, NT, or the generic DL.
-    if position1.upper() in ["DT", "NT"]:
-        if position2.upper() in ["DE", "LE", "RE"]:
-            return "TBD"
-        elif position2.upper() in ["DL", "DT", "NT"]:
-            return "DT"
-        return "CONFLICT"
-    
-    # If position1 is LB, try to go off of position2.
-    if position1.upper() == "LB":
-        if position2.upper() in ["DL", "DE", "LE", "RE", "LB", "OLB"]:
-            return "TBD"
-        elif position2.upper() == "LOLB":
-            return "LOLB"
-        elif position2.upper() == "ROLB":
-            return "ROLB"
-        elif position2.upper() in ["ILB", "MLB"]:
-            return "MLB"
-        return "CONFLICT"
-    
-    # If position1 is OLB, try to go off of position2.
-    if position1.upper() == "OLB":
-        if position2.upper() in ["DL", "DE", "LE", "RE", "LB", "OLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() == "LOLB":
-            return "LOLB"
-        elif position2.upper() == "ROLB":
-            return "ROLB"
-        return "CONFLICT"
-    
-    # If position1 is LOLB, we can match on LB, OLB, or LOLB.
-    if position1.upper() == "LOLB":
-        if position2.upper() in ["DL", "DE", "LE", "RE", "ROLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() in ["LB", "OLB", "LOLB"]:
-            return "LOLB"
-        return "CONFLICT"
-    
-    # If position1 is ROLB, we can match on LB, OLB, or ROLB.
-    if position1.upper() == "ROLB":
-        if position2.upper() in ["DL", "DE", "LE", "RE", "LOLB", "ILB", "MLB"]:
-            return "TBD"
-        elif position2.upper() in ["LB", "OLB", "ROLB"]:
-            return "ROLB"
-        return "CONFLICT"
-    
-    # If position1 is ILB or MLB, we can match on LB, ILB, or MLB.
-    if position1.upper() in ["ILB", "MLB"]:
-        if position2.upper() in ["DL", "DE", "LE", "RE", "OLB", "LOLB", "ROLB"]:
-            return "TBD"
-        elif position2.upper() in ["LB", "ILB", "MLB"]:
-            return "MLB"
-        return "CONFLICT"
-    
-    # If position1 is DB, try to go off of what we have in position2.
-    if position1.upper() == "DB":
-        if position2.upper() in ["DB", "S", "SAF"]:
-            return "TBD"
-        elif position2.upper() == "CB":
-            return "CB"
-        elif position2.upper() == "FS":
-            return "FS"
-        elif position2.upper() == "SS":
-            return "SS"
-        return "CONFLICT"
-    
-    # If position1 is CB, we can only match DB or CB.
-    if position1.upper() == "CB":
-        if position2.upper() in ["S", "SAF", "FS", "SS"]:
-            return "TBD"
-        elif position2.upper() in ["DB", "CB"]:
-            return "CB"
-        return "CONFLICT"
-    
-    # If position1 is S or SAF, try to go off of what we have in position2.
-    if position1.upper() in ["S", "SAF"]:
-        if position2.upper() in ["DB", "CB", "S", "SAF"]:
-            return "TBD"
-        elif position2.upper() == "FS":
-            return "FS"
-        elif position2.upper() == "SS":
-            return "SS"
-        return "CONFLICT"
-    
-    # If position1 is FS, we can match DB, S, SAF, or FS.
-    if position1.upper() == "FS":
-        if position2.upper() in ["CB", "SS"]:
-            return "TBD"
-        elif position2.upper() in ["DB", "S", "SAF", "FS"]:
-            return "FS"
-        return "CONFLICT"
-    
-    # If position1 is SS, we can match DB, S, SAF, or SS.
-    if position1.upper() == "SS":
-        if position2.upper() in ["CB", "FS"]:
-            return "TBD"
-        elif position2.upper() in ["DB", "S", "SAF", "SS"]:
-            return "SS"
+    # If nfl_position is DB, try to go off of what we have in madden_position.
+    if nfl_position.upper() in ["DB", "CB", "S", "SAF", "FS", "SS"]:
+        if madden_position.upper() in ["CB", "FS", "SS"]:
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
     # K is easy.
-    if position1.upper() == "K":
-        if position2.upper() == "K":
-            return "K"
-        elif position2.upper() == "P":
-            return "TBD"
+    if nfl_position.upper() == "K":
+        if madden_position.upper() == "K":
+            return madden_position.upper()
+        elif madden_position.upper() == "P":
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
     # P is easy.
-    if position1.upper() == "P":
-        if position2.upper() == "P":
-            return "P"
-        elif position2.upper() == "K":
-            return "TBD"
+    if nfl_position.upper() == "P":
+        if madden_position.upper() == "P":
+            return madden_position.upper()
+        elif madden_position.upper() == "K":
+            report_position_disagreement("INFO", nfl_position, madden_position, first_name, last_name)
+            return madden_position.upper()
+        report_position_disagreement("ERROR", nfl_position, madden_position, first_name, last_name)
         return "CONFLICT"
     
-    logging.error("Unknown position1 passed to choose_best_position:")
-    logging.error("position1.upper() = %s", position1.upper())
-    logging.error("position2.upper() = %s", position2.upper())
+    logging.error("Unknown nfl_position passed to choose_best_position for %s %s:", 
+                  first_name, 
+                  last_name
+                 )
+    logging.error("nfl_position.upper() = %s", nfl_position.upper())
+    logging.error("madden_position.upper() = %s", madden_position.upper())
     return "CONFLICT"
 
 

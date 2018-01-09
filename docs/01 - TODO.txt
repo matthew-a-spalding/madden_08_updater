@@ -90,13 +90,16 @@ made only once in a while off a revision from Git.
         
         *** Done. *** - It just puts a blank field into the output CSV file.
     
-
-CONTINUE HERE
-2017_11_30
-
 - Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape "https://overthecap.com/contracts" to get links 
 to each player's contract page, for setting the fields "total_salary", "signing_bonus", "draft_pick", "draft_round", 
 "years_pro" [determined from year (un)drafted], "contract_length", "years_left".
+    
+
+CONTINUE HERE
+2017_12_16
+
+    
+    - Add logic to the get_first/last_name functions to replace unicode in names with regular single quote; etc. 
     
     *** In Progress.    ***
     

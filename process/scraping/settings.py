@@ -19,7 +19,7 @@ LOG_LEVEL = "WARNING"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "tutorial (+http://www.yourdomain.com)"
 USER_AGENT = "Mozilla/5.0 (Windows; U; MSIE 10.0; Windows NT 9.0; en-US)"
-DOWNLOAD_DELAY = 0.25
+DOWNLOAD_DELAY = 0.3
 
 # Per docs at http://doc.scrapy.org/en/latest/topics/item-pipeline.html#topics-item-pipeline
 ITEM_PIPELINES = {
@@ -39,7 +39,7 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"cincinnati", "[SHORT_LOCATION]":"cin", "[NICKNAME]":"bengals"},
     # {"[FULL_LOCATION]":"cleveland", "[SHORT_LOCATION]":"cle", "[NICKNAME]":"browns"},
     # {"[FULL_LOCATION]":"pittsburgh", "[SHORT_LOCATION]":"pit", "[NICKNAME]":"steelers"},
-    # {"[FULL_LOCATION]":"houston", "[SHORT_LOCATION]":"hou", "[NICKNAME]":"texans"},
+    {"[FULL_LOCATION]":"houston", "[SHORT_LOCATION]":"hou", "[NICKNAME]":"texans"},
     # {"[FULL_LOCATION]":"indianapolis", "[SHORT_LOCATION]":"ind", "[NICKNAME]":"colts"},
     # {"[FULL_LOCATION]":"jacksonville", "[SHORT_LOCATION]":"jac", "[NICKNAME]":"jaguars"},
     # {"[FULL_LOCATION]":"tennessee", "[SHORT_LOCATION]":"ten", "[NICKNAME]":"titans"},
@@ -56,7 +56,7 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"greenbay", "[SHORT_LOCATION]":"gb", "[NICKNAME]":"packers"},
     # {"[FULL_LOCATION]":"minnesota", "[SHORT_LOCATION]":"min", "[NICKNAME]":"vikings"},
     # {"[FULL_LOCATION]":"atlanta", "[SHORT_LOCATION]":"atl", "[NICKNAME]":"falcons"},
-    {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
+    # {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
     # {"[FULL_LOCATION]":"neworleans", "[SHORT_LOCATION]":"no", "[NICKNAME]":"saints"},
     # {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
     # {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
