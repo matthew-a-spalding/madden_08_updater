@@ -95,28 +95,23 @@ to each player's contract page, for setting the fields "total_salary", "signing_
 "years_pro" [determined from year (un)drafted], "contract_length", "years_left".
     
 
-CONTINUE HERE
-2017_12_16
-
-    
     - Add logic to the get_first/last_name functions to replace unicode in names with regular single quote; etc. 
     
-    *** In Progress.    ***
-    
-- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
-alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
-in the output file for this year.
-    
-    *** TODO    ***
+    *** Not necessary.    ***
     
 - Write up further instructions for future runs of the updating process, including more details on the actions needed 
 for step 3, such as iterating over the run of step_3_scrape_NFL_rosters.py by altering code in 
 process\scraping\settings.py to set the LOG_LEVEL to "INFO" first, then "WARNING", and finally "ERROR" (and only if 
-absolutely neccessary, DEBUG), while choosing which new players not found in the "Latest Madden Ratings.csv" to add or 
+absolutely necessary, DEBUG), while choosing which new players not found in the "Latest Madden Ratings.csv" to add or 
 skip.
     
-    *** TODO    ***
-    
+    *** Done.    ***
+
+
+CONTINUE HERE
+2018_01_09
+
+
 - Figure out whether or not to alter field values from the 2017 Madden ratings file, 
 specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
 certain percentage, to account for inflation today?)
@@ -129,3 +124,8 @@ Setting Field Values.xlsx". Separate out each position into its own Python modul
     
     ***	TODO	***
     
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
+alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
+in the output file for this year.
+    
+    *** TODO    ***
