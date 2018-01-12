@@ -130,10 +130,10 @@ def set_player_string_field(field_name, player_index, field_str_value):
 #                         field_name.decode(), 
 #                         value_as_string.value.decode())
 #        else:
-#            logging.warning("\nError in getting Player %d's %s field.", player_index, field_name.decode())
+#            logging.error("\nError in getting Player %d's %s field.", player_index, field_name.decode())
 #    else:
     if not value_was_set_as_string:
-        logging.warning("\nError in setting Player %d's %s field.", player_index, field_name.decode())
+        logging.error("\nError in setting Player %d's %s field.", player_index, field_name.decode())
 
 
 # ----------------------------------------------------- SECTION 4 -----------------------------------------------------
@@ -142,19 +142,19 @@ def set_player_string_field(field_name, player_index, field_str_value):
 # ------------ READ FROM THE MADDEN RATINGS .csv FILE ------------
 
 # Open the CSV file with all the players and their Madden ratings.
-madden_ratings_file = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Madden Ratings.csv"))
+LATEST_PLAYER_ATTRIBUTES_FILE = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Ratings.csv"))
 
 # Get a DictReader to read the rows into dicts using the header row as keys.
-madden_ratings_dict_reader = csv.DictReader(madden_ratings_file)
+ATTRIBUTES_DICT_READER = csv.DictReader(LATEST_PLAYER_ATTRIBUTES_FILE)
 
 # Get the dict representing the first row.
-first_player_dict = next(madden_ratings_dict_reader)
+FIRST_PLAYER_DICT = next(ATTRIBUTES_DICT_READER)
 
 # Show what we got.
-logging.info("\nfirst_player_dict = %r", first_player_dict)
+logging.info("\nFIRST_PLAYER_DICT = %r", FIRST_PLAYER_DICT)
 
-# Close the Madden Ratings .csv file.
-madden_ratings_file.close()
+# Close the Latest Player Attributes.csv file.
+LATEST_PLAYER_ATTRIBUTES_FILE.close()
 
 
 # ------------------ WRITE NEW VALUES FOR IMPORTANT ATTRIBUTES OF THE FIRST PLAYER ------------------
@@ -171,98 +171,98 @@ set_player_integer_field(b'PRHA', 0, 5)
 #   max(65, min(99, ceil((2 * (m_tas + m_tam + m_tad) - min(m_tas, m_tam, m_tad))/5))).
 # Start by getting a list of the values we want out of the player dict, 
 # using the keys 'Throw Accuracy Short', 'Throw Accuracy Mid', and 'Throw Accuracy Deep'.
-throwing_acc_keys_list = ['Throw Accuracy Short', 'Throw Accuracy Mid', 'Throw Accuracy Deep']
-throwing_acc_values_list = [int(first_player_dict[x]) for x in throwing_acc_keys_list]
+THROWING_ACC_KEYS_LIST = ['Throw Accuracy Short', 'Throw Accuracy Mid', 'Throw Accuracy Deep']
+THROWING_ACC_VALUES_LIST = [int(FIRST_PLAYER_DICT[x]) for x in THROWING_ACC_KEYS_LIST]
 # Now to calculate the PTHA value we want.
-PTHA_value = int(
+PTHA_VALUE = int(
     max([65, 
          min([99, 
               math.ceil(
                   (2 * (
-                      int(first_player_dict['Throw Accuracy Short']) 
-                      + int(first_player_dict['Throw Accuracy Mid']) 
-                      + int(first_player_dict['Throw Accuracy Deep'])
+                      int(FIRST_PLAYER_DICT['Throw Accuracy Short']) 
+                      + int(FIRST_PLAYER_DICT['Throw Accuracy Mid']) 
+                      + int(FIRST_PLAYER_DICT['Throw Accuracy Deep'])
                       ) 
-                   - min(throwing_acc_values_list)
+                   - min(THROWING_ACC_VALUES_LIST)
                   ) / 5
                   )
              ])
         ])
     )
 # Now set the PTHA value.
-set_player_integer_field(b'PTHA', 0, PTHA_value)
+set_player_integer_field(b'PTHA', 0, PTHA_VALUE)
 
 # Set Player 0's first name (PFNA).
-set_player_string_field(b'PFNA', 0, first_player_dict['First'].encode('utf-8'))
+set_player_string_field(b'PFNA', 0, FIRST_PLAYER_DICT['First'].encode('utf-8'))
 
 # Set Player 0's last name (PLNA).
-set_player_string_field(b'PLNA', 0, first_player_dict['Last'].encode('utf-8'))
+set_player_string_field(b'PLNA', 0, FIRST_PLAYER_DICT['Last'].encode('utf-8'))
 
 # Set Player 0's stamina (PSTA).
-set_player_integer_field(b'PSTA', 0, int(first_player_dict['Stamina']))
+set_player_integer_field(b'PSTA', 0, int(FIRST_PLAYER_DICT['Stamina']))
 
 # Set Player 0's kicking accuracy (PKAC).
-set_player_integer_field(b'PKAC', 0, int(first_player_dict['Kick Accuracy']))
+set_player_integer_field(b'PKAC', 0, int(FIRST_PLAYER_DICT['Kick Accuracy']))
 
 # Set Player 0's acceleration (PACC).
-set_player_integer_field(b'PACC', 0, int(first_player_dict['Acceleration']))
+set_player_integer_field(b'PACC', 0, int(FIRST_PLAYER_DICT['Acceleration']))
 
 # Set Player 0's speed (PSPD).
-set_player_integer_field(b'PSPD', 0, int(first_player_dict['Speed']))
+set_player_integer_field(b'PSPD', 0, int(FIRST_PLAYER_DICT['Speed']))
 
 # Set Player 0's toughness (PTGH).
-set_player_integer_field(b'PTGH', 0, int(first_player_dict['Toughness']))
+set_player_integer_field(b'PTGH', 0, int(FIRST_PLAYER_DICT['Toughness']))
 
 # Set Player 0's catching (PCTH).
-set_player_integer_field(b'PCTH', 0, int(first_player_dict['Catching']))
+set_player_integer_field(b'PCTH', 0, int(FIRST_PLAYER_DICT['Catching']))
 
 # Set Player 0's agility (PAGI).
-set_player_integer_field(b'PAGI', 0, int(first_player_dict['Agility']))
+set_player_integer_field(b'PAGI', 0, int(FIRST_PLAYER_DICT['Agility']))
 
 # Set Player 0's injury (PINJ).
-set_player_integer_field(b'PINJ', 0, int(first_player_dict['Injury']))
+set_player_integer_field(b'PINJ', 0, int(FIRST_PLAYER_DICT['Injury']))
 
 # Set Player 0's tackling (PTAK).
-set_player_integer_field(b'PTAK', 0, int(first_player_dict['Tackle']))
+set_player_integer_field(b'PTAK', 0, int(FIRST_PLAYER_DICT['Tackle']))
 
 # Set Player 0's pass blocking (PPBK).
-set_player_integer_field(b'PPBK', 0, int(first_player_dict['Pass Block']))
+set_player_integer_field(b'PPBK', 0, int(FIRST_PLAYER_DICT['Pass Block']))
 
 # Set Player 0's run blocking (PRBK).
-set_player_integer_field(b'PRBK', 0, int(first_player_dict['Run Block']))
+set_player_integer_field(b'PRBK', 0, int(FIRST_PLAYER_DICT['Run Block']))
 
 # Set Player 0's break tackle (PBTK).
-set_player_integer_field(b'PBTK', 0, int(first_player_dict['Trucking']))
+set_player_integer_field(b'PBTK', 0, int(FIRST_PLAYER_DICT['Trucking']))
 
 # Set Player 0's Player Role 1 (PROL) to 35 (Go-To Guy).
 set_player_integer_field(b'PROL', 0, 35)
 
 # Set Player 0's jersey number (PJEN).
-set_player_integer_field(b'PJEN', 0, int(first_player_dict['Jersey']))
+set_player_integer_field(b'PJEN', 0, int(FIRST_PLAYER_DICT['Jersey']))
 
 # Set Player 0's throwing power (PTHP).
-set_player_integer_field(b'PTHP', 0, int(first_player_dict['Throw Power']))
+set_player_integer_field(b'PTHP', 0, int(FIRST_PLAYER_DICT['Throw Power']))
 
 # Set Player 0's jumping (PJMP).
-set_player_integer_field(b'PJMP', 0, int(first_player_dict['Jumping']))
+set_player_integer_field(b'PJMP', 0, int(FIRST_PLAYER_DICT['Jumping']))
 
 # Set Player 0's portrait ID (PSXP).
 set_player_integer_field(b'PSXP', 0, 0)
 
 # Set Player 0's carrying (PCAR).
-set_player_integer_field(b'PCAR', 0, int(first_player_dict['Carrying']))
+set_player_integer_field(b'PCAR', 0, int(FIRST_PLAYER_DICT['Carrying']))
 
 # Set Player 0's kicking power (PKPR).
-set_player_integer_field(b'PKPR', 0, int(first_player_dict['Kick Power']))
+set_player_integer_field(b'PKPR', 0, int(FIRST_PLAYER_DICT['Kick Power']))
 
 # Set Player 0's strength (PSTR).
-set_player_integer_field(b'PSTR', 0, int(first_player_dict['Strength']))
+set_player_integer_field(b'PSTR', 0, int(FIRST_PLAYER_DICT['Strength']))
 
 # Set Player 0's overall rating (POVR).
 set_player_integer_field(b'POVR', 0, 25)
 
 # Set Player 0's awareness (PAWR).
-set_player_integer_field(b'PAWR', 0, int(first_player_dict['Awareness']))
+set_player_integer_field(b'PAWR', 0, int(FIRST_PLAYER_DICT['Awareness']))
 
 # Set Player 0's Position ID (PPOS) to 3 (WR).
 set_player_integer_field(b'PPOS', 0, 3)
@@ -271,7 +271,7 @@ set_player_integer_field(b'PPOS', 0, 3)
 set_player_integer_field(b'POPS', 0, 3)
 
 # Set Player 0's kick returns (PKRT).
-set_player_integer_field(b'PKRT', 0, int(first_player_dict['Kick Return']))
+set_player_integer_field(b'PKRT', 0, int(FIRST_PLAYER_DICT['Kick Return']))
 
 
 # ------------  FINAL ACTIONS: Compact, save, and close the DB. ------------

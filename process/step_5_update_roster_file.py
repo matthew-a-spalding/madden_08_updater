@@ -14,7 +14,7 @@ r""" step_5_update_roster_file.py
     Additionally, the below files must be in the 'inputs' folder, meaning in 
     os.path.join(os.path.dirname(os.path.abspath(__file__)), r"inputs\") : 
         1) The base Madden '08 Roster file to update, named 'base.ros' 
-        2) The latest NFL roster-based CSV file, named 'Latest NFL Rosters.csv' 
+        2) The latest NFL roster-based CSV file, named 'Latest Player Attributes.csv' 
     
     This script will generate the file "latest.ros" in the folder 'outputs'.
 """
@@ -54,10 +54,10 @@ TDBACCESS_DLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbacc
 DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros").encode('utf-8'))
 
 # Open the CSV file with all the players and their latest attributes.
-LATEST_PLAYER_ATTRIBUTES = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Attributes.csv"))
+LATEST_PLAYER_ATTRIBUTES_FILE = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Attributes.csv"))
 
 # Get a DictReader to read the rows into dicts using the header row as keys.
-ATTRIBUTES_DICT_READER = csv.DictReader(LATEST_PLAYER_ATTRIBUTES)
+ATTRIBUTES_DICT_READER = csv.DictReader(LATEST_PLAYER_ATTRIBUTES_FILE)
 
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
@@ -67,7 +67,6 @@ class TDBTablePropertiesStruct(Structure):
     """Structure whose fields hold all the properties of a table in the roster file."""
     _fields_ = [
         ('Name', c_char_p),
-#        ('Name', c_wchar_p),
         ('FieldCount', c_int),
         ('Capacity', c_int),
         ('RecordCount', c_int),
@@ -84,24 +83,19 @@ class TDBTablePropertiesStruct(Structure):
     
     def __init__(self, *args):
         self.Name = cast((c_char * 8)(), c_char_p)
-#        self.Name = cast((c_wchar * 8)(), c_wchar_p)
         Structure.__init__(self, *args)
-#        super(TDBTablePropertiesStruct, self).__init__(*args)
 
 class TDBFieldPropertiesStruct(Structure):
     """Structure whose fields hold all the properties of a field from a table in the roster file."""
     _fields_ = [
         ('Name', c_char_p),
-#        ('Name', c_wchar_p),
         ('Size', c_int),
         ('FieldType', c_int),
     ]
     
     def __init__(self, *args):
         self.Name = cast((c_char * 8)(), c_char_p)
-#        self.Name = cast((c_wchar * 8)(), c_wchar_p)
         Structure.__init__(self, *args)
-#        super(TDBFieldPropertiesStruct, self).__init__(*args)
 
 # Add the argtype and restype definitions here for the DLL functions we'll use.
 
@@ -137,7 +131,7 @@ TDBACCESS_DLL.TDBTableGetProperties.restype = c_bool
 # ------------------------------------------------- Helper Functions --------------------------------------------------
 
 def set_player_integer_field(field_name, player_index, field_int_value):
-    """ Sets a given attribute on a given player to a given integer value. """
+    """ Sets a given field on a given player's record to a given integer value. """
     value_was_set_as_int = TDBACCESS_DLL.TDBFieldSetValueAsInteger(
         DB_INDEX, PLAYERS_TABLE, field_name, player_index, field_int_value)
 #    if value_was_set_as_int:
@@ -145,10 +139,10 @@ def set_player_integer_field(field_name, player_index, field_int_value):
 #        logging.info("\nSet Player %d's %s field to %d", player_index, field_name.decode(), int_value_set)
 #    else:
     if not value_was_set_as_int:
-        logging.error("\nError in setting Player %d's %s field.", player_index, field_name.decode())
+        logging.error("Error in setting Player %d's %s field as integer.", player_index, field_name.decode())
 
 def set_player_string_field(field_name, player_index, field_str_value):
-    """ Sets a given attribute on a given player to a given string value. """
+    """ Sets a given field on a given player's record to a given string value. """
     value_was_set_as_string = TDBACCESS_DLL.TDBFieldSetValueAsString(
         DB_INDEX, PLAYERS_TABLE, field_name, player_index, field_str_value)
 #    if value_was_set_as_string:
@@ -161,54 +155,89 @@ def set_player_string_field(field_name, player_index, field_str_value):
 #                         field_name.decode(), 
 #                         value_as_string.value.decode())
 #        else:
-#            logging.warning("\nError in getting Player %d's %s field.", player_index, field_name.decode())
+#            logging.error("\nError in getting Player %d's %s field.", player_index, field_name.decode())
 #    else:
     if not value_was_set_as_string:
-        logging.warning("\nError in setting Player %d's %s field.", player_index, field_name.decode())
+        logging.error("Error in setting Player %d's %s field as string.", player_index, field_name.decode())
 
 
 # ----------------------------------------------------- SECTION 4 -----------------------------------------------------
 # ------------------------------------------------ Main Functionality -------------------------------------------------
 
-# Loop over each row in the dict reader and process the player's attributes for inserting into our roster file.
-for player_dict in ATTRIBUTES_DICT_READER:
-    #logging.info("player_dict = %r", first_player_dict)
+if __name__ == "__main__":
+    
+    # Loop over each row in the dict reader and process the player's attributes for inserting into our roster file.
+    for i, player_dict in enumerate(ATTRIBUTES_DICT_READER, start=1):
+        #logging.info("player_dict %d = %r", i, player_dict)
+        
+        # Determine which function to call based on the 'position' field value.
+        if player_dict["position"].upper() == "QB":
+            create_quarterback(player_dict, i)
+        elif player_dict["position"].upper() == "HB":
+            create_halfback(player_dict, i)
+        elif player_dict["position"].upper() == "FB":
+            create_fullback(player_dict, i)
+        elif player_dict["position"].upper() == "WR":
+            create_wide_receiver(player_dict, i)
+        elif player_dict["position"].upper() == "TE":
+            create_tight_end(player_dict, i)
+        elif player_dict["position"].upper() == "LT":
+            create_left_tackle(player_dict, i)
+        elif player_dict["position"].upper() == "LG":
+            create_left_guard(player_dict, i)
+        elif player_dict["position"].upper() == "C":
+            create_center(player_dict, i)
+        elif player_dict["position"].upper() == "RG":
+            create_right_guard(player_dict, i)
+        elif player_dict["position"].upper() == "RT":
+            create_right_tackle(player_dict, i)
+        elif player_dict["position"].upper() == "LE":
+            create_left_end(player_dict, i)
+        elif player_dict["position"].upper() == "RE":
+            create_right_end(player_dict, i)
+        elif player_dict["position"].upper() == "DT":
+            create_defensive_tackle(player_dict, i)
+        elif player_dict["position"].upper() == "LOLB":
+            create_left_outside_linebacker(player_dict, i)
+        elif player_dict["position"].upper() == "MLB":
+            create_middle_linebacker(player_dict, i)
+        elif player_dict["position"].upper() == "ROLB":
+            create_right_outside_linebacker(player_dict, i)
+        elif player_dict["position"].upper() == "CB":
+            create_cornerback(player_dict, i)
+        elif player_dict["position"].upper() == "FS":
+            create_free_safety(player_dict, i)
+        elif player_dict["position"].upper() == "SS":
+            create_strong_safety(player_dict, i)
+        elif player_dict["position"].upper() == "K":
+            create_kicker(player_dict, i)
+        elif player_dict["position"].upper() == "P":
+            create_punter(player_dict, i)
+        else:
+            logging.error("Player %d's position was not recognized: %s", i, player_dict["position"].upper())
 
+    # -----------  FINAL ACTIONS: Compact, save, and close the DB, and close the Latest Player Attributes file. -----------
 
-#----------------------------------------------------------------------------------------------------------------------
+    # Compact the DB.
+    compacted_database = TDBACCESS_DLL.TDBDatabaseCompact(DB_INDEX)
+    if compacted_database:
+        logging.info("\nCompacted the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to compact the TDBDatabase.")
 
-# Get the info on the player at index 0.
-stringLastName = cast((c_char * 14)(), c_char_p) # Since PLNA.Size = 104, we need 14 bytes (104/8, +1 for terminator)
-boolGotValueAsString = TDBAccessDLL.TDBFieldGetValueAsString(
-        intDBIndex, listTDBTablePropertiesStructs[6].Name, b"PLNA", 0, byref(stringLastName))
-if boolGotValueAsString:
-    logging.warning("Player 0's PLNA field is %s." % stringLastName.value.decode())
-else:
-    logging.warning("UNABLE TO GET STRING VALUE FROM FIELD 'PLNA'.")
+    # Save the DB.
+    saved_database = TDBACCESS_DLL.TDBSave(DB_INDEX)
+    if saved_database:
+        logging.info("\nSaved the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to save the TDBDatabase.")
 
-#sys.exit()
+    # Close the DB.
+    closed_database = TDBACCESS_DLL.TDBClose(DB_INDEX)
+    if closed_database:
+        logging.info("\nClosed the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to close the TDBDatabase.")
 
-#----------------------------------------------------------------------------------------------------------------------
-
-# ------------  FINAL ACTIONS: Compact, save, and close the DB. ------------
-
-# Compact the DB.
-compacted_database = TDBACCESS_DLL.TDBDatabaseCompact(DB_INDEX)
-if compacted_database:
-    logging.info("\nCompacted the TDBDatabase.")
-else:
-    logging.error("\nError: Failed to compact the TDBDatabase.")
-
-# Save the DB.
-saved_database = TDBACCESS_DLL.TDBSave(DB_INDEX)
-if saved_database:
-    logging.info("\nSaved the TDBDatabase.")
-else:
-    logging.error("\nError: Failed to save the TDBDatabase.")
-
-# Close the DB.
-closed_database = TDBACCESS_DLL.TDBClose(DB_INDEX)
-if closed_database:
-    logging.info("\nClosed the TDBDatabase.")
-else:
-    logging.error("\nError: Failed to close the TDBDatabase.")
+    # Close the Latest Player Attributes.csv file.
+    LATEST_PLAYER_ATTRIBUTES_FILE.close()

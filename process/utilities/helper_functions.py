@@ -12,10 +12,7 @@ This file is broken up into the following sections:
 # --------------------------------------------------- SECTION 1 -------------------------------------------------------
 # ---------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS -------------------------------------------
 # 1 - Standard library imports
-import os
-import csv
-import math
-import ctypes
+import os, csv, math, ctypes
 
 # 2 - Third-party imports
 
@@ -27,11 +24,19 @@ import ctypes
 
 
 # --------------------------------------------------- SECTION 2 -------------------------------------------------------
-# ----------------------------------------------- Local Variables -----------------------------------------------------
+# --------------------------------------------- Class Declarations ----------------------------------------------------
 
 
 
 # --------------------------------------------------- SECTION 3 -------------------------------------------------------
-# ------------------------------------------------ Main Function ------------------------------------------------------
+# ------------------------------------------------ Main Functions -----------------------------------------------------
 
-
+def create_quarterback(player_dict, index):
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    

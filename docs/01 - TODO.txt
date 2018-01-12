@@ -107,17 +107,17 @@ skip.
     
     *** Done.    ***
 
+- Figure out whether or not to alter field values from the 2017 Madden ratings file, 
+specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
+certain percentage, to account for inflation today?)
+    
+    *** Done.    ***
+    
 
 CONTINUE HERE
 2018_01_09
 
 
-- Figure out whether or not to alter field values from the 2017 Madden ratings file, 
-specifically the amounts for Total Salary and Signing Bonus. (Maybe lower them each by a 
-certain percentage, to account for inflation today?)
-    
-    *** TODO    ***
-    
 - Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
