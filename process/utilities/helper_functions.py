@@ -2,17 +2,14 @@
 
 This is the only python sub-module used by the script "step_5_update_roster_file.py". It contains functions to perform 
 any task that is repeated in the logic of that script's main function.
-
-This file is broken up into the following sections:
-1) Imports, Settings, and Constants
-2) Local Variables
-3) Main Function
 """
 
 # --------------------------------------------------- SECTION 1 -------------------------------------------------------
 # ---------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS -------------------------------------------
 # 1 - Standard library imports
-import os, csv, math, ctypes
+import logging, os, math
+from ctypes import cast, c_bool, c_char, c_char_p, c_int, POINTER, Structure, WinDLL
+from shutil import copyfile
 
 # 2 - Third-party imports
 
@@ -22,21 +19,430 @@ import os, csv, math, ctypes
 
 # 5 - Global constants
 
+PLAYERS_TABLE = b'PLAY'
 
-# --------------------------------------------------- SECTION 2 -------------------------------------------------------
-# --------------------------------------------- Class Declarations ----------------------------------------------------
+# Set the base path we will use to keep other paths relative, and shorter :^)
+# This will be the directory above the directory above the directory this file is in.
+BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Get a handle for our DLL.
+TDBACCESS_DLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbaccess\old\tdbaccess.dll"))
+
+# Copy the input file into our destination folder and rename on the way.
+copyfile(
+   	os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros"), 
+	   os.path.join(BASE_MADDEN_PATH, r"process\outputs\latest.ros")
+)
+
+# Open the roster file through the DLL and get its index.
+DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\latest.ros").encode('utf-8'))
 
 
+# ----------------------------------------------------- SECTION 2 -----------------------------------------------------
+# ------------------------------------------------ Class Declarations -------------------------------------------------
 
-# --------------------------------------------------- SECTION 3 -------------------------------------------------------
-# ------------------------------------------------ Main Functions -----------------------------------------------------
+class TDBTablePropertiesStruct(Structure):
+    """Structure whose fields hold all the properties of a table in the roster file."""
+    _fields_ = [
+        ('Name', c_char_p),
+        ('FieldCount', c_int),
+        ('Capacity', c_int),
+        ('RecordCount', c_int),
+        ('DeletedCount', c_int),
+        ('NextDeletedRecord', c_int),
+        ('Flag0', c_bool),
+        ('Flag1', c_bool),
+        ('Flag2', c_bool),
+        ('Flag3', c_bool),
+        ('NonAllocated', c_bool),
+        ('HasVarchar', c_bool),
+        ('HasCompressedVarchar', c_bool),
+    ]
+    
+    def __init__(self, *args):
+        self.Name = cast((c_char * 8)(), c_char_p)
+        Structure.__init__(self, *args)
+
+# Add the argtype and restype definitions here for the DLL functions we'll use.
+
+TDBACCESS_DLL.TDBClose.argtypes = [c_int]
+TDBACCESS_DLL.TDBClose.restype = c_bool
+
+TDBACCESS_DLL.TDBDatabaseCompact.argtypes = [c_int]
+TDBACCESS_DLL.TDBDatabaseCompact.restype = c_bool
+
+TDBACCESS_DLL.TDBFieldGetValueAsInteger.argtypes = [c_int, c_char_p, c_char_p, c_int]
+TDBACCESS_DLL.TDBFieldGetValueAsInteger.restype = c_int
+
+TDBACCESS_DLL.TDBFieldGetValueAsString.argtypes = [c_int, c_char_p, c_char_p, c_int, POINTER(c_char_p)]
+TDBACCESS_DLL.TDBFieldGetValueAsString.restype = c_bool
+
+TDBACCESS_DLL.TDBFieldSetValueAsInteger.argtypes = [c_int, c_char_p, c_char_p, c_int, c_int]
+TDBACCESS_DLL.TDBFieldSetValueAsInteger.restype = c_bool
+
+TDBACCESS_DLL.TDBFieldSetValueAsString.argtypes = [c_int, c_char_p, c_char_p, c_int, c_char_p]
+TDBACCESS_DLL.TDBFieldSetValueAsString.restype = c_bool
+
+TDBACCESS_DLL.TDBOpen.argtypes = [c_char_p]
+TDBACCESS_DLL.TDBOpen.restype = c_int
+
+TDBACCESS_DLL.TDBSave.argtypes = [c_int]
+TDBACCESS_DLL.TDBSave.restype = c_bool
+
+TDBACCESS_DLL.TDBTableGetProperties.argtypes = [c_int, c_int, POINTER(TDBTablePropertiesStruct)]
+TDBACCESS_DLL.TDBTableGetProperties.restype = c_bool
+
+
+# ----------------------------------------------------- SECTION 3 -----------------------------------------------------
+# ------------------------------------------------- Helper Functions --------------------------------------------------
+
+def set_player_integer_field(field_name, player_index, field_int_value):
+    """ Sets a given field on a given player's record to a given integer value. """
+    value_was_set_as_int = TDBACCESS_DLL.TDBFieldSetValueAsInteger(
+        DB_INDEX, PLAYERS_TABLE, field_name, player_index, field_int_value)
+#    if value_was_set_as_int:
+#        int_value_set = TDBACCESS_DLL.TDBFieldGetValueAsInteger(DB_INDEX, PLAYERS_TABLE, field_name, player_index)
+#        logging.info("\nSet Player %d's %s field to %d", player_index, field_name.decode(), int_value_set)
+#    else:
+    if not value_was_set_as_int:
+        logging.error("Error in setting Player %d's %s field as integer.", player_index, field_name.decode())
+
+def set_player_string_field(field_name, player_index, field_str_value):
+    """ Sets a given field on a given player's record to a given string value. """
+    value_was_set_as_string = TDBACCESS_DLL.TDBFieldSetValueAsString(
+        DB_INDEX, PLAYERS_TABLE, field_name, player_index, field_str_value)
+#    if value_was_set_as_string:
+#        value_as_string = cast((c_char * 14)(), c_char_p)
+#        got_str_value = TDBACCESS_DLL.TDBFieldGetValueAsString(
+#            DB_INDEX, PLAYERS_TABLE, field_name, player_index, byref(value_as_string))
+#        if got_str_value:
+#            logging.info("\nSet Player %d's %s field to %s", 
+#                         player_index, 
+#                         field_name.decode(), 
+#                         value_as_string.value.decode())
+#        else:
+#            logging.error("\nError in getting Player %d's %s field.", player_index, field_name.decode())
+#    else:
+    if not value_was_set_as_string:
+        logging.error("Error in setting Player %d's %s field as string.", player_index, field_name.decode())
+
+
+# ----------------------------------------------------- SECTION 4 -----------------------------------------------------
+# ------------------------------------------------ Main Functionality -------------------------------------------------
 
 def create_quarterback(player_dict, index):
+    """
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
     # For all of the following fields, we simply use 0.
     # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
     
     # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
     
     # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
     # the default value we put in that column. If not, we will use formulas to determine what value to use. 
     
+def create_halfback(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_fullback(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_wide_receiver(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_tight_end(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_left_tackle(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_left_guard(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_center(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_right_guard(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_right_tackle(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_left_end(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_right_end(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_defensive_tackle(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_left_outside_linebacker(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_middle_linebacker(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_right_outside_linebacker(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_cornerback(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_free_safety(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_strong_safety(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_kicker(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def create_punter(player_dict, index):
+    """ 
+    Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
+    the calculations and updates necessary to create the player as a QB in the DB.
+    """
+    # For all of the following fields, we simply use 0.
+    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    set_player_integer_field(b'TLHA', index, 0)
+    
+    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    
+    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
+    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    
+def compact_save_close_db():
+    """ Compacts, saves, and closes the DB via the TDBACCESS_DLL. """
+    # Compact the DB.
+    compacted_database = TDBACCESS_DLL.TDBDatabaseCompact(DB_INDEX)
+    if compacted_database:
+        logging.info("\nCompacted the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to compact the TDBDatabase.")
+
+    # Save the DB.
+    saved_database = TDBACCESS_DLL.TDBSave(DB_INDEX)
+    if saved_database:
+        logging.info("\nSaved the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to save the TDBDatabase.")
+
+    # Close the DB.
+    closed_database = TDBACCESS_DLL.TDBClose(DB_INDEX)
+    if closed_database:
+        logging.info("\nClosed the TDBDatabase.")
+    else:
+        logging.error("\nError: Failed to close the TDBDatabase.")
