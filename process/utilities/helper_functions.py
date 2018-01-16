@@ -8,7 +8,7 @@ any task that is repeated in the logic of that script's main function.
 # ---------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS -------------------------------------------
 # 1 - Standard library imports
 import logging, os, math
-from ctypes import cast, c_bool, c_char, c_char_p, c_int, POINTER, Structure, WinDLL
+from ctypes import byref, cast, c_bool, c_char, c_char_p, c_int, POINTER, Structure, WinDLL
 from shutil import copyfile
 
 # 2 - Third-party imports
@@ -424,6 +424,38 @@ def create_punter(player_dict, index):
     # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
     # the default value we put in that column. If not, we will use formulas to determine what value to use. 
     
+def delete_players(number_to_delete):
+    """ Deletes the given number of player records from the end of the PLAY table. """
+    pass
+
+def create_players(number_to_create):
+    """ Adds the given number of player records to the end of the PLAY table. """
+    pass
+
+def get_existing_player_count():
+    """ Returns the number of player records currently in the roster file. """
+    
+    # Create a struct to hold the properties for the PLAY table.
+    player_table_properties = TDBTablePropertiesStruct()
+    
+    # Call the getter for the PLAY table's properties.
+    got_table_properties = TDBACCESS_DLL.TDBTableGetProperties(DB_INDEX, 6, byref(player_table_properties))
+    
+    if got_table_properties:
+        
+        # logging.info("player_table_properties.Name = %s", player_table_properties.Name)
+        # logging.info("player_table_properties.FieldCount = %d", player_table_properties.FieldCount)
+        # logging.info("player_table_properties.Capacity = %d", player_table_properties.Capacity)
+        # logging.info("player_table_properties.RecordCount = %d", player_table_properties.RecordCount)
+        # logging.info("player_table_properties.DeletedCount = %d", player_table_properties.DeletedCount)
+        # logging.info("player_table_properties.NextDeletedRecord = %d", player_table_properties.NextDeletedRecord)
+        
+        # Return the number in the field RecordCount minus the value in DeletedCount.
+        return player_table_properties.RecordCount - player_table_properties.DeletedCount
+        
+    logging.error("\nError: Failed to read properties of PLAY table.")
+    return -1
+
 def compact_save_close_db():
     """ Compacts, saves, and closes the DB via the TDBACCESS_DLL. """
     # Compact the DB.
