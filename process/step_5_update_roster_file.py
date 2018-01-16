@@ -33,6 +33,7 @@ r""" step_5_update_roster_file.py
 # 1 - Standard library imports
 
 import csv, logging, os
+#from importlib import reload
 
 # 2 - Third-party imports
 
@@ -43,6 +44,8 @@ from utilities import helper_functions as helper
 # 4 - Global settings
 
 # Set our logging level to Info.
+#logging.shutdown()
+#reload(logging)
 logging.basicConfig(level=logging.INFO)
 
 # 5 - Global constants
@@ -86,7 +89,7 @@ logging.info("EXISTING_PLAYER_COUNT = %d", EXISTING_PLAYER_COUNT)
 if NEW_PLAYER_COUNT < EXISTING_PLAYER_COUNT:
     helper.delete_players(EXISTING_PLAYER_COUNT - NEW_PLAYER_COUNT)
 elif NEW_PLAYER_COUNT > EXISTING_PLAYER_COUNT:
-    helper.create_players(NEW_PLAYER_COUNT - EXISTING_PLAYER_COUNT)
+    helper.add_players(NEW_PLAYER_COUNT - EXISTING_PLAYER_COUNT)
 
 # Loop over each element in the list and process the player's attributes for inserting into our roster file.
 for i, player_dict in enumerate(NEW_PLAYER_LIST):
