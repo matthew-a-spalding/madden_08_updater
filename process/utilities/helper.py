@@ -333,7 +333,7 @@ class Helper:
         """ Returns the Madden ID corresponding to a given college name. """
         # Use the generator expression 'next' to get the college with the given name, or None if not found.
         college_dict = next(
-            (college for college in self.colleges_list if college["name"].upper() in college_name.upper()), 
+            (college for college in self.colleges_list if college["name"].upper() == college_name.upper()), 
             None
         )
         if college_dict is not None:
