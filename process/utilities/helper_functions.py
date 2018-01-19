@@ -135,6 +135,77 @@ def set_player_string_field(field_name, player_index, field_str_value):
     if not value_was_set_as_string:
         logging.error("\tFailed in setting player %d's %s field as string!", player_index, field_name)
 
+def get_team_id(team_name):
+    """ Returns the Madden ID corresponding to a given team name. """
+    if "BEARS" in team_name.upper():
+        return 1
+    if "BENGALS" in team_name.upper():
+        return 2
+    if "BILLS" in team_name.upper():
+        return 3
+    if "BRONCOS" in team_name.upper():
+        return 4
+    if "BROWNS" in team_name.upper():
+        return 5
+    if "BUCCANEERS" in team_name.upper():
+        return 6
+    if "CARDINALS" in team_name.upper():
+        return 7
+    if "CHARGERS" in team_name.upper():
+        return 8
+    if "CHIEFS" in team_name.upper():
+        return 9
+    if "COLTS" in team_name.upper():
+        return 10
+    if "COWBOYS" in team_name.upper():
+        return 11
+    if "DOLPHINS" in team_name.upper():
+        return 12
+    if "EAGLES" in team_name.upper():
+        return 13
+    if "FALCONS" in team_name.upper():
+        return 14
+    if "49ERS" in team_name.upper():
+        return 15
+    if "GIANTS" in team_name.upper():
+        return 16
+    if "JAGUARS" in team_name.upper():
+        return 17
+    if "JETS" in team_name.upper():
+        return 18
+    if "LIONS" in team_name.upper():
+        return 19
+    if "PACKERS" in team_name.upper():
+        return 20
+    if "PANTHERS" in team_name.upper():
+        return 21
+    if "PATRIOTS" in team_name.upper():
+        return 22
+    if "RAIDERS" in team_name.upper():
+        return 23
+    if "RAMS" in team_name.upper():
+        return 24
+    if "RAVENS" in team_name.upper():
+        return 25
+    if "REDSKINS" in team_name.upper():
+        return 26
+    if "SAINTS" in team_name.upper():
+        return 27
+    if "SEAHAWKS" in team_name.upper():
+        return 28
+    if "STEELERS" in team_name.upper():
+        return 29
+    if "TITANS" in team_name.upper():
+        return 30
+    if "VIKINGS" in team_name.upper():
+        return 31
+    if "TEXANS" in team_name.upper():
+        return 32
+    return 1023
+
+def get_college_id(college_name):
+    """  """
+    return 0
 
 # ----------------------------------------------------- SECTION 4 -----------------------------------------------------
 # ------------------------------------------------ Main Functionality -------------------------------------------------
@@ -150,13 +221,86 @@ def create_quarterback(player_dict, index):
     the calculations and updates necessary to create the player as a QB in the DB.
     """
     # For all of the following fields, we simply use 0.
-    # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+    # PCPH, PFHO, PJTY, PMPC, PMUS, POPS, PPOS, PSTM, PSTY, PSXP, PTSL, PUCL, TLEL, TLHA, TLWR, TREL, TRHA, TRWR, 
+    set_player_integer_field('PCPH', index, 0)
+    set_player_integer_field('PFHO', index, 0)
+    set_player_integer_field('PJTY', index, 0)
+    set_player_integer_field('PMPC', index, 0)
+    set_player_integer_field('PMUS', index, 0)
+    set_player_integer_field('POPS', index, 0)
+    set_player_integer_field('PPOS', index, 0)
+    set_player_integer_field('PSTM', index, 0)
+    set_player_integer_field('PSTY', index, 0)
+    set_player_integer_field('PSXP', index, 0)
+    set_player_integer_field('PTSL', index, 0)
+    set_player_integer_field('PUCL', index, 0)
+    set_player_integer_field('TLEL', index, 0)
     set_player_integer_field('TLHA', index, 0)
+    set_player_integer_field('TLWR', index, 0)
+    set_player_integer_field('TREL', index, 0)
+    set_player_integer_field('TRHA', index, 0)
+    set_player_integer_field('TRWR', index, 0)
     
-    # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+    # PCMT gets 999, PJER gets a 1, PLHY gets -31, PLPL gets 100, and PPTI will always get 1009.
+    set_player_integer_field('PCMT', index, 999)
+    set_player_integer_field('PJER', index, 1)
+    set_player_integer_field('PLHY', index, -31)
+    set_player_integer_field('PLPL', index, 100)
+    set_player_integer_field('PPTI', index, 1009)
     
-    # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
-    # the default value we put in that column. If not, we will use formulas to determine what value to use. 
+    # For most attributes which are in 'Latest Player Attributes.csv', simply use the value in the file.
+    set_player_integer_field('PAGE', index, int(player_dict["age"]))
+    set_player_integer_field('PDPI', index, int(player_dict["draft_pick"]))
+    set_player_integer_field('PDRO', index, int(player_dict["draft_round"]))
+    set_player_integer_field('PFEx', index, int(player_dict["face_id"]))
+    set_player_integer_field('PFPB', index, int(player_dict["pro_bowl"]))
+    set_player_integer_field('PHED', index, int(player_dict["hair_style"]))
+    set_player_integer_field('PHCL', index, int(player_dict["hair_color"]))
+    set_player_integer_field('PHGT', index, int(player_dict["height"]))
+    set_player_integer_field('PICN', index, int(player_dict["nfl_icon"]))
+    set_player_integer_field('PJEN', index, int(player_dict["jersey_number"]))
+    set_player_integer_field('PLEL', index, int(player_dict["left_elbow"]))
+    set_player_integer_field('PLHA', index, int(player_dict["left_hand"]))
+    set_player_integer_field('PLSH', index, int(player_dict["left_shoe"]))
+    set_player_integer_field('PLTH', index, int(player_dict["left_knee"]))
+    set_player_integer_field('PNEK', index, int(player_dict["neck_pad"]))
+    set_player_integer_field('PREL', index, int(player_dict["right_elbow"]))
+    set_player_integer_field('PRHA', index, int(player_dict["right_hand"]))
+    set_player_integer_field('PRSH', index, int(player_dict["right_shoe"]))
+    set_player_integer_field('PRTH', index, int(player_dict["right_knee"]))
+    set_player_integer_field('PSKI', index, int(player_dict["skin_color"]))
+    set_player_integer_field('PVIS', index, int(player_dict["visor_style"]))
+    set_player_integer_field('PYRP', index, int(player_dict["years_pro"]))
+    set_player_integer_field('PYWT', index, int(player_dict["years_pro"]))
+    
+    # For these attributes, the calculations are simple.
+    
+    # Get the first 11 characters of the first name.
+    if len(player_dict["first_name"]) < 12:
+        set_player_string_field('PFNA', index, player_dict["first_name"])
+    else:
+        set_player_string_field('PFNA', index, player_dict["first_name"][:11])
+    # Get the first 13 characters of the last name.
+    if len(player_dict["last_name"]) < 14:
+        set_player_string_field('PLNA', index, player_dict["last_name"])
+    else:
+        set_player_string_field('PLNA', index, player_dict["last_name"][:13])
+    # Subtract 160 from the players weight, unless he is already under 160.
+    if int(player_dict["weight"]) > 159:
+        set_player_integer_field('PWGT', index, (int(player_dict["weight"]) - 160))
+    else:
+        set_player_integer_field('PWGT', index, 0)
+    # The team ID is straightforward.
+    set_player_integer_field('TGID', index, get_team_id(player_dict["team"]))
+    # The college ID is also fairly straightforward.
+    set_player_integer_field('PCOL', index, get_college_id(player_dict["college"]))
+    # The handedness is 0 for right, 1 for left.
+    if "RIGHT" in player_dict["handedness"].upper():
+        set_player_integer_field('PHAN', index, 0)
+    else:
+        set_player_integer_field('PHAN', index, 1)
+    
+    # For some attributes, we will use formulas to determine what value to use. 
     
 def create_halfback(player_dict, index):
     """ 

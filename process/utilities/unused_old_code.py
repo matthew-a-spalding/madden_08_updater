@@ -11,7 +11,7 @@ r""" unused_old_code.py
 # 1.1 - Standard library imports
 
 import logging, os
-from ctypes import byref, cast, c_bool, c_char, c_char_p, c_float, c_int, POINTER, Structure, WinDLL
+from ctypes import byref, cast, c_bool, c_char, c_char_p, c_int, POINTER, Structure, WinDLL
 
 
 # 1.2 - Third-party imports
@@ -21,7 +21,7 @@ from ctypes import byref, cast, c_bool, c_char, c_char_p, c_float, c_int, POINTE
 
 
 # 1.4 - Global settings
-
+logging.basicConfig(level=logging.INFO)
 
 # 1.5 - Global constants
 
@@ -143,19 +143,19 @@ table_property_structs_list = []
 for i in range(table_count):
     table_property_structs_list.append(TDBTablePropertiesStruct())
     got_table_properties = TDBACCESS_DLL.TDBTableGetProperties(DB_INDEX, i, byref(table_property_structs_list[i]))
-    if got_table_properties:
-        logging.info("\ntable_property_structs_list[%d].Name = %s", 
-                     i, table_property_structs_list[i].Name)
-        logging.info("table_property_structs_list[%d].FieldCount = %d", 
-                     i, table_property_structs_list[i].FieldCount)
-        logging.info("table_property_structs_list[%d].Capacity = %d", 
-                     i, table_property_structs_list[i].Capacity)
-        logging.info("table_property_structs_list[%d].RecordCount = %d", 
-                     i, table_property_structs_list[i].RecordCount)
-        logging.info("table_property_structs_list[%d].DeletedCount = %d", 
-                     i, table_property_structs_list[i].DeletedCount)
-        logging.info("table_property_structs_list[%d].NextDeletedRecord = %d", 
-                     i, table_property_structs_list[i].NextDeletedRecord)
+    # if got_table_properties:
+    #     logging.info("\ntable_property_structs_list[%d].Name = %s", 
+    #                  i, table_property_structs_list[i].Name)
+    #     logging.info("table_property_structs_list[%d].FieldCount = %d", 
+    #                  i, table_property_structs_list[i].FieldCount)
+    #     logging.info("table_property_structs_list[%d].Capacity = %d", 
+    #                  i, table_property_structs_list[i].Capacity)
+    #     logging.info("table_property_structs_list[%d].RecordCount = %d", 
+    #                  i, table_property_structs_list[i].RecordCount)
+    #     logging.info("table_property_structs_list[%d].DeletedCount = %d", 
+    #                  i, table_property_structs_list[i].DeletedCount)
+    #     logging.info("table_property_structs_list[%d].NextDeletedRecord = %d", 
+    #                  i, table_property_structs_list[i].NextDeletedRecord)
 
 # A list to hold the properties structs for each field in table 6, the "PLAY" table.
 table_6_field_property_structs_list = []
@@ -183,29 +183,29 @@ logging.info("\n\n")
 # ------------ PRINT THE FIELDS IN THE "PLAY" TABLE AND THEIR TYPES ------------
 
 # Create a dict to hold the player's attributes. Keys will be field Names, values will be field values.
-player_0_attributes_dict = {}
+#player_0_attributes_dict = {}
 
 # Loop over the fields in the PLAY table and get the values out, 
 # calling the appropriate ...GetValueAs... methods for each type.
-for i, field_property_struct in enumerate(table_6_field_property_structs_list):
-    # See what methods we need to call.
-    if field_property_struct.FieldType == 0: # tdbString
-        # First, create the string where we will hold the value.
-        value_as_string = cast((c_char * ((field_property_struct.Size // 8) + 1))(), c_char_p)
-        got_string_value = TDBACCESS_DLL.TDBFieldGetValueAsString(
-            DB_INDEX, table_property_structs_list[6].Name, field_property_struct.Name, 0, byref(value_as_string))
-        if got_string_value:
-            player_0_attributes_dict[field_property_struct.Name] = value_as_string.value.decode()
-            logging.info("%d: value_as_string for player 0's %s field = %s", 
-                         i, field_property_struct.Name, player_0_attributes_dict[field_property_struct.Name])
-        else:
-            logging.error("%d: Field %s is a string. UNABLE TO GET STRING VALUE.", i, field_property_struct.Name)
-    elif field_property_struct.FieldType == 2: # tdbSInt
-        logging.info("%d: Field %s is a signed int.", i, field_property_struct.Name)
-    elif field_property_struct.FieldType == 3: # tdbUInt
-        logging.info("%d: Field %s is an unsigned int.", i, field_property_struct.Name)
+# for i, field_property_struct in enumerate(table_6_field_property_structs_list):
+#     # See what methods we need to call.
+#     if field_property_struct.FieldType == 0: # tdbString
+#         # First, create the string where we will hold the value.
+#         value_as_string = cast((c_char * ((field_property_struct.Size // 8) + 1))(), c_char_p)
+#         got_string_value = TDBACCESS_DLL.TDBFieldGetValueAsString(
+#             DB_INDEX, table_property_structs_list[6].Name, field_property_struct.Name, 0, byref(value_as_string))
+#         if got_string_value:
+#             player_0_attributes_dict[field_property_struct.Name] = value_as_string.value.decode()
+#             logging.info("%d: value_as_string for player 0's %s field = %s", 
+#                          i, field_property_struct.Name, player_0_attributes_dict[field_property_struct.Name])
+#         else:
+#             logging.error("%d: Field %s is a string. UNABLE TO GET STRING VALUE.", i, field_property_struct.Name)
+#     elif field_property_struct.FieldType == 2: # tdbSInt
+#         logging.info("%d: Field %s is a signed int.", i, field_property_struct.Name)
+#     elif field_property_struct.FieldType == 3: # tdbUInt
+#         logging.info("%d: Field %s is an unsigned int.", i, field_property_struct.Name)
 
-logging.info("\nplayer_0_attributes_dict = %r", player_0_attributes_dict)
+# logging.info("\nplayer_0_attributes_dict = %r", player_0_attributes_dict)
 
 
 # -------------- OPTION 2: A list of lists to hold the properties structs for all 10 of the tables --------------
@@ -234,17 +234,38 @@ logging.info("\nplayer_0_attributes_dict = %r", player_0_attributes_dict)
 
 # ------------ Edit player 0's first name. ------------
 
-value_was_set_as_string = TDBACCESS_DLL.TDBFieldSetValueAsString(
-    DB_INDEX, table_property_structs_list[6].Name, b"PFNA", 0, b"SOMEONE")
+# value_was_set_as_string = TDBACCESS_DLL.TDBFieldSetValueAsString(
+#     DB_INDEX, table_property_structs_list[6].Name, b"PFNA", 0, b"SOMEONE")
 
-if value_was_set_as_string:
-    # Try getting the new name back out using the Get method.
-    value_as_string = cast((c_char * 12)(), c_char_p)
-    got_value_as_string = TDBACCESS_DLL.TDBFieldGetValueAsString(
-        DB_INDEX, table_property_structs_list[6].Name, b"PFNA", 0, byref(value_as_string))
-    if got_value_as_string:
-        logging.info("We've set the string for player 0's PFNA field to %s.", value_as_string.value.decode())
-    else:
-        logging.error("UNABLE TO GET STRING VALUE FROM FIELD 'PFNA' AFTER SETTING IT.")
+#if value_was_set_as_string:
+#     # Try getting the new name back out using the Get method.
+#     value_as_string = cast((c_char * 12)(), c_char_p)
+#     got_value_as_string = TDBACCESS_DLL.TDBFieldGetValueAsString(
+#         DB_INDEX, table_property_structs_list[6].Name, b"PFNA", 0, byref(value_as_string))
+#     if got_value_as_string:
+#         logging.info("We've set the string for player 0's PFNA field to %s.", value_as_string.value.decode())
+#     else:
+#         logging.error("UNABLE TO GET STRING VALUE FROM FIELD 'PFNA' AFTER SETTING IT.")
+# else:
+#     logging.error("UNABLE TO SET STRING VALUE IN FIELD 'PFNA'.")
+
+# Compact the DB.
+compacted_database = TDBACCESS_DLL.TDBDatabaseCompact(DB_INDEX)
+if compacted_database:
+    logging.info("Compacted the TDBDatabase.")
 else:
-    logging.error("UNABLE TO SET STRING VALUE IN FIELD 'PFNA'.")
+    logging.error("\tFailed to compact the TDBDatabase!")
+
+# Save the DB.
+saved_database = TDBACCESS_DLL.TDBSave(DB_INDEX)
+if saved_database:
+    logging.info("Saved the TDBDatabase.")
+else:
+    logging.error("\tFailed to save the TDBDatabase!")
+
+# Close the DB.
+closed_database = TDBACCESS_DLL.TDBClose(DB_INDEX)
+if closed_database:
+    logging.info("Closed the TDBDatabase.")
+else:
+    logging.error("\tFailed to close the TDBDatabase!")
