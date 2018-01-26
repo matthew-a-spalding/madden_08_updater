@@ -68,6 +68,7 @@ with open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Attribut
 
 # Get the number of new players, ie. the count of dicts in the list.
 NEW_PLAYER_COUNT = len(NEW_PLAYER_LIST)
+logging.info("NEW_PLAYER_COUNT = %d", NEW_PLAYER_COUNT)
 
 try:
     
@@ -75,7 +76,6 @@ try:
     HELPER = Helper()
     
     # Size our player table.
-    logging.info("NEW_PLAYER_COUNT = %d", NEW_PLAYER_COUNT)
     HELPER.size_player_table(NEW_PLAYER_COUNT)
     
     # Loop over each element in the list and process the player's attributes for inserting into our roster file.

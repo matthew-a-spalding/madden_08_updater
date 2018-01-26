@@ -12,6 +12,7 @@ from ctypes import byref, cast, c_bool, c_wchar, c_wchar_p, c_int, POINTER, Stru
 from shutil import copyfile
 
 # 2 - Third-party imports
+from numpy import array, random
 
 # 3 - Application-specific imports
 
@@ -179,7 +180,7 @@ class Helper:
         existing_player_count = self.player_table_properties.RecordCount - self.player_table_properties.DeletedCount
         logging.info("existing_player_count = %d", existing_player_count)
         
-        # If we have fewer new players than existing players, delete the excess. If we have more, create records for them.
+        # If we have fewer new players than existing players, delete the excess. If more, create records for them.
         if new_player_count < existing_player_count:
             self.delete_players(existing_player_count - new_player_count)
         elif new_player_count > existing_player_count:
@@ -263,71 +264,6 @@ class Helper:
         if team_dict is not None:
             return int(team_dict["id"])
         return 1023
-        # if "BEARS" in team_name.upper():
-        #     return 1
-        # if "BENGALS" in team_name.upper():
-        #     return 2
-        # if "BILLS" in team_name.upper():
-        #     return 3
-        # if "BRONCOS" in team_name.upper():
-        #     return 4
-        # if "BROWNS" in team_name.upper():
-        #     return 5
-        # if "BUCCANEERS" in team_name.upper():
-        #     return 6
-        # if "CARDINALS" in team_name.upper():
-        #     return 7
-        # if "CHARGERS" in team_name.upper():
-        #     return 8
-        # if "CHIEFS" in team_name.upper():
-        #     return 9
-        # if "COLTS" in team_name.upper():
-        #     return 10
-        # if "COWBOYS" in team_name.upper():
-        #     return 11
-        # if "DOLPHINS" in team_name.upper():
-        #     return 12
-        # if "EAGLES" in team_name.upper():
-        #     return 13
-        # if "FALCONS" in team_name.upper():
-        #     return 14
-        # if "49ERS" in team_name.upper():
-        #     return 15
-        # if "GIANTS" in team_name.upper():
-        #     return 16
-        # if "JAGUARS" in team_name.upper():
-        #     return 17
-        # if "JETS" in team_name.upper():
-        #     return 18
-        # if "LIONS" in team_name.upper():
-        #     return 19
-        # if "PACKERS" in team_name.upper():
-        #     return 20
-        # if "PANTHERS" in team_name.upper():
-        #     return 21
-        # if "PATRIOTS" in team_name.upper():
-        #     return 22
-        # if "RAIDERS" in team_name.upper():
-        #     return 23
-        # if "RAMS" in team_name.upper():
-        #     return 24
-        # if "RAVENS" in team_name.upper():
-        #     return 25
-        # if "REDSKINS" in team_name.upper():
-        #     return 26
-        # if "SAINTS" in team_name.upper():
-        #     return 27
-        # if "SEAHAWKS" in team_name.upper():
-        #     return 28
-        # if "STEELERS" in team_name.upper():
-        #     return 29
-        # if "TITANS" in team_name.upper():
-        #     return 30
-        # if "VIKINGS" in team_name.upper():
-        #     return 31
-        # if "TEXANS" in team_name.upper():
-        #     return 32
-        # return 1023
     
     def get_college_id(self, college_name):
         """ Returns the Madden ID corresponding to a given college name. """
@@ -346,7 +282,7 @@ class Helper:
         the calculations and updates necessary to create the player as a QB in the DB.
         """
         # For all of the following fields, we simply use 0.
-        # PCPH, PFHO, PJTY, PMPC, PMUS, POPS, PPOS, PSTM, PSTY, PSXP, PTSL, PUCL, TLEL, TLHA, TLWR, TREL, TRHA, TRWR, 
+        # PCPH, PFHO, PJTY, PMPC, PMUS, POPS, PPOS, PSTM, PSTY, PSXP, PTSL, PUCL, TLEL, TLHA, TLWR, TREL, TRHA, TRWR 
         self.set_player_integer_field('PCPH', index, 0)
         self.set_player_integer_field('PFHO', index, 0)
         self.set_player_integer_field('PJTY', index, 0)
@@ -373,7 +309,7 @@ class Helper:
         self.set_player_integer_field('PLPL', index, 100)
         self.set_player_integer_field('PPTI', index, 1009)
         
-        # For most attributes which are in 'Latest Player Attributes.csv', simply use the value in the file.
+        # For many attributes in 'Latest Player Attributes.csv', we simply use the exact value from the file.
         self.set_player_integer_field('PAGE', index, int(player_dict["age"]))
         self.set_player_integer_field('PDPI', index, int(player_dict["draft_pick"]))
         self.set_player_integer_field('PDRO', index, int(player_dict["draft_round"]))
@@ -384,56 +320,292 @@ class Helper:
         self.set_player_integer_field('PHGT', index, int(player_dict["height"]))
         self.set_player_integer_field('PICN', index, int(player_dict["nfl_icon"]))
         self.set_player_integer_field('PJEN', index, int(player_dict["jersey_number"]))
-        self.set_player_integer_field('PLEL', index, int(player_dict["left_elbow"]))
-        self.set_player_integer_field('PLHA', index, int(player_dict["left_hand"]))
-        self.set_player_integer_field('PLSH', index, int(player_dict["left_shoe"]))
-        self.set_player_integer_field('PLTH', index, int(player_dict["left_knee"]))
         self.set_player_integer_field('PNEK', index, int(player_dict["neck_pad"]))
-        self.set_player_integer_field('PREL', index, int(player_dict["right_elbow"]))
-        self.set_player_integer_field('PRHA', index, int(player_dict["right_hand"]))
-        self.set_player_integer_field('PRSH', index, int(player_dict["right_shoe"]))
-        self.set_player_integer_field('PRTH', index, int(player_dict["right_knee"]))
         self.set_player_integer_field('PSKI', index, int(player_dict["skin_color"]))
         self.set_player_integer_field('PVIS', index, int(player_dict["visor_style"]))
         self.set_player_integer_field('PYRP', index, int(player_dict["years_pro"]))
+        # This is correct - we are intentionally setting the years with team to the number of years pro.
         self.set_player_integer_field('PYWT', index, int(player_dict["years_pro"]))
         
-        # For these attributes, the calculations are simple.
+        
+        # For these next attributes, the calculations involve the value from a column in the player dict.
         
         # The college ID is simply picked from a list.
         self.set_player_integer_field('PCOL', index, self.get_college_id(player_dict["college"]))
+        
+        # For eye_black, if the CSV says -1, give 80% a 0 (none) and 20% a 1 (black).
+        if int(player_dict["eye_black"]) == -1:
+            elements = [0, 1]
+            weights = [0.8, 0.2]
+            eye_black = get_weighted_random(elements, weights)
+        else:
+            eye_black = int(player_dict["eye_black"])
+        self.set_player_integer_field('PEYE', index, eye_black)
+        
         # Get the first 11 characters of the first name.
         if len(player_dict["first_name"]) < 12:
             self.set_player_string_field('PFNA', index, player_dict["first_name"])
         else:
             self.set_player_string_field('PFNA', index, player_dict["first_name"][:11])
+        
         # The handedness is 0 for right, 1 for left.
         if "RIGHT" in player_dict["handedness"].upper():
-            self.set_player_integer_field('PHAN', index, 0)
+            handedness = 0
         else:
-            self.set_player_integer_field('PHAN', index, 1)
+            handedness = 1
+        self.set_player_integer_field('PHAN', index, handedness)
+        
+        # For left_elbow, if the CSV says -1, give 85% a 0 (none), 5% a 7 (black wrist), 5% a 8 (white wrist), and 
+        # 5% a 9 (team-color wrist).
+        if int(player_dict["left_elbow"]) == -1:
+            elements = [0, 7, 8, 9]
+            weights = [0.85, 0.05, 0.05, 0.05]
+            left_elbow = get_weighted_random(elements, weights)
+        else:
+            left_elbow = int(player_dict["left_elbow"])
+        self.set_player_integer_field('PLEL', index, left_elbow)
+        
+        # For left_hand, if the CSV says -1 and the player's handedness is right, set 70% to 0 (none), 5% to 2 
+        # (black glove), 5% to 3 (white glove), 5% to 4 (team-color glove), 5% to 5 (white RB glove), 5% to 6 (black 
+        # RB glove), and 5% to 7 (team-color RB glove).
+        if int(player_dict["left_hand"]) == -1:
+            if handedness == 0:
+                elements = [0, 2, 3, 4, 5, 6, 7]
+                weights = [0.70, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+                left_hand = get_weighted_random(elements, weights)
+            else:
+                left_hand = 0
+        else:
+            left_hand = int(player_dict["left_hand"])
+        self.set_player_integer_field('PLHA', index, left_hand)
+        
         # Get the first 13 characters of the last name.
         if len(player_dict["last_name"]) < 14:
             self.set_player_string_field('PLNA', index, player_dict["last_name"])
         else:
             self.set_player_string_field('PLNA', index, player_dict["last_name"][:13])
+        
+        # For left_shoe, if the CSV says -1, give 90% a 0 (none) and 10% a 1 (white tape).
+        if int(player_dict["left_shoe"]) == -1:
+            elements = [0, 1]
+            weights = [0.9, 0.1]
+            left_shoe = get_weighted_random(elements, weights)
+        else:
+            left_shoe = int(player_dict["left_shoe"])
+        self.set_player_integer_field('PLSH', index, left_shoe)
+        
+        # For left_knee, if the CSV says -1, always use 0. Otherwise, just use what is in the file.
+        if int(player_dict["left_knee"]) == -1:
+            left_knee = 0
+        else:
+            left_knee = int(player_dict["left_knee"])
+        self.set_player_integer_field('PLTH', index, left_knee)
+        
+        # For right_elbow, if the CSV says -1: If the left_elbow was 0, set 85% to 0 (none), 5% to 7 (black wrist), 5% 
+        # to 8 (white wrist), and 5% to 9 (team-color wrist). If left_elbow was non-zero, set 80% to the same value, 
+        # and 20% to 0. If the CSV value is not -1, just use what is in there.
+        if int(player_dict["right_elbow"]) == -1:
+            if left_elbow == 0:
+                elements = [0, 7, 8, 9]
+                weights = [0.85, 0.05, 0.05, 0.05]
+                right_elbow = get_weighted_random(elements, weights)
+            else:
+                elements = [left_elbow, 0]
+                weights = [0.80, 0.2]
+                right_elbow = get_weighted_random(elements, weights)
+        else:
+            right_elbow = int(player_dict["right_elbow"])
+        self.set_player_integer_field('PREL', index, right_elbow)
+        
+        # For right_hand, if the CSV says -1 and the player's handedness is left, set 70% to 0 (none), 5% to 2 
+        # (black glove), 5% to 3 (white glove), 5% to 4 (team-color glove), 5% to 5 (white RB glove), 5% to 6 (black 
+        # RB glove), and 5% to 7 (team-color RB glove).
+        if int(player_dict["right_hand"]) == -1:
+            if handedness == 1:
+                elements = [0, 2, 3, 4, 5, 6, 7]
+                weights = [0.70, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+                right_hand = get_weighted_random(elements, weights)
+            else:
+                right_hand = 0
+        else:
+            right_hand = int(player_dict["right_hand"])
+        self.set_player_integer_field('PRHA', index, right_hand)
+        
+        # For right_shoe, if the CSV says -1, just match it to the left_shoe.
+        if int(player_dict["right_shoe"]) == -1:
+            right_shoe = left_shoe
+        else:
+            right_shoe = int(player_dict["right_shoe"])
+        self.set_player_integer_field('PRSH', index, right_shoe)
+        
+        # For right_knee, if the CSV says -1, always use 0. Otherwise, just use what is in the file.
+        if int(player_dict["right_knee"]) == -1:
+            right_knee = 0
+        else:
+            right_knee = int(player_dict["right_knee"])
+        self.set_player_integer_field('PRTH', index, right_knee)
+        
         # Subtract 160 from the players weight, unless he is already under 160.
         if int(player_dict["weight"]) > 159:
             self.set_player_integer_field('PWGT', index, (int(player_dict["weight"]) - 160))
         else:
             self.set_player_integer_field('PWGT', index, 0)
+        
         # The team ID is simply picked from a list.
         self.set_player_integer_field('TGID', index, self.get_team_id(player_dict["team"]))
         
-        # For some attributes, we will use formulas to determine what value to use. 
+        
+        # Here is where we set the main attributes used by this position. See the file 'Methods for Setting Field 
+        # Values.xlsx' for details on the calculations used.
+        
+        speed = max(min(int(player_dict["speed"]), 95), 45)
+        self.set_player_integer_field('PSPD', index, speed)
+        
+        strength = max(min(int(player_dict["strength"]), 80), 45)
+        self.set_player_integer_field('PSTR', index, strength)
+        
+        awareness = max(min(int(player_dict["awareness"]), 99), 40)
+        self.set_player_integer_field('PAWR', index, awareness)
+        
+        agility = max(min(int(player_dict["agility"]), 97), 50)
+        self.set_player_integer_field('PAGI', index, agility)
+        
+        acceleration = max(min(int(player_dict["acceleration"]), 95), 40)
+        self.set_player_integer_field('PACC', index, acceleration)
+        
+        carrying = max(min(int(player_dict["carrying"]), 80), 25)
+        self.set_player_integer_field('PCAR', index, carrying)
+        
+        catching = max(min(int(player_dict["catching"]), 85), 15)
+        self.set_player_integer_field('PCTH', index, catching)
+        
+        jumping = max(min(int(player_dict["jumping"]), 95), 40)
+        self.set_player_integer_field('PJMP', index, jumping)
+        
+        break_tackles = max(min(math.ceil(
+            (int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2
+        ), 85), 35)
+        self.set_player_integer_field('PBTK', index, break_tackles)
+        
+        tackle = max(min(int(player_dict["tackle"]), 50), 10)
+        self.set_player_integer_field('PTAK', index, tackle)
+        
+        throw_power = max(min(int(player_dict["throw_power"]), 99), 70)
+        self.set_player_integer_field('PTHP', index, throw_power)
+        
+        throw_accuracy = max(min(math.ceil(
+            ((2 * (
+                int(player_dict["throw_accuracy_short"]) + 
+                int(player_dict["throw_accuracy_mid"]) + 
+                int(player_dict["throw_accuracy_deep"]) + 
+                int(player_dict["throw_on_the_run"]) + 
+                int(player_dict["throw_accuracy"])
+            )
+             ) - min(
+                 int(player_dict["throw_accuracy_short"]), 
+                 int(player_dict["throw_accuracy_mid"]), 
+                 int(player_dict["throw_accuracy_deep"]), 
+                 int(player_dict["throw_on_the_run"]), 
+                 int(player_dict["throw_accuracy"])
+             )
+            ) / 9
+        ), 99), 60)
+        self.set_player_integer_field('PTHA', index, throw_accuracy)
+        
+        pass_block = max(min(math.ceil(
+            (
+                int(player_dict["pass_block"]) + 
+                int(player_dict["pass_block_strength"]) + 
+                int(player_dict["pass_block_footwork"])
+            ) / 3
+        ), 60), 5)
+        self.set_player_integer_field('PPBK', index, pass_block)
+        
+        run_block = max(min(math.ceil(
+            (
+                int(player_dict["run_block"]) + 
+                int(player_dict["run_block_strength"]) + 
+                int(player_dict["run_block_footwork"])
+            ) / 3
+        ), 60), 10)
+        self.set_player_integer_field('PRBK', index, run_block)
+        
+        kick_power = max(min(int(player_dict["kick_power"]), 75), 5)
+        self.set_player_integer_field('PKPR', index, kick_power)
+        
+        kick_accuracy = max(min(int(player_dict["kick_accuracy"]), 75), 5)
+        self.set_player_integer_field('PKAC', index, kick_accuracy)
+        
+        kick_return = max(min(int(player_dict["kick_return"]), 60), 5)
+        self.set_player_integer_field('PKRT', index, kick_return)
+        
+        stamina = max(min(int(player_dict["stamina"]), 99), 65)
+        self.set_player_integer_field('PSTA', index, stamina)
+        
+        injury = max(min(int(player_dict["injury"]), 99), 50)
+        self.set_player_integer_field('PINJ', index, injury)
+        
+        toughness = max(min(int(player_dict["toughness"]), 99), 45)
+        self.set_player_integer_field('PTGH', index, toughness)
+        
+        
+        # For other attributes, we will use more complicated formulas to determine the values. 
+        
+        # PCHS: A random distribution from 0 to 30, where the most likely value is 10 and the least likely is 30.
+        elements = list(range(0, 31))
+        weights = [1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 6, 6, 5, 5, \
+                   4, 4, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2]
+        
+        chest_shelf = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PCHS', index, chest_shelf)
+        
+        # PEGO: A random distribution from 0 to 99, where the most likely value is 85 and the least likely is 0.
+        elements = list(range(0, 100))
+        weights = [0.03] + [.003]*20 + [.0015]*20 + [.003]*10 + [.02]*10 + [.0125]*20 + [.025]*10 + [.016667]*9
+        
+        ego = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PEGO', index, ego)
+        
+        # PFAS: A random distribution from 0 to 10, where the most likely value is 0 and the least likely is 10.
+        elements = list(range(0, 11))
+        weights = [0.24, 0.19, 0.15, 0.11, 0.08, 0.07, 0.06, 0.05, 0.03, 0.01, 0.01]
+        
+        arm_fat = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PFAS', index, arm_fat)
+        
+        # PFCS: A random distribution from 0 to 15, where the most likely value is 0 and the least likely is 15.
+        elements = list(range(0, 16))
+        weights = [0.17, 0.15, 0.13, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04, 0.04, 0.03, 0.02, 0.02, 0.02, 0.01, 0.01]
+        
+        calf_fat = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PFCS', index, calf_fat)
+        
+        # PFGS: A random distribution from 0 to 20, where the most likely value is 5 and the least likely is 20.
+        elements = list(range(0, 21))
+        weights = [0.04, 0.04, 0.06, 0.08, 0.12, 0.15, 0.12, 0.08, 0.06, 0.04, \
+                   0.03, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01]
+        
+        glute_fat = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PFGS', index, glute_fat)
+        
+        # PFHS: A random distribution from 0 to 20, where the most likely value is 5 and the least likely is 20.
+        elements = list(range(0, 21))
+        weights = [0.04, 0.04, 0.06, 0.08, 0.12, 0.15, 0.12, 0.08, 0.06, 0.04, \
+                   0.03, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01]
+        
+        thigh_fat = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PFHS', index, thigh_fat)
+        
+        
+        
         
     def create_halfback(self, player_dict, index):
         """ 
         Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
         the calculations and updates necessary to create the player as a HB in the DB.
         """
-        # For all of the following fields, we simply use 0.
-        # TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
+        # For all of the following fields, we simply use 0: TLHA, TRHA, PCPH, PLSH, PRSH, PLTH, PRTH, PUCL, TLEL, 
+        # TREL, PTSL, PSTM, PFHO, PSXP, TLWR, TRWR, PMUS, PJTY, PSTY
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
@@ -706,4 +878,14 @@ class Helper:
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
-        
+
+
+# ----------------------------------------------------- SECTION 3 -----------------------------------------------------
+# ------------------------------------------------- Helper Functions --------------------------------------------------
+
+
+def get_weighted_random(values_list, weights_list):
+    """ Gets a random value from a list of possible values where each value is assigned a weighted probability. """
+    weights_array = array(weights_list)
+    normalized_weights = weights_array / weights_array.sum()
+    return random.choice(values_list, p=normalized_weights)
