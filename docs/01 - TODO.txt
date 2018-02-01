@@ -114,16 +114,30 @@ certain percentage, to account for inflation today?)
     *** Done.    ***
     
 
-CONTINUE HERE
-2018_01_09
-
-
 - Write the rest of "step_5_update_roster_file.py" according to the outline in "Methods for 
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
     
-    ***	TODO	***
+
+CONTINUE HERE
+2018_01_09
+
+    ***	IN PROGRESS.	***
     
+- Double check the input file, Latest Player Attributes.csv, before running step 5 for the creation of latest.ros. 
+Check each field by sorting on its values and making sure we get a range we expect, and that there are no empty or 
+otherwise invalid values.
+    
+    *** TODO    ***
+
+- Test the creation of the latest.ros for a few specific things:
+    - There are a few players in the Madden file with contract lengths > 7 (a few 8s, one 10). Since there were no 
+    players with contracts that long in the original game, make sure this doesn't mess anything up. (Contract years 
+    left are within the original range, at 1 - 7.)
+    - 
+    
+    *** TODO    ***
+
 - Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
 alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
 in the output file for this year.

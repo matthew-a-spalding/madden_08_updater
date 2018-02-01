@@ -281,6 +281,9 @@ class Helper:
         Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
         the calculations and updates necessary to create the player as a QB in the DB.
         """
+        
+        position = 0 # QB
+        
         # For all of the following fields, we simply use 0.
         # PCPH, PFHO, PJTY, PMPC, PMUS, POPS, PPOS, PSTM, PSTY, PSXP, PTSL, PUCL, TLEL, TLHA, TLWR, TREL, TRHA, TRWR 
         self.set_player_integer_field('PCPH', index, 0)
@@ -311,9 +314,13 @@ class Helper:
         
         # For many attributes in 'Latest Player Attributes.csv', we simply use the exact value from the file.
         self.set_player_integer_field('PAGE', index, int(player_dict["age"]))
-        self.set_player_integer_field('PDPI', index, int(player_dict["draft_pick"]))
-        self.set_player_integer_field('PDRO', index, int(player_dict["draft_round"]))
-        self.set_player_integer_field('PFEx', index, int(player_dict["face_id"]))
+        contract_length = int(player_dict["contract_length"])
+        self.set_player_integer_field('PCON', index, contract_length)
+        self.set_player_integer_field('PCYL', index, int(player_dict["contract_years_left"]))
+        draft_pick = int(player_dict["draft_pick"])
+        self.set_player_integer_field('PDPI', index, draft_pick)
+        draft_round = int(player_dict["draft_round"])
+        self.set_player_integer_field('PDRO', index, draft_round)
         self.set_player_integer_field('PFPB', index, int(player_dict["pro_bowl"]))
         self.set_player_integer_field('PHED', index, int(player_dict["hair_style"]))
         self.set_player_integer_field('PHCL', index, int(player_dict["hair_color"]))
@@ -322,10 +329,13 @@ class Helper:
         self.set_player_integer_field('PJEN', index, int(player_dict["jersey_number"]))
         self.set_player_integer_field('PNEK', index, int(player_dict["neck_pad"]))
         self.set_player_integer_field('PSKI', index, int(player_dict["skin_color"]))
-        self.set_player_integer_field('PVIS', index, int(player_dict["visor_style"]))
-        self.set_player_integer_field('PYRP', index, int(player_dict["years_pro"]))
+        self.set_player_integer_field('PTAL', index, int(player_dict["tattoo_left"]))
+        self.set_player_integer_field('PTAR', index, int(player_dict["tattoo_right"]))
+        self.set_player_integer_field('PVCO', index, contract_length)
+        years_pro = int(player_dict["years_pro"])
+        self.set_player_integer_field('PYRP', index, years_pro)
         # This is correct - we are intentionally setting the years with team to the number of years pro.
-        self.set_player_integer_field('PYWT', index, int(player_dict["years_pro"]))
+        self.set_player_integer_field('PYWT', index, years_pro)
         
         
         # For these next attributes, the calculations involve the value from a column in the player dict.
@@ -336,11 +346,30 @@ class Helper:
         # For eye_black, if the CSV says -1, give 80% a 0 (none) and 20% a 1 (black).
         if int(player_dict["eye_black"]) == -1:
             elements = [0, 1]
-            weights = [0.8, 0.2]
+            weights = [80, 20]
             eye_black = get_weighted_random(elements, weights)
         else:
             eye_black = int(player_dict["eye_black"])
         self.set_player_integer_field('PEYE', index, eye_black)
+        
+        # For face_id, if the CSV says -1, pick a random value between 2 and 518.
+        if int(player_dict["face_id"]) == -1:
+            elements = list(range(2, 519))
+            weights = [100/519]*519
+            face_id = get_weighted_random(elements, weights)
+        else:
+            face_id = int(player_dict["face_id"])
+        self.set_player_integer_field('PFEx', index, face_id)
+        
+        # For face_mask, if the CSV says -1, set 10% to 0 (2-bar), 20% to 1 (3-bar), 30% to 6 (3-Bar QB), 10% to 8 
+        # (3-Bar RB), and 30% to 11 (REVOG2EG). NOTE!! If choosing 11, must also set PHLM to 4 !!
+        if int(player_dict["face_mask"]) == -1:
+            elements = [0, 1, 6, 8, 11]
+            weights = [10, 20, 30, 10, 30]
+            face_mask = get_weighted_random(elements, weights)
+        else:
+            face_mask = int(player_dict["face_mask"])
+        self.set_player_integer_field('PFMK', index, face_mask)
         
         # Get the first 11 characters of the first name.
         if len(player_dict["first_name"]) < 12:
@@ -359,7 +388,7 @@ class Helper:
         # 5% a 9 (team-color wrist).
         if int(player_dict["left_elbow"]) == -1:
             elements = [0, 7, 8, 9]
-            weights = [0.85, 0.05, 0.05, 0.05]
+            weights = [85, 5, 5, 5]
             left_elbow = get_weighted_random(elements, weights)
         else:
             left_elbow = int(player_dict["left_elbow"])
@@ -371,7 +400,7 @@ class Helper:
         if int(player_dict["left_hand"]) == -1:
             if handedness == 0:
                 elements = [0, 2, 3, 4, 5, 6, 7]
-                weights = [0.70, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+                weights = [70, 5, 5, 5, 5, 5, 5]
                 left_hand = get_weighted_random(elements, weights)
             else:
                 left_hand = 0
@@ -388,7 +417,7 @@ class Helper:
         # For left_shoe, if the CSV says -1, give 90% a 0 (none) and 10% a 1 (white tape).
         if int(player_dict["left_shoe"]) == -1:
             elements = [0, 1]
-            weights = [0.9, 0.1]
+            weights = [90, 10]
             left_shoe = get_weighted_random(elements, weights)
         else:
             left_shoe = int(player_dict["left_shoe"])
@@ -401,17 +430,31 @@ class Helper:
             left_knee = int(player_dict["left_knee"])
         self.set_player_integer_field('PLTH', index, left_knee)
         
+        # For left_wrist, if the CSV says -1: When the player's handedness is right, use 1 (QB wrist). Otherwise, set 
+        # 30% to 0 (normal), 40% to 2 (white wrist), 10% to 3 (black wrist), 10% to 4 (team-color wrist), and 10% to 5 
+        # (team-color double).
+        if int(player_dict["left_wrist"]) == -1:
+            if handedness == 0:
+                left_wrist = 1
+            else:
+                elements = [0, 2, 3, 4, 5]
+                weights = [30, 40, 10, 10, 10]
+                left_wrist = get_weighted_random(elements, weights)
+        else:
+            left_wrist = int(player_dict["left_wrist"])
+        self.set_player_integer_field('PLWR', index, left_wrist)
+        
         # For right_elbow, if the CSV says -1: If the left_elbow was 0, set 85% to 0 (none), 5% to 7 (black wrist), 5% 
         # to 8 (white wrist), and 5% to 9 (team-color wrist). If left_elbow was non-zero, set 80% to the same value, 
         # and 20% to 0. If the CSV value is not -1, just use what is in there.
         if int(player_dict["right_elbow"]) == -1:
             if left_elbow == 0:
                 elements = [0, 7, 8, 9]
-                weights = [0.85, 0.05, 0.05, 0.05]
+                weights = [85, 5, 5, 5]
                 right_elbow = get_weighted_random(elements, weights)
             else:
                 elements = [left_elbow, 0]
-                weights = [0.80, 0.2]
+                weights = [80, 20]
                 right_elbow = get_weighted_random(elements, weights)
         else:
             right_elbow = int(player_dict["right_elbow"])
@@ -423,7 +466,7 @@ class Helper:
         if int(player_dict["right_hand"]) == -1:
             if handedness == 1:
                 elements = [0, 2, 3, 4, 5, 6, 7]
-                weights = [0.70, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+                weights = [70, 5, 5, 5, 5, 5, 5]
                 right_hand = get_weighted_random(elements, weights)
             else:
                 right_hand = 0
@@ -444,6 +487,27 @@ class Helper:
         else:
             right_knee = int(player_dict["right_knee"])
         self.set_player_integer_field('PRTH', index, right_knee)
+        
+        # For right_wrist, if the CSV says -1: When the player's handedness is left, use 1 (QB wrist). Otherwise, set 
+        # 30% to 0 (normal), 40% to 2 (white wrist), 10% to 3 (black wrist), 10% to 4 (team-color wrist), and 10% to 5 
+        # (team-color double).
+        if int(player_dict["right_wrist"]) == -1:
+            if handedness == 1:
+                right_wrist = 1
+            else:
+                elements = [0, 2, 3, 4, 5]
+                weights = [30, 40, 10, 10, 10]
+                right_wrist = get_weighted_random(elements, weights)
+        else:
+            right_wrist = int(player_dict["right_wrist"])
+        self.set_player_integer_field('PRWR', index, right_wrist)
+        
+         # For visor, if the CSV says -1, always use 0. Otherwise, just use what is in the file.
+        if int(player_dict["visor"]) == -1:
+            visor = 0
+        else:
+            visor = int(player_dict["visor"])
+        self.set_player_integer_field('PVIS', index, visor)
         
         # Subtract 160 from the players weight, unless he is already under 160.
         if int(player_dict["weight"]) > 159:
@@ -549,56 +613,303 @@ class Helper:
         self.set_player_integer_field('PTGH', index, toughness)
         
         
-        # For other attributes, we will use more complicated formulas to determine the values. 
+        # For the following attributes, we will use weighted random distributions or other non-dependant means without 
+        # checking the CSV file at all.
         
         # PCHS: A random distribution from 0 to 30, where the most likely value is 10 and the least likely is 30.
         elements = list(range(0, 31))
         weights = [1, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 6, 6, 5, 5, \
                    4, 4, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2]
-        
         chest_shelf = get_weighted_random(elements, weights)
         self.set_player_integer_field('PCHS', index, chest_shelf)
         
-        # PEGO: A random distribution from 0 to 99, where the most likely value is 85 and the least likely is 0.
+        # PEGO: A random distribution from 0 to 99, where the most likely value is 85 and the least likely is 21-40.
         elements = list(range(0, 100))
-        weights = [0.03] + [.003]*20 + [.0015]*20 + [.003]*10 + [.02]*10 + [.0125]*20 + [.025]*10 + [.016667]*9
-        
+        weights = [3.0] + [0.3]*20 + [.15]*20 + [.3]*10 + [2.0]*10 + [1.25]*20 + [2.5]*10 + [1.6667]*9
         ego = get_weighted_random(elements, weights)
         self.set_player_integer_field('PEGO', index, ego)
         
         # PFAS: A random distribution from 0 to 10, where the most likely value is 0 and the least likely is 10.
         elements = list(range(0, 11))
-        weights = [0.24, 0.19, 0.15, 0.11, 0.08, 0.07, 0.06, 0.05, 0.03, 0.01, 0.01]
-        
+        weights = [24, 19, 15, 11, 8, 7, 6, 5, 3, 1, 1]
         arm_fat = get_weighted_random(elements, weights)
         self.set_player_integer_field('PFAS', index, arm_fat)
         
         # PFCS: A random distribution from 0 to 15, where the most likely value is 0 and the least likely is 15.
         elements = list(range(0, 16))
-        weights = [0.17, 0.15, 0.13, 0.10, 0.08, 0.07, 0.06, 0.05, 0.04, 0.04, 0.03, 0.02, 0.02, 0.02, 0.01, 0.01]
-        
+        weights = [17, 15, 13, 10, 8, 7, 6, 5, 4, 4, 3, 2, 2, 2, 1, 1]
         calf_fat = get_weighted_random(elements, weights)
         self.set_player_integer_field('PFCS', index, calf_fat)
         
         # PFGS: A random distribution from 0 to 20, where the most likely value is 5 and the least likely is 20.
         elements = list(range(0, 21))
-        weights = [0.04, 0.04, 0.06, 0.08, 0.12, 0.15, 0.12, 0.08, 0.06, 0.04, \
-                   0.03, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01]
-        
+        weights = [4, 4, 6, 8, 12, 15, 12, 8, 6, 4, \
+                   3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1]
         glute_fat = get_weighted_random(elements, weights)
         self.set_player_integer_field('PFGS', index, glute_fat)
         
         # PFHS: A random distribution from 0 to 20, where the most likely value is 5 and the least likely is 20.
         elements = list(range(0, 21))
-        weights = [0.04, 0.04, 0.06, 0.08, 0.12, 0.15, 0.12, 0.08, 0.06, 0.04, \
-                   0.03, 0.03, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01]
-        
+        weights = [4, 4, 6, 8, 12, 15, 12, 8, 6, 4, \
+                   3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1]
         thigh_fat = get_weighted_random(elements, weights)
         self.set_player_integer_field('PFHS', index, thigh_fat)
         
+        # PFTS: A random distribution from 0 to 25, where the most likely value is 0 and the least likely is 25.
+        elements = list(range(0, 26))
+        weights = [8, 8, 8, 8, 8, 8, 7, 6, 5, 4, 3, 3, 3, \
+                   2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
+        torso_fat = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PFTS', index, torso_fat)
+        
+        # PGID: Try starting with 1 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index+1)
+        
+        # PLSS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
+        elements = list(range(0, 41))
+        weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
+                   3, 4, 6, 7, 9, 7, 6, 4, 3, 3, \
+                   3, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        shoe_length = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PLSS', index, shoe_length)
+        
+        # PMAS: A random distribution from 0 to 25, where the most likely value is 10 and the least likely is 25.
+        elements = list(range(0, 26))
+        weights = [1, 1, 2, 2, 3, 4, 5, 6, 7, 9, 12, 9, 7, \
+                   6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1]
+        arm_muscle = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PMAS', index, arm_muscle)
+        
+        # PMCS: A random distribution from 0 to 30, where the most likely value is 10 and the least likely is 30.
+        elements = list(range(0, 31))
+        weights = [1, 1, 1, 2, 2, 3, 3, 5, 7, 10, 13, 10, 7, 5, 3, 3, \
+                   3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]
+        calf_muscle = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PMCS', index, calf_muscle)
+        
+        # PMHS: Random distribution from 0 to 25, where the most likely value is 10 and the least likely are 0 and 25.
+        elements = list(range(0, 26))
+        weights = [1, 1, 2, 2, 3, 4, 5, 6, 7, 9, 12, 9, 7, \
+                   6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1]
+        thigh_muscle = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PMHS', index, thigh_muscle)
+        
+        # PMOR: Set 20% to between 50 - 79, 20% to 80 - 89, and 60% to 90 - 99.
+        elements = list(range(50, 80)) + list(range(80, 90)) + list(range(90, 100))
+        weights = [2/3]*30 + [2]*10 + [6]*10
+        morale = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PMOR', index, morale)
+        
+        # PMTS: A random distribution from 0 to 25, where the most likely value is 5 and the least likely is 25.
+        elements = list(range(0, 26))
+        weights = [2, 4, 6, 8, 11, 14, 11, 8, 6, 4, 3, 3, 2, \
+                   2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+        mid_torso = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PMTS', index, mid_torso)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index+1)
+        
+        # PSBS: Random distribution from 34 to 99, where the most likely value is 79 and the least likely is 34.
+        elements = list(range(34, 100))
+        weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, \
+                   5, 10, 5, 3, 2, 2, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        subtract_for_body_size = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PSBS', index, subtract_for_body_size)
+        
+        # PUTS: A random distribution from 5 to 40, where the most likely value is 10 and the least likely is 40.
+        elements = list(range(5, 41))
+        weights = [1, 1, 2, 4, 8, 15, 8, 4, 3, \
+                   3, 3, 3, 3, 3, 3, 3, 3, 3, \
+                   2, 2, 2, 2, 2, 2, 2, 2, 2, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1]
+        upper_torso = get_weighted_random(elements, weights)
+        self.set_player_integer_field('PUTS', index, upper_torso)
         
         
+        # These calculations use the results of previous calculations.
         
+        # PTEN: If the CSV is -1, use the QB's awareness, speed, acceleration, and agility attributes to determine his 
+        # tendency.
+        if int(player_dict["tendency"]) == -1:
+            # If the QB has 
+            if speed < 70 or acceleration < 75 or agility < 70:
+                tendency = 0 # pocket passer
+            elif speed > 80 and acceleration > 80 and agility > 80 and awareness < 85:
+                tendency = 1 # scrambling
+            else:
+                tendency = 2 # balanced
+        else:
+            tendency = int(player_dict["tendency"])
+        self.set_player_integer_field('PTEN', index, tendency)
+        
+        # PBRE: If the QB has a PTEN of 1 (Scrambling), give him a 40% chance of getting a 0 (none), a 30% chance of 
+        # getting a 1 (white strip), and a 30% chance of getting a 2 (black strip).
+        if int(player_dict["breathing_strip"]) == -1:
+            if tendency == 1:
+                elements = [0, 1, 2]
+                weights = [40, 30, 30]
+                breathing_strip = get_weighted_random(elements, weights)
+            else:
+                breathing_strip = 0
+        else:
+            breathing_strip = int(player_dict["breathing_strip"])
+        self.set_player_integer_field('PBRE', index, breathing_strip)
+        
+        # PHLM: Check the value from PFMK. If it was set to 11, we must use 4. Otherwise, see what is in the CSV. If 
+        # it is -1, give 80% a 0 (Style 1) and 20% a 2 (Style 3).
+        if face_mask == 11:
+            helmet = 4
+        elif int(player_dict["helmet"]) == -1:
+            elements = [0, 2]
+            weights = [80, 20]
+            helmet = get_weighted_random(elements, weights)
+        else:
+            helmet = int(player_dict["helmet"])
+        self.set_player_integer_field('PHLM', index, helmet)
+        
+        # PGSL: If the CSV has -1 and we didn't set PLEL, PREL, PTAL, or PTAR to anything but 0, set 86% to 0 (none), 
+        # 2% to 1 (black), 10% to 2 (white), and 2% to 3 (team-color). (For others, just use 0.)
+        if int(player_dict["sleeves"]) == -1:
+            if (left_elbow == 0 and 
+                    right_elbow == 0 and 
+                    int(player_dict["tattoo_left"]) == 0 and 
+                    int(player_dict["tattoo_right"]) == 0):
+                elements = [0, 1, 2, 3]
+                weights = [86, 2, 10, 2]
+                sleeves = get_weighted_random(elements, weights)
+            else:
+                sleeves = 0
+        else:
+            sleeves = int(player_dict["sleeves"])
+        self.set_player_integer_field('PGSL', index, sleeves)
+        
+        # POVR: Use the formula found in 04 - FORMULA for Calculating Overall Rating.txt
+        overall_rating = 0.0
+        overall_rating += ((throw_power - 50.0) / 10.0) * 4.9
+        overall_rating += ((throw_accuracy - 50.0) / 10.0) * 5.8
+        overall_rating += ((break_tackles - 50.0) / 10.0) * 0.8
+        overall_rating += ((agility - 50.0) / 10.0) * 0.8
+        overall_rating += ((awareness - 50.0) / 10.0) * 4.0
+        overall_rating += ((speed - 50.0) / 10.0) * 2.0
+        overall_rating = max(min((round(overall_rating) + 28), 99), 40)
+        self.set_player_integer_field('POVR', index, overall_rating)
+        
+        # PIMP: We're relating the importance of a player to his overall rating and his position. QB is the most 
+        # important position, so we will give the highest importance ratings to good ones. 
+        importance = max(min(math.ceil((math.pow((overall_rating / 100), 2) * 85) + (overall_rating - 68)), 99), 15)
+        self.set_player_integer_field('PIMP', index, importance)
+        
+        # PROL: Check for these roles IN THIS ORDER: 1) injury_prone 2) team_distraction 3) franchise_qb 
+        # 4) qb_of_the_future 5) project_player 6) underachiever 7) precision_passer 8) cannon_arm 9) scrambler 
+        # 10) game_manager 11) fan_favorite 12) team_mentor 13) team_leader 14) first_round_pick .
+        role_one = int(player_dict["role_one"])
+        if role_one == 45:
+            if is_injury_prone(role_one, injury, toughness):
+                role_one = 14
+            elif is_team_distraction(role_one, morale, overall_rating):
+                role_one = 8
+            elif is_franchise_qb(role_one, awareness, overall_rating):
+                role_one = 20
+            elif is_qb_of_the_future(role_one, draft_round, years_pro, throw_power, throw_accuracy, overall_rating):
+                role_one = 0
+            elif is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
+                                   break_tackles, throw_power, throw_accuracy, kick_power, years_pro, overall_rating):
+                role_one = 7
+            elif is_underachiever(role_one, draft_round, draft_pick, years_pro, overall_rating):
+                role_one = 4
+            elif is_precision_passer(role_one, throw_accuracy):
+                role_one = 17
+            elif is_cannon_arm(role_one, throw_accuracy):
+                role_one = 18
+            elif is_scrambler(role_one, speed, acceleration, agility):
+                role_one = 19
+            elif is_game_manager(role_one, years_pro, awareness, throw_power, throw_accuracy, overall_rating):
+                role_one = 10
+            elif is_fan_favorite(role_one, years_pro, morale, overall_rating):
+                role_one = 13
+            elif is_team_mentor(role_one, position, awareness, morale, years_pro, overall_rating):
+                role_one = 5
+            elif is_team_leader(role_one, position, awareness, morale, years_pro, overall_rating):
+                role_one = 6
+            elif is_first_round_pick(role_one, draft_round):
+                role_one = 12
+        self.set_player_integer_field('PROL', index, role_one)
+        
+        # PRL2: Check for these roles IN THIS ORDER: 1) injury_prone 2) team_distraction 3) franchise_qb 
+        # 4) qb_of_the_future 5) project_player 6) underachiever 7) precision_passer 8) cannon_arm 9) scrambler 
+        # 10) game_manager 11) fan_favorite 12) team_mentor 13) team_leader 14) first_round_pick .
+        role_two = int(player_dict["role_two"])
+        if role_two == 45 and role_one != 45:
+            if is_injury_prone(role_one, injury, toughness):
+                role_two = 14
+            elif is_team_distraction(role_one, morale, overall_rating):
+                role_two = 8
+            elif is_franchise_qb(role_one, awareness, overall_rating):
+                role_two = 20
+            elif is_qb_of_the_future(role_one, draft_round, years_pro, throw_power, throw_accuracy, overall_rating):
+                role_two = 0
+            elif is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
+                                   break_tackles, throw_power, throw_accuracy, kick_power, years_pro, overall_rating):
+                role_two = 7
+            elif is_underachiever(role_one, draft_round, draft_pick, years_pro, overall_rating):
+                role_two = 4
+            elif is_precision_passer(role_one, throw_accuracy):
+                role_two = 17
+            elif is_cannon_arm(role_one, throw_accuracy):
+                role_two = 18
+            elif is_scrambler(role_one, speed, acceleration, agility):
+                role_two = 19
+            elif is_game_manager(role_one, years_pro, awareness, throw_power, throw_accuracy, overall_rating):
+                role_two = 10
+            elif is_fan_favorite(role_one, years_pro, morale, overall_rating):
+                role_two = 13
+            elif is_team_mentor(role_one, position, awareness, morale, years_pro, overall_rating):
+                role_two = 5
+            elif is_team_leader(role_one, position, awareness, morale, years_pro, overall_rating):
+                role_two = 6
+            elif is_first_round_pick(role_one, draft_round):
+                role_two = 12
+        self.set_player_integer_field('PRL2', index, role_two)
+        
+        # PTSA & PVTS: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
+        # account for inflation.
+        total_salary = int(player_dict["total_salary"])
+        if total_salary > 10000000:
+            total_salary = round((total_salary / 10000) * 0.725)
+        elif total_salary > 1000000:
+            total_salary = round((total_salary / 10000) * 0.58)
+        else:
+            total_salary = round((total_salary / 10000) * 0.43)
+            
+        self.set_player_integer_field('PTSA', index, total_salary)
+        self.set_player_integer_field('PVTS', index, total_salary)
+        
+        # PSBO & PVSB: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
+        # account for inflation.
+        signing_bonus = int(player_dict["signing_bonus"])
+        if signing_bonus > 10000000:
+            signing_bonus = round((signing_bonus / 10000) * 0.4)
+        elif signing_bonus > 1000000:
+            signing_bonus = round((signing_bonus / 10000) * 0.5)
+        elif signing_bonus > 100000:
+            signing_bonus = round((signing_bonus / 10000) * 0.65)
+        else:
+            signing_bonus = round((signing_bonus / 10000) * 0.8)
+        # PSBO must always be in multiples of PCON (contract_length).
+        if signing_bonus % contract_length > 0:
+            signing_bonus += (contract_length - (signing_bonus % contract_length))
+        
+        self.set_player_integer_field('PSBO', index, signing_bonus)
+        self.set_player_integer_field('PVSB', index, signing_bonus)
+        
+    
     def create_halfback(self, player_dict, index):
         """ 
         Given a dictionary of a new player and the index of the related record to modify in the DB, performs all of 
@@ -889,3 +1200,120 @@ def get_weighted_random(values_list, weights_list):
     weights_array = array(weights_list)
     normalized_weights = weights_array / weights_array.sum()
     return random.choice(values_list, p=normalized_weights)
+
+def is_cannon_arm(role_one, throw_power):
+    """ Determines whether the given values qualify a player to be labeled as a 'cannon arm'. """
+    if role_one in [18]:
+        return False
+    if throw_power > 92:
+        return True
+    return False
+
+def is_fan_favorite(role_one, years_pro, morale, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'fan favorite'. """
+    if role_one in [8, 13]:
+        return False
+    if years_pro > 5 and morale > 80 and overall_rating > 90:
+        return True
+    return False
+
+def is_first_round_pick(role_one, draft_round):
+    """ Determines whether the given values qualify a player to be labeled as a 'first round pick'. """
+    if role_one in [12]:
+        return False
+    if draft_round == 1:
+        return True
+    return False
+
+def is_franchise_qb(role_one, awareness, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'franchise QB'. """
+    if role_one in [8, 14, 20]:
+        return False
+    if awareness > 79 and overall_rating > 87:
+        return True
+    return False
+
+def is_game_manager(role_one, years_pro, awareness, throw_power, throw_accuracy, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'game manager'. """
+    if role_one in [10]:
+        return False
+    if years_pro > 5 and awareness > 80 and throw_power < 90 and throw_accuracy > 84 and overall_rating < 88:
+        return True
+    return False
+
+def is_injury_prone(role_one, injury, toughness):
+    """ Determines whether the given values qualify a player to be labeled as 'injury prone'. """
+    if role_one in [14]:
+        return False
+    if injury < 71 and toughness < 81:
+        return True
+    return False
+
+def is_precision_passer(role_one, throw_accuracy):
+    """ Determines whether the given values qualify a player to be labeled as a 'precision passer'. """
+    if role_one in [17]:
+        return False
+    if throw_accuracy > 89:
+        return True
+    return False
+
+def is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, break_tackles, 
+                      throw_power, throw_accuracy, kick_power, years_pro, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'project player'. """
+    if role_one in [7]:
+        return False
+    if awareness > 85 or years_pro > 5 or overall_rating > 87:
+        return False
+    # QBs
+    if position == 0:
+        if (throw_power > 90 and throw_accuracy < 80) or (speed > 79 and acceleration > 82 and break_tackles > 57):
+            return True
+    return False
+
+def is_qb_of_the_future(role_one, draft_round, years_pro, throw_power, throw_accuracy, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'QB of the future'. """
+    if role_one in [0]:
+        return False
+    if draft_round < 6 and years_pro < 5 and throw_power > 86 and throw_accuracy > 76 and overall_rating > 74:
+        return True
+    return False
+
+def is_scrambler(role_one, speed, acceleration, agility):
+    """ Determines whether the given values qualify a player to be labeled as a 'scrambler'. """
+    if role_one in [19]:
+        return False
+    if speed > 80 and acceleration > 80 and agility > 80:
+        return True
+    return False
+
+def is_team_distraction(role_one, morale, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'team distraction'. """
+    if role_one in [5, 6, 8]:
+        return False
+    if morale < 55 and overall_rating > 70:
+        return True
+    return False
+
+def is_team_leader(role_one, position, awareness, morale, years_pro, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'team leader'. """
+    if role_one in [5, 6, 8] or position in [19, 20]:
+        return False
+    if awareness > 90 and morale > 74 and years_pro > 6 and overall_rating > 90:
+        return True
+    return False
+
+def is_team_mentor(role_one, position, awareness, morale, years_pro, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'team mentor'. """
+    if role_one in [5, 6, 8] or position in [19, 20]:
+        return False
+    if awareness > 87 and morale > 80 and years_pro > 8 and overall_rating > 85:
+        return True
+    return False
+
+def is_underachiever(role_one, draft_round, draft_pick, years_pro, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as an 'underachiever'. """
+    if role_one in [4]:
+        return False
+    if draft_round == 1 and draft_pick < 16 and years_pro > 3 and years_pro < 11 and overall_rating < 83:
+        return True
+    return False
