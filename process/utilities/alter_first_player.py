@@ -29,13 +29,13 @@ PLAYERS_TABLE = b'PLAY'
 
 # Set the base path we will use to keep other paths relative, and shorter :^)
 # This will be the directory above the directory this file is in.
-BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Get a handle for our DLL.
 TDBACCESS_DLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbaccess\old\tdbaccess.dll"))
 
 # Open the roster file through the DLL and get its index.
-DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\inputs\base.ros").encode('utf-8'))
+DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\latest.ros").encode('utf-8'))
 
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
@@ -142,7 +142,7 @@ def set_player_string_field(field_name, player_index, field_str_value):
 # ------------ READ FROM THE MADDEN RATINGS .csv FILE ------------
 
 # Open the CSV file with all the players and their Madden ratings.
-LATEST_PLAYER_ATTRIBUTES_FILE = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Ratings.csv"))
+LATEST_PLAYER_ATTRIBUTES_FILE = open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Attributes.csv"))
 
 # Get a DictReader to read the rows into dicts using the header row as keys.
 ATTRIBUTES_DICT_READER = csv.DictReader(LATEST_PLAYER_ATTRIBUTES_FILE)
@@ -166,6 +166,15 @@ set_player_integer_field(b'PRL2', 0, 37)
 set_player_integer_field(b'PLHA', 0, 5)
 
 set_player_integer_field(b'PRHA', 0, 5)
+
+
+
+set_player_integer_field(b'PGID', 39, 10001)
+
+
+
+
+"""
 
 # Set Player 0's throwing accuracy (PTHA) to:
 #   max(65, min(99, ceil((2 * (m_tas + m_tam + m_tad) - min(m_tas, m_tam, m_tad))/5))).
@@ -273,6 +282,8 @@ set_player_integer_field(b'POPS', 0, 3)
 # Set Player 0's kick returns (PKRT).
 set_player_integer_field(b'PKRT', 0, int(FIRST_PLAYER_DICT['Kick Return']))
 
+
+"""
 
 # ------------  FINAL ACTIONS: Compact, save, and close the DB. ------------
 

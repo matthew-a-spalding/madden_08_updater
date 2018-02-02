@@ -42,7 +42,7 @@ dependencies:
 - six=1.11.0=py36_1
 - vc=14=0
 - vs2015_runtime=14.0.25420=0
-- wheel=0.30.0=py_1
+- wheel=0.30.0
 - wincertstore=0.2=py36_0
 - wrapt=1.10.11=py36_0
 - zlib=1.2.11=vc14_0

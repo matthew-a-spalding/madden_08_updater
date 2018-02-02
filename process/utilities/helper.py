@@ -355,7 +355,7 @@ class Helper:
         # For face_id, if the CSV says -1, pick a random value between 2 and 518.
         if int(player_dict["face_id"]) == -1:
             elements = list(range(2, 519))
-            weights = [100/519]*519
+            weights = [100/517]*517
             face_id = get_weighted_random(elements, weights)
         else:
             face_id = int(player_dict["face_id"])
@@ -662,9 +662,9 @@ class Helper:
         torso_fat = get_weighted_random(elements, weights)
         self.set_player_integer_field('PFTS', index, torso_fat)
         
-        # PGID: Try starting with 1 and simply incrementing the count with each player. If altering these causes any 
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
         # problems, try just leaving the value as it was in the default roster.
-        self.set_player_integer_field('PGID', index, index+1)
+        self.set_player_integer_field('PGID', index, index)
         
         # PLSS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
         elements = list(range(0, 41))
@@ -710,7 +710,7 @@ class Helper:
         self.set_player_integer_field('PMTS', index, mid_torso)
         
         # POID: Just set this to the same number as PGID.
-        self.set_player_integer_field('POID', index, index+1)
+        self.set_player_integer_field('POID', index, index)
         
         # PSBS: Random distribution from 34 to 99, where the most likely value is 79 and the least likely is 34.
         elements = list(range(34, 100))
@@ -921,6 +921,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -934,6 +943,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -949,6 +967,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -962,6 +989,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -977,6 +1013,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -990,6 +1035,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1005,6 +1059,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1018,6 +1081,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1033,6 +1105,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1046,6 +1127,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1061,6 +1151,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1074,6 +1173,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1089,6 +1197,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1102,6 +1219,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1117,6 +1243,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1130,6 +1265,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1145,6 +1289,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1158,6 +1311,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
@@ -1173,6 +1335,15 @@ class Helper:
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
         
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
+        
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
         
@@ -1186,6 +1357,15 @@ class Helper:
         self.set_player_integer_field('TLHA', index, 0)
         
         # PPTI will always get 1009, PLPL gets 100, PJER gets a 1, PCMT gets 999, PLHY gets -31, 
+        
+        
+        # PGID: Try starting with 0 and simply incrementing the count with each player. If altering these causes any 
+        # problems, try just leaving the value as it was in the default roster.
+        self.set_player_integer_field('PGID', index, index)
+        
+        # POID: Just set this to the same number as PGID.
+        self.set_player_integer_field('POID', index, index)
+        
         
         # For attributes which have a column in the 'Latest Player Attributes.csv' file, use the value if it differs from 
         # the default value we put in that column. If not, we will use formulas to determine what value to use. 
