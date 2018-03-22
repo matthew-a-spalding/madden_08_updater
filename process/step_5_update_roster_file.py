@@ -9,7 +9,7 @@ r""" step_5_update_roster_file.py
     
     This script requires the following files to be placed in the "utilities" folder alongside it, meaning in 
     os.path.join(os.path.dirname(os.path.abspath(__file__)), r"utilities\") : 
-        1) The helper file, "helper.py" 
+        1) The helper file, "roster_manager.py" 
         2) The folder and file "tdbaccess\new\tdbaccess.dll" 
         3) colleges_and_ids.csv
         4) teams_and_ids.csv
@@ -32,7 +32,7 @@ import csv, logging, os
 
 # 3 - Application-specific imports
 
-from utilities.helper import Helper
+from utilities.roster_manager import RosterManager
 
 # 4 - Global settings
 
@@ -72,66 +72,67 @@ logging.info("NEW_PLAYER_COUNT = %d", NEW_PLAYER_COUNT)
 
 try:
     
-    # Instantiate our helper object.
-    HELPER = Helper()
+    # Instantiate our RosterManager object.
+    ROSTERMANAGER = RosterManager()
     
     # Size our player table.
-    HELPER.size_player_table(NEW_PLAYER_COUNT)
+    ROSTERMANAGER.size_player_table(NEW_PLAYER_COUNT)
     
     # Loop over each element in the list and process the player's attributes for inserting into our roster file.
     for i, player_dict in enumerate(NEW_PLAYER_LIST):
         
         # Determine which function to call based on the 'position' field value.
         if player_dict["position"].upper() == "QB":
-            HELPER.create_quarterback(player_dict, i)
+            ROSTERMANAGER.create_quarterback(player_dict, i)
         elif player_dict["position"].upper() == "HB":
-            HELPER.create_halfback(player_dict, i)
+            ROSTERMANAGER.create_halfback(player_dict, i)
         elif player_dict["position"].upper() == "FB":
-            HELPER.create_fullback(player_dict, i)
+            ROSTERMANAGER.create_fullback(player_dict, i)
         elif player_dict["position"].upper() == "WR":
-            HELPER.create_wide_receiver(player_dict, i)
+            ROSTERMANAGER.create_wide_receiver(player_dict, i)
         elif player_dict["position"].upper() == "TE":
-            HELPER.create_tight_end(player_dict, i)
+            ROSTERMANAGER.create_tight_end(player_dict, i)
         elif player_dict["position"].upper() == "LT":
-            HELPER.create_left_tackle(player_dict, i)
+            ROSTERMANAGER.create_left_tackle(player_dict, i)
         elif player_dict["position"].upper() == "LG":
-            HELPER.create_left_guard(player_dict, i)
+            ROSTERMANAGER.create_left_guard(player_dict, i)
         elif player_dict["position"].upper() == "C":
-            HELPER.create_center(player_dict, i)
+            ROSTERMANAGER.create_center(player_dict, i)
         elif player_dict["position"].upper() == "RG":
-            HELPER.create_right_guard(player_dict, i)
+            ROSTERMANAGER.create_right_guard(player_dict, i)
         elif player_dict["position"].upper() == "RT":
-            HELPER.create_right_tackle(player_dict, i)
+            ROSTERMANAGER.create_right_tackle(player_dict, i)
         elif player_dict["position"].upper() == "LE":
-            HELPER.create_left_end(player_dict, i)
+            ROSTERMANAGER.create_left_end(player_dict, i)
         elif player_dict["position"].upper() == "RE":
-            HELPER.create_right_end(player_dict, i)
+            ROSTERMANAGER.create_right_end(player_dict, i)
         elif player_dict["position"].upper() == "DT":
-            HELPER.create_defensive_tackle(player_dict, i)
+            ROSTERMANAGER.create_defensive_tackle(player_dict, i)
         elif player_dict["position"].upper() == "LOLB":
-            HELPER.create_left_outside_linebacker(player_dict, i)
+            ROSTERMANAGER.create_left_outside_linebacker(player_dict, i)
         elif player_dict["position"].upper() == "MLB":
-            HELPER.create_middle_linebacker(player_dict, i)
+            ROSTERMANAGER.create_middle_linebacker(player_dict, i)
         elif player_dict["position"].upper() == "ROLB":
-            HELPER.create_right_outside_linebacker(player_dict, i)
+            ROSTERMANAGER.create_right_outside_linebacker(player_dict, i)
         elif player_dict["position"].upper() == "CB":
-            HELPER.create_cornerback(player_dict, i)
+            ROSTERMANAGER.create_cornerback(player_dict, i)
         elif player_dict["position"].upper() == "FS":
-            HELPER.create_free_safety(player_dict, i)
+            ROSTERMANAGER.create_free_safety(player_dict, i)
         elif player_dict["position"].upper() == "SS":
-            HELPER.create_strong_safety(player_dict, i)
+            ROSTERMANAGER.create_strong_safety(player_dict, i)
         elif player_dict["position"].upper() == "K":
-            HELPER.create_kicker(player_dict, i)
+            ROSTERMANAGER.create_kicker(player_dict, i)
         elif player_dict["position"].upper() == "P":
-            HELPER.create_punter(player_dict, i)
+            ROSTERMANAGER.create_punter(player_dict, i)
         else:
             logging.error("Player %d's position was not recognized: %s", i, player_dict["position"].upper())
     
     # Compact, save, and close the DB.
-    HELPER.compact_save_close_db()
+    ROSTERMANAGER.compact_save_close_db()
     
 except SystemExit:
     logging.critical("Unable to open file 'latest.ros'. TDBOpen returned -1. Exiting.")
 
 except RuntimeError:
-    HELPER.__del__()
+    # This makes sure that, in case of an error, we correctly close the DB file.
+    ROSTERMANAGER.__del__()
