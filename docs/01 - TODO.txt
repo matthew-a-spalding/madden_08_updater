@@ -90,20 +90,21 @@ made only once in a while off a revision from Git.
         
         *** Done. *** - It just puts a blank field into the output CSV file.
     
-- Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape "https://overthecap.com/contracts" to get links 
-to each player's contract page, for setting the fields "total_salary", "signing_bonus", "draft_pick", "draft_round", 
-"years_pro" [determined from year (un)drafted], "contract_length", "years_left".
-    
+- Add code to scraping/spiders/nfl_spider.py (step 3) that will scrape 
+"https://overthecap.com/contracts" to get links to each player's contract page, for setting the 
+fields "total_salary", "signing_bonus", "draft_pick", "draft_round", "years_pro" [determined from 
+year (un)drafted], "contract_length", "years_left".
 
-    - Add logic to the get_first/last_name functions to replace unicode in names with regular single quote; etc. 
+    - Add logic to the get_first/last_name functions to replace unicode in names with regular 
+    single quote; etc. 
     
     *** Not necessary.    ***
     
-- Write up further instructions for future runs of the updating process, including more details on the actions needed 
-for step 3, such as iterating over the run of step_3_scrape_NFL_rosters.py by altering code in 
-process\scraping\settings.py to set the LOG_LEVEL to "INFO" first, then "WARNING", and finally "ERROR" (and only if 
-absolutely necessary, DEBUG), while choosing which new players not found in the "Latest Madden Ratings.csv" to add or 
-skip.
+- Write up further instructions for future runs of the updating process, including more details 
+on the actions needed for step 3, such as iterating over the run of step_3_scrape_NFL_rosters.py 
+by altering code in process\scraping\settings.py to set the LOG_LEVEL to "INFO" first, then 
+"WARNING", and finally "ERROR" (and only if absolutely necessary, DEBUG), while choosing which 
+new players not found in the "Latest Madden Ratings.csv" to add or skip.
     
     *** Done.    ***
 
@@ -118,28 +119,40 @@ certain percentage, to account for inflation today?)
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
     
-
-CONTINUE HERE
-2018_01_09
-
     ***	IN PROGRESS.	***
     
-- Double check the input file, Latest Player Attributes.csv, before running step 5 for the creation of latest.ros. 
-Check each field by sorting on its values and making sure we get a range we expect, and that there are no empty or 
-otherwise invalid values.
+
+-- CONTINUE HERE --
+--   2018_03_22  --
+
+
+- Player Fixes:
+    - Jeremy Butler, WR Bills; Zach Wood, TE Saints; Luke Rhodes, TE Colts (blocking); 
+        They can NOT be this bad. Seriously. Must have been injury-based ratings.
+    - Many TEs blk str/ftw: Ross Travis, Jon Weeks, Jon Condo, Morgan Cox, John Denney, Matt 
+        Lengel, L.P. LaDouceur, Neal Sterling, Zak DeOssie
+    - FBs: Make sure we have enough, and they are rated reasonably (range of OVR, etc.)
+    - 
+
+- Double check the input file, Latest Player Attributes.csv, before running step 5 for the 
+creation of latest.ros. Check each field by sorting on its values and making sure we get a range 
+we expect, and that there are no empty or otherwise invalid values.
     
     *** TODO    ***
 
 - Test the creation of the latest.ros for a few specific things:
-    - There are a few players in the Madden file with contract lengths > 7 (a few 8s, one 10). Since there were no 
-    players with contracts that long in the original game, make sure this doesn't mess anything up. (Contract years 
-    left are within the original range, at 1 - 7.)
-    - 
+    - There are a few players in the Madden file with contract lengths > 7 (a few 8s, one 10). 
+    Since there were no players with contracts that long in the original game, make sure this 
+    doesn't mess anything up. (Contract years left are within the original range, at 1 - 7.)
+    - See if any players get the following attributes:
+        - Check All PROL or PRL2s to see that at least someone get one of each. In particular, 
+        any: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 
+        team_leader (6), etc. Well, yeah... basically, just check for all of them.
     
     *** TODO    ***
 
-- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL Rosters.csv" file 
-alongside the "Latest Madden Ratings.csv" so we can pull in players' info on skin color, hair color, etc. to include 
-in the output file for this year.
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My %d NFL 
+Rosters.csv" file alongside the "Latest Madden Ratings.csv" so we can pull in players' info on 
+skin color, hair color, etc. to include in the output file for this year.
     
     *** TODO    ***

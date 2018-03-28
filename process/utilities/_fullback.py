@@ -160,12 +160,9 @@ def create_fullback(self, player_dict, index):
     # gloves), 10% to 4 (team-color gloves), 10% to 5 (white RB gloves), 15% to 6 (black RB gloves), and 15% to 7 
     # (team-color RB gloves).
     if int(player_dict["left_hand"]) == -1:
-        if handedness == 0:
-            elements = [0, 2, 3, 4, 5, 6, 7]
-            weights = [20, 20, 10, 10, 10, 15, 15]
-            left_hand = get_weighted_random(elements, weights)
-        else:
-            left_hand = 0
+        elements = [0, 2, 3, 4, 5, 6, 7]
+        weights = [20, 20, 10, 10, 10, 15, 15]
+        left_hand = get_weighted_random(elements, weights)
     else:
         left_hand = int(player_dict["left_hand"])
     self.set_player_integer_field('PLHA', index, left_hand)
@@ -259,8 +256,8 @@ def create_fullback(self, player_dict, index):
     right_wrist = left_wrist
     self.set_player_integer_field('PRWR', index, right_wrist)
     
-     # For visor, if the value in the CSV is -1, set 60% to 0 (none), 25% to 1 (clear), and 10% to 2 (dark), and 5% to 
-     # 3 (amber).
+     # For visor, if the value in the CSV is -1, set 60% to 0 (none), 25% to 1 (clear), 10% to 2 (dark), and 5% to 3 
+     # (amber).
     if int(player_dict["visor"]) == -1:
         elements = [0, 1, 2, 3]
         weights = [60, 25, 10, 5]
@@ -436,8 +433,8 @@ def create_fullback(self, player_dict, index):
     # problems, try just leaving the value as it was in the default roster.
     self.set_player_integer_field('PGID', index, index)
     
-    # PLSS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
-    elements = list(range(0, 41))
+    # PLSS: A random distribution from 5 to 45, where the most likely value is 20 and the least likely is 45.
+    elements = list(range(5, 46))
     weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
                3, 4, 6, 7, 9, 7, 6, 4, 3, 3, \
                3, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
@@ -517,7 +514,7 @@ def create_fullback(self, player_dict, index):
         if catching > 67:
             tendency = 1 # receiving
         # Otherwise, if the FB has enough overall blocking ability, call him a blocking back.
-        elif pass_block > 70 or run_block > 70:
+        elif (pass_block > 67 and run_block > 57) or (pass_block > 57 and run_block > 67) or catching < 57:
             tendency = 0 # blocking
         else:
             tendency = 2 # balanced
@@ -525,7 +522,6 @@ def create_fullback(self, player_dict, index):
         tendency = int(player_dict["tendency"])
     self.set_player_integer_field('PTEN', index, tendency)
     
-
     # PHLM: Check the value from PFMK. If it was set to 13, we must use 4. Otherwise, see what is in the CSV. If it is 
     # -1, give 75% a 0 (Style 1) and 25% a 2 (Style 3).
     if face_mask == 13:
@@ -594,9 +590,9 @@ def create_fullback(self, player_dict, index):
             role_one = 24
         elif player_roles.is_pass_blocker(role_one, position, pass_block):
             role_one = 25
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_one = 7
         elif player_roles.is_fan_favorite(role_one, years_pro, morale, overall_rating):
             role_one = 13
@@ -627,9 +623,9 @@ def create_fullback(self, player_dict, index):
             role_two = 24
         elif player_roles.is_pass_blocker(role_one, position, pass_block):
             role_two = 25
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_two = 7
         elif player_roles.is_fan_favorite(role_one, years_pro, morale, overall_rating):
             role_two = 13

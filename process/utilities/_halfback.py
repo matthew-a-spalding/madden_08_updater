@@ -156,16 +156,12 @@ def create_halfback(self, player_dict, index):
         left_elbow = int(player_dict["left_elbow"])
     self.set_player_integer_field('PLEL', index, left_elbow)
     
-    # For left_hand, if the CSV says -1 and the player's handedness is right, set 5% to 0 (none), 25% to 2 
-    # (black glove), 10% to 3 (white glove), 20% to 4 (team-color glove), 5% to 5 (white RB glove), 15% to 6 (black 
-    # RB glove), and 20% to 7 (team-color RB glove).
+    # For left_hand, if the CSV says -1, set 5% to 0 (none), 25% to 2 (black glove), 10% to 3 (white glove), 20% to 4 
+    # (team-color glove), 5% to 5 (white RB glove), 15% to 6 (black RB glove), and 20% to 7 (team-color RB glove).
     if int(player_dict["left_hand"]) == -1:
-        if handedness == 0:
-            elements = [0, 2, 3, 4, 5, 6, 7]
-            weights = [5, 25, 10, 20, 5, 15, 20]
-            left_hand = get_weighted_random(elements, weights)
-        else:
-            left_hand = 0
+        elements = [0, 2, 3, 4, 5, 6, 7]
+        weights = [5, 25, 10, 20, 5, 15, 20]
+        left_hand = get_weighted_random(elements, weights)
     else:
         left_hand = int(player_dict["left_hand"])
     self.set_player_integer_field('PLHA', index, left_hand)
@@ -427,8 +423,8 @@ def create_halfback(self, player_dict, index):
     # problems, try just leaving the value as it was in the default roster.
     self.set_player_integer_field('PGID', index, index)
     
-    # PLSS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
-    elements = list(range(0, 41))
+    # PLSS: A random distribution from 5 to 45, where the most likely value is 20 and the least likely is 45.
+    elements = list(range(5, 46))
     weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
                3, 4, 6, 7, 9, 7, 6, 4, 3, 3, \
                3, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
@@ -585,9 +581,9 @@ def create_halfback(self, player_dict, index):
             role_one = 23
         elif player_roles.is_return_specialist(role_one, speed, acceleration, agility, kick_return, overall_rating):
             role_one = 11
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_one = 7
         elif player_roles.is_fan_favorite(role_one, years_pro, morale, overall_rating):
             role_one = 13
@@ -623,9 +619,9 @@ def create_halfback(self, player_dict, index):
             role_two = 23
         elif player_roles.is_return_specialist(role_one, speed, acceleration, agility, kick_return, overall_rating):
             role_two = 11
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_two = 7
         elif player_roles.is_fan_favorite(role_one, years_pro, morale, overall_rating):
             role_two = 13

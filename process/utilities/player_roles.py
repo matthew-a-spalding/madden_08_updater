@@ -13,6 +13,20 @@ def is_cannon_arm(role_one, throw_power):
         return True
     return False
 
+def is_deep_threat(role_one, position, speed, acceleration):
+    """ Determines whether the given values qualify a player to be labeled as a 'deep threat'. """
+    if role_one in [35, 36, 37]:
+        return False
+    # WRs
+    if position == 3:
+        if (speed > 89 and acceleration > 93) or (speed > 92 and acceleration > 89):
+            return True
+    # TEs
+    elif position == 4:
+        if (speed > 86 and acceleration > 89) or (speed > 89 and acceleration > 86):
+            return True
+    return False
+
 def is_elusive_back(role_one, acceleration, agility):
     """ Determines whether the given values qualify a player to be labeled as an 'elusive back'. """
     if role_one in [21, 22, 23]:
@@ -70,6 +84,20 @@ def is_game_manager(role_one, years_pro, awareness, throw_power, throw_accuracy,
         return True
     return False
 
+def is_go_to_guy(role_one, position, speed, catching, overall_rating):
+    """ Determines whether the given values qualify a player to be labeled as a 'go-to guy'. """
+    if role_one in [35, 36, 37]:
+        return False
+    # WRs
+    if position == 3:
+        if speed > 88 and catching > 90 and overall_rating > 79:
+            return True
+    # TEs
+    elif position == 4:
+        if speed > 84 and catching > 85 and overall_rating > 79:
+            return True
+    return False
+
 def is_injury_prone(role_one, injury, toughness):
     """ Determines whether the given values qualify a player to be labeled as 'injury prone'. """
     if role_one in [14]:
@@ -82,13 +110,32 @@ def is_pass_blocker(role_one, position, pass_block):
     """ Determines whether the given values qualify a player to be labeled as a 'pass blocker'. """
     if role_one in [25, 24, 26]:
         return False
+    # FBs
     if position == 2:
-        if pass_block > 66:
+        if pass_block > 65:
             return True
+    # TEs
     elif position == 4:
-        pass
-    elif pass_block > 64:
-        pass
+        if pass_block > 65:
+            return True
+    # L/RTs
+    elif position in [5, 9]:
+        if pass_block > 87:
+            return True
+    return False
+
+def is_possession_receiver(role_one, position, catching, awareness):
+    """ Determines whether the given values qualify a player to be labeled as a 'possession receiver'. """
+    if role_one in [35, 36, 37]:
+        return False
+    # WRs
+    if position == 3:
+        if catching > 88 and awareness > 85:
+            return True
+    # TEs
+    elif position == 4:
+        if catching > 85 and awareness > 85:
+            return True
     return False
 
 def is_power_back(role_one, strength, break_tackles):
@@ -107,12 +154,12 @@ def is_precision_passer(role_one, throw_accuracy):
         return True
     return False
 
-def is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, break_tackles, 
-                      throw_power, throw_accuracy, kick_power, years_pro, overall_rating):
+def is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, throw_accuracy, speed, 
+                      acceleration, break_tackles, agility, strength, kick_power):
     """ Determines whether the given values qualify a player to be labeled as a 'project player'. """
     if role_one in [7]:
         return False
-    if awareness > 79 or years_pro > 4 or overall_rating > 87:
+    if overall_rating > 87 or years_pro > 4 or awareness > 79:
         return False
     # QBs
     if position == 0:
@@ -124,7 +171,19 @@ def is_project_player(role_one, position, awareness, speed, acceleration, agilit
             return True
     # FBs
     elif position == 2:
-        if (speed > 82 and acceleration > 85 and strength > 70) or (strength > 83):
+        if (speed > 82 and acceleration > 85 and strength > 70) or (strength > 80):
+            return True
+    # WRs
+    elif position == 3:
+        if speed > 89 and acceleration > 89 and agility > 89:
+            return True
+    # TEs
+    elif position == 4:
+        if (speed > 84 and acceleration > 86 and agility > 80) or (strength > 80):
+            return True
+    # L/RTs
+    elif position in [5, 9]:
+        if (speed > 84 and acceleration > 86 and agility > 80) or (strength > 80):
             return True
     return False
 
@@ -140,35 +199,45 @@ def is_return_specialist(role_one, speed, acceleration, agility, kick_return, ov
     """ Determines whether the given values qualify a player to be labeled as a 'return specialist'. """
     if role_one in [11, 34, 35, 37]:
         return False
-    if (overall_rating < 85 and speed > 89 and acceleration > 89 and agility > 89 and kick_return > 78 
+    if (overall_rating < 86 and speed > 89 and acceleration > 89 and agility > 89 and kick_return > 79 
             and math.ceil((speed + acceleration + agility) / 3) > 91):
         return True
     return False
 
 def is_road_blocker(role_one, position, run_block, pass_block):
     """ Determines whether the given values qualify a player to be labeled as a 'road blocker'. """
-    if role_one in [26]:
+    if role_one in [26, 24, 25]:
         return False
+    # FBs
     if position == 2:
-        if run_block > 69 and pass_block > 64:
+        if run_block > 69 and pass_block > 65:
             return True
+    # TEs
     elif position == 4:
-        pass
-    elif run_block > 69 and pass_block > 64:
-        pass
+        if run_block > 69 and pass_block > 65:
+            return True
+    # L/RTs
+    elif position in [5, 9]:
+        if run_block > 84 and pass_block > 87:
+            return True
     return False
 
 def is_run_blocker(role_one, position, run_block):
     """ Determines whether the given values qualify a player to be labeled as a 'run blocker'. """
     if role_one in [24, 25, 26]:
         return False
+    # FBs
     if position == 2:
         if run_block > 69:
             return True
+    # TEs
     elif position == 4:
-        pass
-    elif run_block > 69:
-        pass
+        if run_block > 69:
+            return True
+    #L/RTs
+    elif position in [5, 9]:
+        if run_block > 84:
+            return True
     return False
 
 def is_scrambler(role_one, speed, acceleration, agility):
@@ -191,7 +260,7 @@ def is_team_distraction(role_one, morale, importance):
     """ Determines whether the given values qualify a player to be labeled as a 'team distraction'. """
     if role_one in [8, 5, 6]:
         return False
-    if morale < 55 and importance > 55:
+    if morale < 55 and importance > 60:
         return True
     return False
 

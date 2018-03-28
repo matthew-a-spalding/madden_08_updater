@@ -427,8 +427,8 @@ def create_quarterback(self, player_dict, index):
     # problems, try just leaving the value as it was in the default roster.
     self.set_player_integer_field('PGID', index, index)
     
-    # PLSS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
-    elements = list(range(0, 41))
+    # PLSS: A random distribution from 5 to 45, where the most likely value is 20 and the least likely is 45.
+    elements = list(range(5, 46))
     weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
                3, 4, 6, 7, 9, 7, 6, 4, 3, 3, \
                3, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
@@ -582,9 +582,9 @@ def create_quarterback(self, player_dict, index):
         elif player_roles.is_qb_of_the_future(role_one, draft_round, years_pro, throw_power, throw_accuracy, 
                                               overall_rating):
             role_one = 0
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_one = 7
         elif player_roles.is_underachiever(role_one, draft_round, draft_pick, years_pro, overall_rating):
             role_one = 4
@@ -621,9 +621,9 @@ def create_quarterback(self, player_dict, index):
         elif player_roles.is_qb_of_the_future(role_one, draft_round, years_pro, throw_power, throw_accuracy, 
                                               overall_rating):
             role_two = 0
-        elif player_roles.is_project_player(role_one, position, awareness, speed, acceleration, agility, strength, 
-                                            break_tackles, throw_power, throw_accuracy, kick_power, years_pro, 
-                                            overall_rating):
+        elif player_roles.is_project_player(role_one, overall_rating, years_pro, awareness, position, throw_power, 
+                                            throw_accuracy, speed, acceleration, break_tackles, agility, strength, 
+                                            kick_power):
             role_two = 7
         elif player_roles.is_underachiever(role_one, draft_round, draft_pick, years_pro, overall_rating):
             role_two = 4
