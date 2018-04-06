@@ -60,6 +60,18 @@ def is_first_round_pick(role_one, draft_round):
         return True
     return False
 
+def is_force_of_nature(role_one, position, acceleration, strength):
+    """ Determines whether the given values qualify a player to be labeled as a 'force of nature'. """
+    if role_one in [27, 28, 39, 40]:
+        return False
+    if position in [10, 11]: #L/REs
+        if acceleration > 85 and strength > 85:
+            return True
+    if position == 12: #DTs
+        if acceleration > 83 and strength > 88:
+            return True
+    return False
+
 def is_franchise_qb(role_one, awareness, overall_rating):
     """ Determines whether the given values qualify a player to be labeled as a 'franchise QB'. """
     if role_one in [8, 14, 20]:
@@ -98,6 +110,20 @@ def is_go_to_guy(role_one, position, speed, catching, overall_rating):
             return True
     return False
 
+def is_heavy_hitter(role_one, position, tackle):
+    """ Determines whether the given values qualify a player to be labeled as a 'heavy hitter'. """
+    if role_one in [28, 27, 39, 40]:
+        return False
+    # L/REs
+    if position in [10, 11]:
+        if tackle > 83:
+            return True
+    # DTs
+    if position == 12:
+        if tackle > 89:
+            return True
+    return False
+
 def is_injury_prone(role_one, injury, toughness):
     """ Determines whether the given values qualify a player to be labeled as 'injury prone'. """
     if role_one in [14]:
@@ -121,6 +147,28 @@ def is_pass_blocker(role_one, position, pass_block):
     # L/RTs
     elif position in [5, 9]:
         if pass_block > 87:
+            return True
+    # L/RGs
+    elif position in [6, 8]:
+        if pass_block > 84:
+            return True
+    # Cs
+    elif position == 7:
+        if pass_block > 84:
+            return True
+    return False
+
+def is_pass_rusher(role_one, position, speed, acceleration):
+    """ Determines whether the given values qualify a player to be labeled as a 'pass rusher'. """
+    if role_one in [39, 27, 28, 40]:
+        return False
+    # L/REs
+    if position in [10, 11]:
+        if speed > 79 and acceleration > 86:
+            return True
+    # DTs
+    if position == 12:
+        if speed > 72 and acceleration > 83:
             return True
     return False
 
@@ -179,11 +227,27 @@ def is_project_player(role_one, overall_rating, years_pro, awareness, position, 
             return True
     # TEs
     elif position == 4:
-        if (speed > 84 and acceleration > 86 and agility > 80) or (strength > 80):
+        if (speed > 84 and acceleration > 86 and agility > 80) or strength > 80:
             return True
     # L/RTs
     elif position in [5, 9]:
-        if (speed > 84 and acceleration > 86 and agility > 80) or (strength > 80):
+        if (speed > 70 and acceleration > 80 and agility > 70 and strength > 86) or strength > 90:
+            return True
+    # L/RGs
+    elif position in [6, 8]:
+        if (speed > 66 and acceleration > 79 and agility > 65 and strength > 84) or strength > 90:
+            return True
+    # Cs
+    elif position == 7:
+        if (speed > 66 and acceleration > 79 and agility > 65 and strength > 84) or strength > 90:
+            return True
+    # L/REs
+    elif position in [10, 11]:
+        if (speed > 77 and acceleration > 84 and agility > 79 and strength > 75) or strength > 87:
+            return True
+    # DTs
+    elif position == 12:
+        if (speed > 69 and acceleration > 81 and agility > 67 and strength > 84) or strength > 88:
             return True
     return False
 
@@ -220,6 +284,14 @@ def is_road_blocker(role_one, position, run_block, pass_block):
     elif position in [5, 9]:
         if run_block > 84 and pass_block > 87:
             return True
+    # L/RGs
+    elif position in [6, 8]:
+        if run_block > 87 and pass_block > 84:
+            return True
+    # Cs
+    elif position == 7:
+        if run_block > 84 and pass_block > 84:
+            return True
     return False
 
 def is_run_blocker(role_one, position, run_block):
@@ -237,6 +309,28 @@ def is_run_blocker(role_one, position, run_block):
     #L/RTs
     elif position in [5, 9]:
         if run_block > 84:
+            return True
+    #L/RGs
+    elif position in [6, 8]:
+        if run_block > 87:
+            return True
+    #Cs
+    elif position == 7:
+        if run_block > 84:
+            return True
+    return False
+
+def is_run_stopper(role_one, position, strength, tackle):
+    """ Determines whether the given values qualify a player to be labeled as a 'run stopper'. """
+    if role_one in [40, 27, 28, 39]:
+        return False
+    # L/REs
+    if position in [10, 11]:
+        if strength > 84 and tackle > 84:
+            return True
+    # DTs
+    if position == 12:
+        if strength > 89 and tackle > 86:
             return True
     return False
 

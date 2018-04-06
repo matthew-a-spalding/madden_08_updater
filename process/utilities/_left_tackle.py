@@ -418,46 +418,41 @@ def create_left_tackle(self, player_dict, index):
     ego = get_weighted_random(elements, weights)
     self.set_player_integer_field('PEGO', index, ego)
     
-    # PFAS: A random distribution from 0 to 30, where the most likely value is 15 and the least likely are 0 and 30.
-    elements = list(range(0, 31))
-    weights = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 4, 6, 11, \
-               16, 11, 6, 4, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
+    # PFAS: A random distribution from 10 to 30, where the most likely value is 15 and the least likely is 30.
+    elements = list(range(10, 31))
+    weights = [5, 6, 9, 11, 13, 15, 10, 6, 4, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
     arm_fat = get_weighted_random(elements, weights)
     self.set_player_integer_field('PFAS', index, arm_fat)
     
-    # PFCS: A random distribution from 0 to 35, where the most likely value is 10 and the least likely are 0 and 35.
-    elements = list(range(0, 36))
-    weights = [1, 1, 1, 2, 2, 3, 3, 4, 6, 9, 13, 9, 6, 4, 3, 3, 3, 3, \
-               2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    # PFCS: A random distribution from 10 to 35, where the most likely value is 20 and the least likely is 35.
+    elements = list(range(10, 36))
+    weights = [1, 1, 2, 2, 3, 4, 5, 7, 9, 11, 13, 10, 7, 5, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1]
     calf_fat = get_weighted_random(elements, weights)
     self.set_player_integer_field('PFCS', index, calf_fat)
     
-    # PFGS: A random distribution from 0 to 50, where the most likely value is 20 and the least likely are 0 and 50.
-    elements = list(range(0, 51))
-    weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-               2, 2, 2, 2, 2, 3, 3, 3, 4, 6, \
-               10, 6, 4, 3, 3, 3, 2, 2, 2, 2, \
-               2, 2, 2, 1, 1, 1, 1, 1, 1, 1, \
+    # PFGS: A random distribution from 10 to 50, where the most likely value is 25 and the least likely is 50.
+    elements = list(range(10, 51))
+    weights = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, \
+               3, 3, 4, 6, 8, 10, 8, 6, 4, 3, \
+               3, 2, 2, 2, 2, 1, 1, 1, 1, 1, \
                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     glute_fat = get_weighted_random(elements, weights)
     self.set_player_integer_field('PFGS', index, glute_fat)
     
-    # PFHS: A random distribution from 0 to 50, where the most likely value is 20 and the least likely are 0 and 50.
-    elements = list(range(0, 51))
-    weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-               2, 2, 2, 2, 2, 3, 3, 3, 4, 6, \
-               10, 6, 4, 3, 3, 3, 2, 2, 2, 2, \
-               2, 2, 2, 1, 1, 1, 1, 1, 1, 1, \
+    # PFHS: A random distribution from 10 to 50, where the most likely value is 25 and the least likely is 50.
+    elements = list(range(10, 51))
+    weights = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, \
+               3, 3, 4, 6, 8, 10, 8, 6, 4, 3, \
+               3, 2, 2, 2, 2, 1, 1, 1, 1, 1, \
                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     thigh_fat = get_weighted_random(elements, weights)
     self.set_player_integer_field('PFHS', index, thigh_fat)
     
-    # PFTS: A random distribution from 0 to 50, where the most likely value is 20 and the least likely are 0 and 50.
-    elements = list(range(0, 51))
-    weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-               2, 2, 2, 2, 2, 3, 3, 3, 4, 6, \
-               10, 6, 4, 3, 3, 3, 2, 2, 2, 2, \
-               2, 2, 2, 1, 1, 1, 1, 1, 1, 1, \
+    # PFTS: A random distribution from 10 to 50, where the most likely value is 20 and the least likely is 50.
+    elements = list(range(10, 51))
+    weights = [1, 1, 1, 2, 2, 2, 3, 4, 6, 8, \
+               10, 8, 6, 4, 3, 3, 3, 3, 2, 2, \
+               2, 2, 2, 2, 2, 1, 1, 1, 1, 1, \
                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     torso_fat = get_weighted_random(elements, weights)
     self.set_player_integer_field('PFTS', index, torso_fat)
@@ -475,11 +470,10 @@ def create_left_tackle(self, player_dict, index):
     shoe_length = get_weighted_random(elements, weights)
     self.set_player_integer_field('PLSS', index, shoe_length)
     
-    # PMAS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
-    elements = list(range(0, 41))
-    weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
-               3, 4, 6, 7, 9, 7, 6, 4, 3, 3, \
-               3, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+    # PMAS: A random distribution from 10 to 40, where the most likely value is 20 and the least likely is 40.
+    elements = list(range(10, 41))
+    weights = [2, 2, 2, 2, 3, 3, 4, 6, 8, 10, 12, \
+               9, 6, 4, 3, 3, 3, 2, 2, 2, 2, \
                1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     arm_muscle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PMAS', index, arm_muscle)
@@ -530,7 +524,7 @@ def create_left_tackle(self, player_dict, index):
     subtract_for_body_size = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSBS', index, subtract_for_body_size)
     
-    # PUTS: A random distribution from 10 to 50, where the most likely value is 20 and the least likely are 10 and 50.
+    # PUTS: A random distribution from 10 to 50, where the most likely value is 20 and the least likely is 50.
     elements = list(range(10, 51))
     weights = [1, 1, 1, 1, 2, 2, 3, 4, 6, 9, 13, \
                9, 7, 5, 3, 3, 2, 2, 2, 2, 2, \
