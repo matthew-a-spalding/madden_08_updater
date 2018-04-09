@@ -27,6 +27,14 @@ def is_deep_threat(role_one, position, speed, acceleration):
             return True
     return False
 
+def is_defensive_enforcer(role_one, speed, strength):
+    """ Determines whether the given values qualify a player to be labeled as a 'defensive enforcer'. """
+    if role_one in [41, 42, 27, 39, 40, 28]:
+        return False
+    if speed > 85 and strength > 79:
+        return True
+    return False
+
 def is_elusive_back(role_one, acceleration, agility):
     """ Determines whether the given values qualify a player to be labeled as an 'elusive back'. """
     if role_one in [21, 22, 23]:
@@ -69,6 +77,9 @@ def is_force_of_nature(role_one, position, acceleration, strength):
             return True
     if position == 12: #DTs
         if acceleration > 83 and strength > 88:
+            return True
+    if position in [13, 14, 15]: #LBs
+        if acceleration > 87 and strength > 82:
             return True
     return False
 
@@ -122,6 +133,10 @@ def is_heavy_hitter(role_one, position, tackle):
     if position == 12:
         if tackle > 89:
             return True
+    # LBs
+    if position in [13, 14, 15]:
+        if tackle > 84:
+            return True
     return False
 
 def is_injury_prone(role_one, injury, toughness):
@@ -160,7 +175,7 @@ def is_pass_blocker(role_one, position, pass_block):
 
 def is_pass_rusher(role_one, position, speed, acceleration):
     """ Determines whether the given values qualify a player to be labeled as a 'pass rusher'. """
-    if role_one in [39, 27, 28, 40]:
+    if role_one in [39, 27, 28, 40, 41, 42]:
         return False
     # L/REs
     if position in [10, 11]:
@@ -170,6 +185,18 @@ def is_pass_rusher(role_one, position, speed, acceleration):
     if position == 12:
         if speed > 72 and acceleration > 83:
             return True
+    # LBs
+    if position in [13, 14, 15]:
+        if speed > 84 and acceleration > 88:
+            return True
+    return False
+
+def is_playmaker(role_one, speed, awareness):
+    """ Determines whether the given values qualify a player to be labeled as a 'playmaker'. """
+    if role_one in [42, 41, 27, 39, 40, 28]:
+        return False
+    if speed > 83 and awareness > 81:
+        return True
     return False
 
 def is_possession_receiver(role_one, position, catching, awareness):
@@ -248,6 +275,10 @@ def is_project_player(role_one, overall_rating, years_pro, awareness, position, 
     # DTs
     elif position == 12:
         if (speed > 69 and acceleration > 81 and agility > 67 and strength > 84) or strength > 88:
+            return True
+    # L/ROLBs
+    elif position in [13, 15]:
+        if (speed > 82 and acceleration > 86 and agility > 79 and strength > 75) or strength > 83:
             return True
     return False
 
@@ -331,6 +362,10 @@ def is_run_stopper(role_one, position, strength, tackle):
     # DTs
     if position == 12:
         if strength > 89 and tackle > 86:
+            return True
+    # DTs
+    if position in [13, 14, 15]:
+        if strength > 79 and tackle > 80:
             return True
     return False
 
