@@ -123,7 +123,7 @@ def is_go_to_guy(role_one, position, speed, catching, overall_rating):
 
 def is_heavy_hitter(role_one, position, tackle):
     """ Determines whether the given values qualify a player to be labeled as a 'heavy hitter'. """
-    if role_one in [28, 27, 39, 40]:
+    if role_one in [28, 27]:
         return False
     # L/REs
     if position in [10, 11]:
@@ -175,7 +175,7 @@ def is_pass_blocker(role_one, position, pass_block):
 
 def is_pass_rusher(role_one, position, speed, acceleration):
     """ Determines whether the given values qualify a player to be labeled as a 'pass rusher'. """
-    if role_one in [39, 27, 28, 40, 41, 42]:
+    if role_one in [39, 40]:
         return False
     # L/REs
     if position in [10, 11]:
@@ -276,8 +276,8 @@ def is_project_player(role_one, overall_rating, years_pro, awareness, position, 
     elif position == 12:
         if (speed > 69 and acceleration > 81 and agility > 67 and strength > 84) or strength > 88:
             return True
-    # L/ROLBs
-    elif position in [13, 15]:
+    # LBs
+    elif position in [13, 14, 15]:
         if (speed > 82 and acceleration > 86 and agility > 79 and strength > 75) or strength > 83:
             return True
     return False
@@ -353,7 +353,7 @@ def is_run_blocker(role_one, position, run_block):
 
 def is_run_stopper(role_one, position, strength, tackle):
     """ Determines whether the given values qualify a player to be labeled as a 'run stopper'. """
-    if role_one in [40, 27, 28, 39]:
+    if role_one in [40, 39]:
         return False
     # L/REs
     if position in [10, 11]:
