@@ -321,7 +321,7 @@ def create_left_outside_linebacker(self, player_dict, index):
     awareness = max(min(int(player_dict["awareness"]), 99), 40)
     self.set_player_integer_field('PAWR', index, awareness)
     
-    agility = max(min(int(player_dict["agility"]), 95), 60)
+    agility = max(min(int(player_dict["agility"]), 95), 65)
     self.set_player_integer_field('PAGI', index, agility)
     
     acceleration = max(min(int(player_dict["acceleration"]), 95), 75)
@@ -403,6 +403,9 @@ def create_left_outside_linebacker(self, player_dict, index):
     toughness = max(min(int(player_dict["toughness"]), 99), 60)
     self.set_player_integer_field('PTGH', index, toughness)
     
+    
+    # For the following attributes, we will use weighted random distributions or other non-dependant means without 
+    # checking the CSV file at all.
     
     # PCHS: A random distribution from 0 to 50, where the most likely value is 15 and the least likely is 50.
     elements = list(range(0, 51))

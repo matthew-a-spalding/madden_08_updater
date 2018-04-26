@@ -143,7 +143,7 @@ we expect, and that there are no empty or otherwise invalid values.
 - Test the creation of the latest.ros for a few specific things:
     - There are a few players in the Madden file with contract lengths > 7 (a few 8s, one 10). 
     Since there were no players with contracts that long in the original game, make sure this 
-    doesn't mess anything up. (Contract years left are within the original range, at 1 - 7.)
+    doesn't mess anything up. (Contract Years Left are within the original range, at 1 - 7.)
     - See if any players get the following attributes:
         - Check All PROL or PRL2s to see that at least someone get one of each. In particular, 
         any: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 

@@ -402,6 +402,9 @@ def create_right_guard(self, player_dict, index):
     self.set_player_integer_field('PTGH', index, toughness)
     
     
+    # For the following attributes, we will use weighted random distributions or other non-dependant means without 
+    # checking the CSV file at all.
+    
     # PCHS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
     elements = list(range(0, 41))
     weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \

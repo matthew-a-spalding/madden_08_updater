@@ -402,6 +402,9 @@ def create_left_end(self, player_dict, index):
     self.set_player_integer_field('PTGH', index, toughness)
     
     
+    # For the following attributes, we will use weighted random distributions or other non-dependant means without 
+    # checking the CSV file at all.
+    
     # PCHS: A random distribution from 0 to 40, where the most likely value is 15 and the least likely is 40.
     elements = list(range(0, 41))
     weights = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, \
@@ -536,11 +539,11 @@ def create_left_end(self, player_dict, index):
     
     # These calculations use the results of previous calculations.
     
-    # PTEN: If the CSV is -1, use the LE's speed, acceleration, and agility attributes to determine the tendency.
+    # PTEN: If the CSV is -1, use the LE's speed, acceleration, agility, and tackling attributes to determine tendency.
     if int(player_dict["tendency"]) == -1:
         if speed > 76 and acceleration > 84 and agility > 73:
             tendency = 0 # pass_rushing
-        elif speed < 76 and acceleration < 84 and agility < 73:
+        elif speed < 76 and acceleration < 84 and agility < 73 and tackle > 80:
             tendency = 1 # run_stopping
         else:
             tendency = 2 # balanced
