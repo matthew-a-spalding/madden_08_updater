@@ -119,20 +119,248 @@ certain percentage, to account for inflation today?)
 Setting Field Values.xlsx". Separate out each position into its own Python module, kept in the 
 'utilities' folder.
     
-    ***	IN PROGRESS.	***
+    ***	DONE ***
     
 
--- CONTINUE HERE --
---   2018_03_22  --
-
-
 - Player Fixes:
-    - Jeremy Butler, WR Bills; Zach Wood, TE Saints; Luke Rhodes, TE Colts (blocking); 
-        They can NOT be this bad. Seriously. Must have been injury-based ratings.
-    - Many TEs blk str/ftw: Ross Travis, Jon Weeks, Jon Condo, Morgan Cox, John Denney, Matt 
-        Lengel, L.P. LaDouceur, Neal Sterling, Zak DeOssie
-    - FBs: Make sure we have enough, and they are rated reasonably (range of OVR, etc.)
-    - 
+    - Jeremy Butler, WR Bills; 
+        DONE
+    -Zach Wood, TE Saints; 
+        DONE
+    - Luke Rhodes, TE Colts (blocking); 
+        DONE
+    
+    - Many TEs blocking str/ftw: 
+        Ross Travis;
+            DONE
+        Jon Weeks;
+            DONE
+        Jon Condo;
+            DONE
+        Morgan Cox;
+            DONE
+        John Denney;
+            DONE
+        Matt Lengel;
+            DONE
+        L.P. LaDouceur;
+            DONE
+        Neal Sterling;
+            DONE
+        Zak DeOssie;
+            DONE
+        
+    - Check remaining stats in latest FINAL
+        Awareness: DONE
+        Speed: DONE
+        Accel: DONE
+        Agility: DONE
+        Strength: DONE
+        Catching: DONE
+        Throw Accuracy: DONE
+        Pass Block: DONE
+        Run Block: DONE
+        Tackle: DONE
+        Kick Power: DONE
+        Kick Accuracy: DONE
+        Kick Return: DONE
+    
+    
+    
+-- CONTINUE HERE --
+--   2018_05_18  --
+    
+- Fill out numbers at each position to be slightly more than what were in the original roster (roster_default08.csv).
+    
+    - QBs: Try to get up to 110 - Had 106 in original ros, incl. 16 FAs. WAS: 93 - Add 17 (15 more) new
+        - Baker Mayfield - DONE
+        - Sam Darnold - DONE
+        - Josh Allen - 
+        - Josh Rosen 
+        - L. Jackson 
+        - M. Rudolph 
+        - K. Lauletta 
+        - M. White 
+        - L. Falk 
+        - T. Lee 
+        - D. Etling 
+        - A. McGough 
+        - L. Woodside 
+        - Quinton Flowers 
+        - Nic Shimonek 
+        - Kurt Benkert 
+        - Tim Boyle 
+    - HBs: Try to get down to 130 - Had 129 in original ros, incl. 18 FAs. WAS: 148 - Make X into FBs, add X new
+        - Saquon Barkley - DONE
+        - 
+        - 
+    - FBs: Try to get up to 50 - Had 54 in original ros, incl. 10 FAs. WAS: 30 - Need 15 from HBs / 5 from draft
+        - Dimitri Flowers
+        - 
+        - 
+        - 
+        - 
+    - WRs: Try to get up to 205 - Had 201 in original ros, incl. 17 FAs. WAS: 218 - DROP X retiring, add 15? new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - TEs: Try to get up to 110 - Had 96 in original ros, incl. 11 FAs. WAS: 164 - DROP X, move X to OL, add 10?
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - LTs: Try to get up to 75 - Had 73 in original ros, incl. 8 FAs. WAS: 64- Get 5 from RT, add 6 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - LGs: Try to get up to 75 - Had 78 in original ros, incl. 13 FAs. WAS: 73 - Move 5 to RG, add 7 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - Cs: Try to get up to 75 - Had 74 in original ros, incl. 8 FAs. WAS: 71 - Add 4 new
+        - 
+        - 
+        - 
+        - 
+    - RGs: Try to get up to 75 - Had 82 in original ros, incl. 17 FAs. WAS: 61 - Get 5 from LG, add 9 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - RTs: Try to get up to 75 - Had 82 in original ros, incl. 15 FAs. WAS: 75 - Move 5 to LT, add 5 new
+        - 
+        - 
+        - 
+        - 
+        - 
+    - LEs: Try to get up to 85 - Had 80 in original ros, incl. 6 FAs. WAS: 90 - Move 8 to DT, add 5 new
+        - 
+        - 
+        - 
+        - 
+        - 
+    - REs: Try to get up to 85 - Had 77 in original ros, incl. 5 FAs. WAS: 90 - Move 8 to DT, add 5 new
+        - 
+        - 
+        - 
+        - 
+        - 
+    - DTs: Try to get up to 140 - Had 138 in original ros, incl. 16 FAs. WAS: 116 - Get 16 from DEs, add 8 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - LOLBs: Try to get up to 85 - Had 79 in original ros, incl. 9 FAs. WAS: 87 - Retire 10, add 8 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - MLBs: Try to get up to 115 - Had 100 in original ros, incl. 16 FAs. WAS: 123 - Retire 16, add 8 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - ROLBs: Try to get up to 85 - Had 83 in original ros, incl. 11 FAs. WAS: 90 - Retire 13, add 8 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - CBs: Try to get down to 190 - Had 178 in original ros, incl. 17 FAs. WAS: 212 - too many! Move:
+                - 10 to SS
+                - Retire/cut 22 more
+                - Add 10 (9 more) from draft
+        - Denzel Ward - DONE
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - FSs: Try to get up to 90 - Had 81 in original ros, incl. 12 FAs. WAS: 85 - Add 5 new
+        - 
+        - 
+        - 
+        - 
+        - 
+    - SSs: Try to get up to 95 - Had 87 in original ros, incl. 17 FAs. WAS: 79 - Get 10 from CB, add 6 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - Ks: Try to get up to 45 - Had 41 in original ros, incl. 7 FAs. WAS: 37 - Add 8 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+    - Ps: Try to get up to 45 - Had 43 in original ros, incl. 10 FAs. WAS: 34 - Add 11 new
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+
+    Current total: 
 
 - Double check the input file, Latest Player Attributes.csv, before running step 5 for the 
 creation of latest.ros. Check each field by sorting on its values and making sure we get a range 
