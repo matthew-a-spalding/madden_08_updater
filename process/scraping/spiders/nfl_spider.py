@@ -1,4 +1,4 @@
-r""" nfl_spider.py
+r"""nfl_spider.py
     
     This script defines the spider class and related helper functions that will perform the actual crawl over the 
     entirety of the NFL team roster pages. It generates a CSV file named 'NFL rosters.csv' listing all current NFL 
@@ -76,7 +76,7 @@ class NFLSpider(CrawlSpider):
         self.madden_ratings_file = open(
             os.path.join(
                 os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 
-                r"process\inputs\Latest Madden Ratings.csv"
+                r"process\inputs\step3\Latest Madden Ratings.csv"
             ), 'r'
         )
         
@@ -413,38 +413,39 @@ class NFLSpider(CrawlSpider):
             
             # Set the values for the remaining fields listed in "items.py" as simple pass-throughs from Madden. 
             
+            player["awareness"] = madden_player_dict["Awareness"]
             player["speed"] = madden_player_dict["Speed"]
             player["acceleration"] = madden_player_dict["Acceleration"]
-            player["strength"] = madden_player_dict["Strength"]
             player["agility"] = madden_player_dict["Agility"]
-            player["awareness"] = madden_player_dict["Awareness"]
-            player["catching"] = madden_player_dict["Catching"]
-            player["carrying"] = madden_player_dict["Carrying"]
-            player["throw_power"] = madden_player_dict["Throw Power"]
-            player["throw_accuracy"] = madden_player_dict["Throw Accuracy"]
-            player["kick_power"] = madden_player_dict["Kick Power"]
-            player["kick_accuracy"] = madden_player_dict["Kick Accuracy"]
-            player["run_block"] = madden_player_dict["Run Block"]
-            player["pass_block"] = madden_player_dict["Pass Block"]
-            player["tackle"] = madden_player_dict["Tackle"]
-            player["jumping"] = madden_player_dict["Jumping"]
-            player["kick_return"] = madden_player_dict["Kick Return"]
-            player["injury"] = madden_player_dict["Injury"]
-            player["stamina"] = madden_player_dict["Stamina"]
-            player["toughness"] = madden_player_dict["Toughness"]
-            player["trucking"] = madden_player_dict["Trucking"]
+            player["strength"] = madden_player_dict["Strength"]
             player["elusiveness"] = madden_player_dict["Elusiveness"]
-            player["run_block_strength"] = madden_player_dict["Run Block Strength"]
-            player["run_block_footwork"] = madden_player_dict["Run Block Footwork"]
-            player["pass_block_strength"] = madden_player_dict["Pass Block Strength"]
-            player["pass_block_footwork"] = madden_player_dict["Pass Block Footwork"]
+            player["carrying"] = madden_player_dict["Carrying"]
+            player["trucking"] = madden_player_dict["Trucking"]
+            player["catching"] = madden_player_dict["Catching"]
+            player["jumping"] = madden_player_dict["Jumping"]
+            player["throw_power"] = madden_player_dict["Throw Power"]
             player["throw_accuracy_short"] = madden_player_dict["Throw Accuracy Short"]
             player["throw_accuracy_mid"] = madden_player_dict["Throw Accuracy Mid"]
             player["throw_accuracy_deep"] = madden_player_dict["Throw Accuracy Deep"]
             player["throw_on_the_run"] = madden_player_dict["Throw on the Run"]
+            player["playaction"] = madden_player_dict["Playaction"]
+            player["pass_block"] = madden_player_dict["Pass Block"]
+            player["run_block"] = madden_player_dict["Run Block"]
+            player["tackle"] = madden_player_dict["Tackle"]
+            player["kick_power"] = madden_player_dict["Kick Power"]
+            player["kick_accuracy"] = madden_player_dict["Kick Accuracy"]
+            player["kick_return"] = madden_player_dict["Kick Return"]
+            player["stamina"] = madden_player_dict["Stamina"]
+            player["injury"] = madden_player_dict["Injury"]
+            player["run_block_power"] = madden_player_dict["Run Block Power"]
+            player["run_block_finesse"] = madden_player_dict["Run Block Finesse"]
+            player["pass_block_power"] = madden_player_dict["Pass Block Power"]
+            player["pass_block_finesse"] = madden_player_dict["Pass Block Finesse"]
+            player["break_tackle"] = madden_player_dict["Break Tackle"]
+            player["toughness"] = madden_player_dict["Toughness"]
+            player["handedness"] = madden_player_dict["Handedness"]
             player["total_salary"] = madden_player_dict["Total Salary"]
             player["signing_bonus"] = madden_player_dict["Signing Bonus"]
-            player["handedness"] = madden_player_dict["Handedness"]
             
             # Construct the next request, for the 'OverTheCap' contracts list page, and pass it the current player.
             # NOTE: The 'dont_filter=True' in the assignment below is CRITICAL, as omitting it will mean the spider 

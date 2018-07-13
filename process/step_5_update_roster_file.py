@@ -1,24 +1,28 @@
-r""" step_5_update_roster_file.py
+r"""step_5_update_roster_file.py
+    
     This is one of the two main Python scripts called when updating the base Madden NFL '08 roster file, to be called 
     using the syntax: 
         > python step_5_update_roster_file.py
     
     This script is only one part of the process for generating an updated Madden NFL '08 Roster file. Prior to running 
     this script, the first four steps of the process need to be performed. Please refer to the document 
-    "step_1 README for Madden_08_Updater.docx" for more information. 
+    "step_1 README for madden_08_updater.txt" for more information. 
     
     This script requires the following files to be placed in the "utilities" folder alongside it, meaning in 
     os.path.join(os.path.dirname(os.path.abspath(__file__)), r"utilities\") : 
-        1) The helper file, "roster_manager.py" 
-        2) The folder and file "tdbaccess\new\tdbaccess.dll" 
-        3) colleges_and_ids.csv
-        4) teams_and_ids.csv
-    Additionally, the below files must be in the "inputs" folder, meaning in 
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), r"inputs\") : 
-        1) The base Madden '08 Roster file to update, named "base.ros" 
-        2) The latest NFL roster-based CSV file, named "Latest Player Attributes.csv" 
+        1) The main helper file, "roster_manager.py"
+        2) The individual position helper files, like "_center.py", etc.
+        3) The file 'player_roles.py', used to decide which roles to assign to players
+        4) The file 'randomizer_functions.py', which is used when generating psuedo-random numbers
+        5) The folder and file "tdbaccess\new\tdbaccess.dll"
+        6) colleges_and_ids.csv
+        7) teams_and_ids.csv
+    Additionally, the base Madden roster file to update, named "base.ros", must be in the "process\inputs\step5" 
+    folder, and the final version of the latest player attributes file must be in "process\inputs\both" as a CSV file 
+    named "Latest Player Attributes.csv."
     
-    This script will generate the file "latest.ros" in the folder "outputs".
+    This script (or, more accurately, its helper, "roster_manager.py") will generate the file "latest.ros" in the 
+    folder "outputs\step5\".
 """
 
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
@@ -60,7 +64,10 @@ BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ------------------------------------------------ Main Functionality -------------------------------------------------
 
 # Open the CSV file with all the players and their latest attributes.
-with open(os.path.join(BASE_MADDEN_PATH, r"process\inputs\Latest Player Attributes.csv")) as PLAYER_ATTRIBUTES_FILE: 
+with open(os.path.join(
+    BASE_MADDEN_PATH, 
+    r"process\inputs\both\Latest Player Attributes.csv")
+         ) as PLAYER_ATTRIBUTES_FILE: 
     # Get a DictReader to read the rows into dicts using the header row as keys.
     ATTRIBUTES_DICT_READER = csv.DictReader(PLAYER_ATTRIBUTES_FILE)
     # Pull our records into a list so we can count them and iterate over them as often as needed.

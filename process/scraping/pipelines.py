@@ -1,4 +1,4 @@
-""" pipelines.py
+r"""pipelines.py
     
     This module contains the definition of the pipeline class and its methods. The pipeline is where each item found 
     by the spider during the crawl is processed. Our Player Pipeline opens a CSV file for writing the player dicts, 
@@ -22,11 +22,11 @@ class PlayerPipeline(object):
     """
     def __init__(self):
         # Figure out the path we will use when placing our output file.
-        output_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'outputs'))
+        output_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', r'outputs\step3'))
         # Open the file we will write to, and keep it in our object's scope.
         self.nfl_rosters_file = open(
             os.path.join(
-                output_directory, "My {0} NFL Ratings.csv".format(int(datetime.now().year))
+                output_directory, "My {0} NFL Ratings - Initial.csv".format(int(datetime.now().year))
             ), "w", newline='')
         # Create our list of field names.
         field_names = NFLPlayer.fields.keys()

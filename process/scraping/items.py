@@ -1,4 +1,5 @@
-"""
+r"""items.py
+    
     This module is just the definition of the NFLPlayer item our spider captures.
 """
 from scrapy.item import Item, Field
@@ -13,6 +14,7 @@ class NFLPlayer(Item):
     agility = Field()
     awareness = Field()
     birthdate = Field()
+    break_tackle = Field()
     carrying = Field()
     catching = Field()
     college = Field()
@@ -32,19 +34,19 @@ class NFLPlayer(Item):
     kick_return = Field()
     last_name = Field()
     pass_block = Field()
-    pass_block_footwork = Field()
-    pass_block_strength = Field()
+    pass_block_power = Field()
+    pass_block_finesse = Field()
+    playaction = Field()
     position = Field()
     run_block = Field()
-    run_block_footwork = Field()
-    run_block_strength = Field()
+    run_block_power = Field()
+    run_block_finesse = Field()
     signing_bonus = Field()
     speed = Field()
     stamina = Field()
     strength = Field()
     tackle = Field()
     team = Field()
-    throw_accuracy = Field()
     throw_accuracy_deep = Field()
     throw_accuracy_mid = Field()
     throw_accuracy_short = Field()

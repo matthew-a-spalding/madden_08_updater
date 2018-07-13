@@ -1,4 +1,4 @@
-r""" roster_manager.py
+r"""roster_manager.py
     
     This is the only python sub-module used by the script "step_5_update_roster_file.py". It contains the 
     RosterManager class which has methods that perform the logic of that script's main function.
@@ -64,13 +64,13 @@ class RosterManager:
         
         # Copy the input file into our destination folder and rename on the way.
         copyfile(
-            os.path.join(RosterManager.base_madden_path, r"process\inputs\base.ros"), 
-            os.path.join(RosterManager.base_madden_path, r"process\outputs\latest.ros")
+            os.path.join(RosterManager.base_madden_path, r"process\inputs\step5\base.ros"), 
+            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\latest.ros")
         )
         
         # Open the roster file through the DLL and get its index.
         self.db_index = self.tdbaccess_dll.TDBOpen(
-            os.path.join(RosterManager.base_madden_path, r"process\outputs\latest.ros")
+            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\latest.ros")
         )
         if self.db_index == -1:
             sys.exit()
@@ -88,7 +88,10 @@ class RosterManager:
             raise RuntimeError
         
         # Read colleges_and_ids.csv into a list of dicts.
-        with open(os.path.join(RosterManager.base_madden_path, r"process\utilities\colleges_and_ids.csv")) as colleges_file: 
+        with open(os.path.join(
+            RosterManager.base_madden_path, 
+            r"process\utilities\colleges_and_ids.csv")
+                 ) as colleges_file: 
             # Get a DictReader to read the rows into dicts using the header row as keys.
             colleges_dict_reader = csv.DictReader(colleges_file)
             # Pull our records into a list so we can count them and iterate over them as often as needed.

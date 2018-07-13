@@ -1,8 +1,8 @@
-r""" dump_roster_to_csv.py
+r"""dump_roster_to_csv.py
     
-    This file currently: opens the file "latest.ros" (found in "[BASE_MADDEN_PATH]\process\outputs\"); calls method 
-    TDBTableGetProperties on each of the tables; gets the properties of each field in table 6 (the "PLAY" table, with 
-    player attribute info); and then writes all of the 110 attributes of each player to 
+    This file currently: opens the file "latest.ros" (found in "[BASE_MADDEN_PATH]\process\outputs\step5\"); calls 
+    method TDBTableGetProperties on each of the tables; gets the properties of each field in table 6 (the "PLAY" 
+    table, with player attribute info); and then writes all of the 110 attributes of each player to 
     "[BASE_MADDEN_PATH]\docs\Roster dumps\latest.csv".
 """
 
@@ -36,7 +36,7 @@ BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 TDBACCESS_DLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbaccess\old\tdbaccess.dll"))
 
 # Open the roster file through the DLL and get its index.
-DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\latest.ros").encode('utf-8'))
+DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\step5\latest.ros").encode('utf-8'))
 
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
@@ -117,7 +117,7 @@ TDBACCESS_DLL.TDBTableGetProperties.restype = c_bool
 
 # We'll use this to control a loop over the tables.
 table_count = TDBACCESS_DLL.TDBDatabaseGetTableCount(DB_INDEX)
-logging.info("\ntable_count = %d",table_count)
+logging.info("\ntable_count = %d", table_count)
 
 # Create a list to hold all our table properties structs.
 table_property_structs_list = []
