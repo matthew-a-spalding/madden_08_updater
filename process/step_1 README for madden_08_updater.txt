@@ -87,11 +87,16 @@ validating the roster file and polishing it up before creating a new franchise.
     c. Change to the process folder:
         cd Gaming\madden_08_updater\process
     d. Activate the virtual environment: 
-        .\scraping\Scripts\activate.bat
+        ..\venv\Scripts\activate.bat
 
-3.  Run the Scrapy script:
+3.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\process" DIRECTORY, OR SCRAPY WILL SAY THAT 
+    IT CANNNOT FIND THE SPIDER "nfl_rosters".
     
     python step_3_scrape_NFL_rosters.py
+    
+    IF THERE ARE ERRORS FROM SCRAPY: Check the changelogs for Scrapy to see if anything has changed out from under me. 
+    This happened the last time I tried to perform a fresh install of Scrapy - the class name in Scrapy's crawler.py 
+    apparently had been changed from CrawlerPROCESS to CrawlerProcess, the casing of which Python cares about.
     
     If the format of the HTML on the NFL and OverTheCap sites has not changed, the step 3 script should have created a 
     file "My [year] NFL Ratings.csv" in "Gaming\madden_08_updater\process\outputs". If there is no file there, or if 

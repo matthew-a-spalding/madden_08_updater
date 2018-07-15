@@ -20,7 +20,7 @@ r""" step_3_scrape_NFL_rosters.py
 
 # 2 - Third-party imports
 #from scrapy import signals
-from scrapy.crawler import CrawlerPROCESS
+from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 #from scrapy.utils.log import configure_logging
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     """
     
     # Get the settings and initialize the crawler PROCESS.
-    PROCESS = CrawlerPROCESS(get_project_settings())
+    PROCESS = CrawlerProcess(get_project_settings())
     # Let's crawl!
     PROCESS.crawl('nfl_rosters')
     print('Starting our crawl...')

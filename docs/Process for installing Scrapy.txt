@@ -10,6 +10,7 @@ In a command prompt window, do:
     
     python -m pip install --upgrade pip
     
+    pip install Scrapy
+    
     pip install pypiwin32
     
-    pip install Scrapy
