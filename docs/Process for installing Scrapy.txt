@@ -1,0 +1,15 @@
+In a command prompt window, do:
+
+    python -m venv E:\Gaming\madden_08_updater\venv
+    
+    E:
+    
+    cd E:\Gaming\madden_08_updater\venv
+    
+    .\Scripts\activate.bat
+    
+    python -m pip install --upgrade pip
+    
+    pip install pypiwin32
+    
+    pip install Scrapy
