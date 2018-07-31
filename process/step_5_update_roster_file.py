@@ -18,10 +18,10 @@ r"""step_5_update_roster_file.py
         6) colleges_and_ids.csv
         7) teams_and_ids.csv
     Additionally, the base Madden roster file to update, named "base.ros", must be in the "process\inputs\step5" 
-    folder, and the final version of the latest player attributes file must be in "process\inputs\both" as a CSV file 
-    named "Latest Player Attributes.csv."
+    folder, and the final version of the current player attributes file must be in "process\inputs\step5" as a CSV file 
+    named "Current Player Attributes.csv."
     
-    This script (or, more accurately, its helper, "roster_manager.py") will generate the file "latest.ros" in the 
+    This script (or, more accurately, its helper, "roster_manager.py") will generate the file "current.ros" in the 
     folder "outputs\step5\".
 """
 
@@ -63,10 +63,10 @@ BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ----------------------------------------------------- SECTION 4 -----------------------------------------------------
 # ------------------------------------------------ Main Functionality -------------------------------------------------
 
-# Open the CSV file with all the players and their latest attributes.
+# Open the CSV file with all the players and their current attributes.
 with open(os.path.join(
     BASE_MADDEN_PATH, 
-    r"process\inputs\both\Latest Player Attributes.csv")
+    r"process\inputs\step5\Current Player Attributes.csv")
          ) as PLAYER_ATTRIBUTES_FILE: 
     # Get a DictReader to read the rows into dicts using the header row as keys.
     ATTRIBUTES_DICT_READER = csv.DictReader(PLAYER_ATTRIBUTES_FILE)
@@ -138,7 +138,7 @@ try:
     ROSTERMANAGER.compact_save_close_db()
     
 except SystemExit:
-    logging.critical("Unable to open file 'latest.ros'. TDBOpen returned -1. Exiting.")
+    logging.critical("Unable to open file 'current.ros'. TDBOpen returned -1. Exiting.")
 
 except RuntimeError:
     # This makes sure that, in case of an error, we correctly close the DB file.

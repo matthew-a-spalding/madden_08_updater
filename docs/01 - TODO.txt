@@ -125,21 +125,28 @@ Setting Field Values.xlsx". Separate out each position into its own Python modul
     
     ***	DONE ***
     
+- Figure out how to put the venv folder I will make (E:\Gaming\madden_08_updater\venv\) into the .gitignore.
+    
+    *** Done.    ***
+
+- Install Scrapy into \venv.
+    
+    *** Done.    ***
+
 
 
     *** CONTINUE HERE - 2018-07-13 ***
 
 
-- Figure out how to put the venv folder I will make (E:\Gaming\madden_08_updater\venv\) into the .gitignore.
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's final ratings file (which should 
+always be found in "process\inputs\both\Latest Player Attributes.csv") alongside the "Latest Madden Ratings.csv" so we 
+can pull in players' info on skin color, hair color, etc. to include in the Step 3 output file for this year.
     
-    *** TODO    ***
+    *** IN PROGRESS.    ***
+        
+        - Try doing step 3 again, now that I finished putting the verbose flag into the main NFL parsing method.
+        
+- After running Step 3, see why so many players are showing up as missing from the Madden 19 file. Maybe just many FA 
+signings, which Madden didn't know about at launch and couldn't rate?
 
-- Install Scrapy into \venv.
-    
-    *** TODO    ***
-
-- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's "My 20XX NFL 
-Ratings - FINAL.csv" file alongside the "Latest Madden Ratings.csv" so we can pull in players' info on 
-skin color, hair color, etc. to include in the output file for this year.
-    
     *** TODO    ***

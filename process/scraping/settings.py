@@ -14,7 +14,7 @@ BOT_NAME = "scripted_bot"
 SPIDER_MODULES = ["scraping.spiders"]
 NEWSPIDER_MODULE = "scraping.spiders"
 
-LOG_LEVEL = "INFO"
+LOG_LEVEL = "WARNING"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "tutorial (+http://www.yourdomain.com)"

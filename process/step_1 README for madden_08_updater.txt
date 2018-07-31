@@ -59,7 +59,7 @@ validating the roster file and polishing it up before creating a new franchise.
         Run Block Finesse
         Pass Block Power
         Pass Block Finesse
-        Break Tackle
+        Break Tackle*           Not in 2017's attribute files.
         Toughness
         Handedness
         Jersey Number
@@ -71,7 +71,6 @@ validating the roster file and polishing it up before creating a new franchise.
         College
         Total Salary
         Signing Bonus
-        
 
 
                                 Step 3: Scrape the current rosters from NFL.com.
@@ -82,15 +81,17 @@ validating the roster file and polishing it up before creating a new franchise.
 2.  Activate the venv in "process\scraping" so we can use Scrapy. To do this:
     a. Open a CMD window.
         CTRL-R -> cmd
-    b. Change drive letters to the letter assigned to the USB thumb drive "Working Files": "E:" or "G:" or whatever:
-        e:
-    c. Change to the process folder:
-        cd Gaming\madden_08_updater\process
-    d. Activate the virtual environment: 
-        ..\venv\Scripts\activate.bat
+    b. Change to the process folder:
+        cd C:\Home\madden_08_updater_venv\
+    c. Activate the virtual environment: 
+        .\Scripts\activate.bat
+    d. Change drive letters to the letter assigned to the USB thumb drive "Working Files": "E:" or "G:" or whatever:
+        E:
+    e. Go into the madden_08_updater\process directory.
+        cd E:\Gaming\madden_08_updater\process
 
 3.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\process" DIRECTORY, OR SCRAPY WILL SAY THAT 
-    IT CANNNOT FIND THE SPIDER "nfl_rosters".
+    IT CANNNOT FIND THE SPIDER "nfl_rosters". In the command prompt window, do:
     
     python step_3_scrape_NFL_rosters.py
     
@@ -111,12 +112,18 @@ validating the roster file and polishing it up before creating a new franchise.
 
                             Step 4: Manually edit my ratings file until it is complete.
 
-1.  Once the script for step 3 has created the file "My 20XX NFL Ratings - Initial.csv," copy the file into 
-    "docs\My Ratings\20XX" and make another copy as "My 20XX NFL Ratings - In Progress 20XX_MM_DD.csv." Manually edit 
-    (and save revisions of) the file to:
+1.  Once the script for step 3 has created the file "My 20XX Player Attributes - Initial.csv," copy the file into 
+    "docs\My Ratings\20XX" and make another copy as "My 20XX Player Attributes - In Progress 20XX_MM_DD.csv." Manually 
+    edit (and save revisions of) the file to:
     a. Resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT. 
     b. Add important 'missing' (defaulted) values, particularly for new players in areas like Face ID, Hair Style, etc.
     c. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
+        * TO FIND MISSING FIELDS (BLANK CELLS IN EXCEL):
+        - Select the entire range where there should be no blank cells.
+        - Press F5 (fn-F5 on the Mac keyboard). 
+        - This brings up a "Go To" window. Here, click on the "Special..." button at the bottom.
+        - Select the radio button for Blanks and click OK.
+            It should show the first empty cell (if any) or say "No cells were found."
     d. Fill out roster numbers at each position to be slightly more than what they were in the original roster,
     "docs\Roster dumps\roster_default08_NFL_ONLY.csv," as below:
     
@@ -264,8 +271,8 @@ validating the roster file and polishing it up before creating a new franchise.
         
         Current total: 
     
-2.  Once the file is complete, save a final copy as "My 20XX NFL Ratings - FINAL 20XX_MM_DD.csv" and also put a copy 
-    of the file into "process\inputs\step5" as "Latest Player Attributes.csv" (overwriting the previous copy).
+2.  Once the file is complete, save a final copy as "My 20XX Player Attributes - FINAL 20XX_MM_DD.csv" and also put a 
+    copy of the file into "process\inputs\step5" as "Current Player Attributes.csv" (overwriting the previous copy).
 
 
                                             Step 5: Update the roster file.

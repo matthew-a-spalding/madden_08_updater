@@ -65,12 +65,12 @@ class RosterManager:
         # Copy the input file into our destination folder and rename on the way.
         copyfile(
             os.path.join(RosterManager.base_madden_path, r"process\inputs\step5\base.ros"), 
-            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\latest.ros")
+            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\current.ros")
         )
         
         # Open the roster file through the DLL and get its index.
         self.db_index = self.tdbaccess_dll.TDBOpen(
-            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\latest.ros")
+            os.path.join(RosterManager.base_madden_path, r"process\outputs\step5\current.ros")
         )
         if self.db_index == -1:
             sys.exit()

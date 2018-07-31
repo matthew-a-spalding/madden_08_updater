@@ -1,12 +1,14 @@
 r""" step_3_scrape_NFL_rosters.py
     
     This script crawls the entirety of the NFL team roster pages and generates a CSV file named 'NFL rosters.csv',
-    containing the full list of current NFL players and their latest Madden ratings as well as their biographic and 
-    contract data.
+    containing the full list of current NFL players and their latest Madden ratings as well as their biographic, in-
+    game model, and contract data.
     
-    For this PROCESS to run successfully, the file "PROCESS\inputs\step3\Latest Madden Ratings.cs" must exist. This 
+    For this process to run successfully, two other files must exist. The first is "process\inputs\step3\Latest 
+    Madden Ratings.csv" and the second is a file matching the convention "docs\My Ratings\{0}\My {1} NFL Ratings - 
+    FINAL.csv".format((int(datetime.now().year)))
     file should contain the full list of the latest ratings put out by EA Sports for Madden. It should have all of the 
-    required columns as listed in the README file (PROCESS\step_1 README for madden_08_updater.txt). 
+    required columns as listed in the README file (process\step_1 README for madden_08_updater.txt). 
     
     See the documentation on running Scrapy from a script here: 
         http://doc.scrapy.org/en/latest/topics/practices.html#run-scrapy-from-a-script
