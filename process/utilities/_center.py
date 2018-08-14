@@ -310,10 +310,25 @@ def create_center(self, player_dict, index):
     # Here is where we set the main attributes used by this position. See the file 'Methods for Setting Field 
     # Values.xlsx' for details on the calculations used.
     
-    speed = max(min(int(player_dict["speed"]), 85), 45)
+    if player_dict["speed"]:
+        speed = max(min(int(player_dict["speed"]), 85), 45)
+    else:
+        # A random distribution from 55 to 75, where the most likely values are 60 - 68.
+        elements = list(range(55, 76))
+        weights = [1, 2, 3, 4, 6, 8, 8, 8, 8, 7, 7, \
+                   7, 7, 6, 5, 4, 3, 2, 2, 1, 1]
+        speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
-    strength = max(min(int(player_dict["strength"]), 99), 65)
+    if player_dict["strength"]:
+        strength = max(min(int(player_dict["strength"]), 99), 65)
+    else:
+        # A random distribution from 70 to 97, where the most likely values are 85 - 89.
+        elements = list(range(70, 98))
+        weights = [1, 1, 1, 1, 1, 1, 2, 2, 3, \
+                   4, 5, 5, 6, 6, 7, 7, 8, 8, \
+                   7, 6, 5, 4, 3, 2, 1, 1, 1, 1]
+        strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     awareness = max(min(int(player_dict["awareness"]), 99), 40)

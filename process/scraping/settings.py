@@ -39,7 +39,7 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"cincinnati", "[SHORT_LOCATION]":"cin", "[NICKNAME]":"bengals"},
     # {"[FULL_LOCATION]":"cleveland", "[SHORT_LOCATION]":"cle", "[NICKNAME]":"browns"},
     # {"[FULL_LOCATION]":"pittsburgh", "[SHORT_LOCATION]":"pit", "[NICKNAME]":"steelers"},
-    {"[FULL_LOCATION]":"houston", "[SHORT_LOCATION]":"hou", "[NICKNAME]":"texans"},
+    # {"[FULL_LOCATION]":"houston", "[SHORT_LOCATION]":"hou", "[NICKNAME]":"texans"},
     # {"[FULL_LOCATION]":"indianapolis", "[SHORT_LOCATION]":"ind", "[NICKNAME]":"colts"},
     # {"[FULL_LOCATION]":"jacksonville", "[SHORT_LOCATION]":"jac", "[NICKNAME]":"jaguars"},
     # {"[FULL_LOCATION]":"tennessee", "[SHORT_LOCATION]":"ten", "[NICKNAME]":"titans"},
@@ -59,10 +59,10 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
     # {"[FULL_LOCATION]":"neworleans", "[SHORT_LOCATION]":"no", "[NICKNAME]":"saints"},
     # {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
-    # {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
-    # {"[FULL_LOCATION]":"st.louis", "[SHORT_LOCATION]":"stl", "[NICKNAME]":"rams"},
-    # {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
-    # {"[FULL_LOCATION]":"seattle", "[SHORT_LOCATION]":"sea", "[NICKNAME]":"seahawks"},
+    {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
+    {"[FULL_LOCATION]":"st.louis", "[SHORT_LOCATION]":"stl", "[NICKNAME]":"rams"},
+    {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
+    {"[FULL_LOCATION]":"seattle", "[SHORT_LOCATION]":"sea", "[NICKNAME]":"seahawks"},
 ]
 
 # The RegEx to use to find the links to follow from the NFL roster pages to the player profile pages.

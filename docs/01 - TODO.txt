@@ -133,20 +133,18 @@ Setting Field Values.xlsx". Separate out each position into its own Python modul
     
     *** Done.    ***
 
+- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's final ratings file (which should 
+always be found in "process\inputs\step3\Previous Player Attributes.csv") alongside the "Latest Madden Ratings.csv" so 
+we can pull in players' info on skin color, hair color, etc. to include in the Step 3 output file for this year.
+    
+    
+    *** DONE.    ***
+    
+    
+- Add code to each of the _[position] helper functions that generates weighted pseudo-random values for player 
+attributes when the attributes were not present in the "Current Player Attributes.csv" file used in step 5.
 
 
     *** CONTINUE HERE - 2018-07-13 ***
 
-
-- Add in code to scraping/spiders/nfl_spider.py that will open the previous year's final ratings file (which should 
-always be found in "process\inputs\both\Latest Player Attributes.csv") alongside the "Latest Madden Ratings.csv" so we 
-can pull in players' info on skin color, hair color, etc. to include in the Step 3 output file for this year.
-    
-    *** IN PROGRESS.    ***
-        
-        - Try doing step 3 again, now that I finished putting the verbose flag into the main NFL parsing method.
-        
-- After running Step 3, see why so many players are showing up as missing from the Madden 19 file. Maybe just many FA 
-signings, which Madden didn't know about at launch and couldn't rate?
-
-    *** TODO    ***
+    ***  IN PROGRESS. Currently working on _center.py.  ***

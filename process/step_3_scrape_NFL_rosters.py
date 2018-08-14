@@ -62,7 +62,7 @@ if __name__ == "__main__":
     PROCESS = CrawlerProcess(get_project_settings())
     # Let's crawl!
     PROCESS.crawl('nfl_rosters')
-    print('Starting our crawl...')
+    print('\n\n\n\nStarting our crawl...\n')
     PROCESS.start()
     # Once the reactor is done, we're done.
-    print('Crawling stopped.')
+    print('Crawling stopped.\n\n\n\n')
