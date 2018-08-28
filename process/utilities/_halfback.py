@@ -276,95 +276,94 @@ def create_halfback(self, player_dict, index):
     # Here is where we set the main attributes used by this position. See the file 'Methods for Setting Field 
     # Values.xlsx' for details on the calculations used.
     
-    speed = max(min(int(player_dict["speed"]), 99), 80)
+    speed = int(max(min(int(player_dict["speed"]), 99), 80))
     self.set_player_integer_field('PSPD', index, speed)
     
-    strength = max(min(int(player_dict["strength"]), 90), 45)
+    strength = int(max(min(int(player_dict["strength"]), 90), 45))
     self.set_player_integer_field('PSTR', index, strength)
     
-    awareness = max(min(int(player_dict["awareness"]), 99), 45)
+    awareness = int(max(min(int(player_dict["awareness"]), 99), 45))
     self.set_player_integer_field('PAWR', index, awareness)
     
-    agility = max(min(int(player_dict["agility"]), 99), 70)
+    agility = int(max(min(int(player_dict["agility"]), 99), 70))
     self.set_player_integer_field('PAGI', index, agility)
     
-    acceleration = max(min(int(player_dict["acceleration"]), 99), 75)
+    acceleration = int(max(min(int(player_dict["acceleration"]), 99), 75))
     self.set_player_integer_field('PACC', index, acceleration)
     
-    carrying = max(min(int(player_dict["carrying"]), 99), 55)
+    carrying = int(max(min(int(player_dict["carrying"]), 99), 55))
     self.set_player_integer_field('PCAR', index, carrying)
     
-    catching = max(min(int(player_dict["catching"]), 95), 50)
+    catching = int(max(min(int(player_dict["catching"]), 95), 50))
     self.set_player_integer_field('PCTH', index, catching)
     
-    jumping = max(min(int(player_dict["jumping"]), 99), 50)
+    jumping = int(max(min(int(player_dict["jumping"]), 99), 50))
     self.set_player_integer_field('PJMP', index, jumping)
     
-    break_tackles = max(min(
+    break_tackles = int(max(min(
         (math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2) + 5), 
-        99
-    ), 50)
+        99), 50))
     self.set_player_integer_field('PBTK', index, break_tackles)
     
-    tackle = max(min(int(player_dict["tackle"]), 65), 10)
+    tackle = int(max(min(int(player_dict["tackle"]), 65), 10))
     self.set_player_integer_field('PTAK', index, tackle)
     
-    throw_power = max(min(int(player_dict["throw_power"]), 90), 20)
+    throw_power = int(max(min(int(player_dict["throw_power"]), 90), 20))
     self.set_player_integer_field('PTHP', index, throw_power)
     
-    throw_accuracy = max(min(math.ceil(
+    throw_accuracy = int(max(min(math.ceil(
         ((2 * (
             int(player_dict["throw_accuracy_short"]) + 
             int(player_dict["throw_accuracy_mid"]) + 
             int(player_dict["throw_accuracy_deep"]) + 
             int(player_dict["throw_on_the_run"]) + 
-            int(player_dict["throw_accuracy"])
+            int(player_dict["playaction"])
         )
          ) - min(
              int(player_dict["throw_accuracy_short"]), 
              int(player_dict["throw_accuracy_mid"]), 
              int(player_dict["throw_accuracy_deep"]), 
              int(player_dict["throw_on_the_run"]), 
-             int(player_dict["throw_accuracy"])
+             int(player_dict["playaction"])
          )
         ) / 9
-    ), 85), 20)
+    ), 85), 20))
     self.set_player_integer_field('PTHA', index, throw_accuracy)
     
-    pass_block = max(min(math.ceil(
+    pass_block = int(max(min(math.ceil(
         (
             int(player_dict["pass_block"]) + 
-            int(player_dict["pass_block_strength"]) + 
-            int(player_dict["pass_block_footwork"])
+            int(player_dict["pass_block_power"]) + 
+            int(player_dict["pass_block_finesse"])
         ) / 3
-    ), 75), 25)
+    ), 75), 25))
     self.set_player_integer_field('PPBK', index, pass_block)
     
-    run_block = max(min(math.ceil(
+    run_block = int(max(min(math.ceil(
         (
             int(player_dict["run_block"]) + 
-            int(player_dict["run_block_strength"]) + 
-            int(player_dict["run_block_footwork"])
+            int(player_dict["run_block_power"]) + 
+            int(player_dict["run_block_finesse"])
         ) / 3
-    ), 70), 25)
+    ), 70), 25))
     self.set_player_integer_field('PRBK', index, run_block)
     
-    kick_power = max(min(int(player_dict["kick_power"]), 50), 10)
+    kick_power = int(max(min(int(player_dict["kick_power"]), 50), 10))
     self.set_player_integer_field('PKPR', index, kick_power)
     
-    kick_accuracy = max(min(int(player_dict["kick_accuracy"]), 50), 5)
+    kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 50), 5))
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     
-    kick_return = max(min(int(player_dict["kick_return"]), 99), 20)
+    kick_return = int(max(min(int(player_dict["kick_return"]), 99), 20))
     self.set_player_integer_field('PKRT', index, kick_return)
     
-    stamina = max(min(int(player_dict["stamina"]), 99), 60)
+    stamina = int(max(min(int(player_dict["stamina"]), 99), 60))
     self.set_player_integer_field('PSTA', index, stamina)
     
-    injury = max(min(int(player_dict["injury"]), 99), 45)
+    injury = int(max(min(int(player_dict["injury"]), 99), 45))
     self.set_player_integer_field('PINJ', index, injury)
     
-    toughness = max(min(int(player_dict["toughness"]), 99), 45)
+    toughness = int(max(min(int(player_dict["toughness"]), 99), 45))
     self.set_player_integer_field('PTGH', index, toughness)
     
     
@@ -549,12 +548,12 @@ def create_halfback(self, player_dict, index):
     overall_rating += ((strength - 50.0) / 10.0) * 0.6
     overall_rating += ((speed - 50.0) / 10.0) * 3.3
     overall_rating += ((catching - 50.0) / 10.0) * 1.4
-    overall_rating = max(min((round(overall_rating) + 27), 99), 40)
+    overall_rating = int(max(min((round(overall_rating) + 27), 99), 40))
     self.set_player_integer_field('POVR', index, overall_rating)
     
     # PIMP: We're relating the importance of a player to his overall rating and his position. HBs should be fairly 
-    # important, so use the following:  max(min(ceil((([POVR]/100)^2) * 75) + ([POVR] - 70), 99), 15)
-    importance = max(min(math.ceil((math.pow((overall_rating / 100), 2) * 75) + (overall_rating - 70)), 99), 15)
+    # important, so use the following:  int(max(min(ceil((([POVR]/100)^2) * 75) + ([POVR] - 70), 99), 15))
+    importance = int(max(min(math.ceil((math.pow((overall_rating / 100), 2) * 75) + (overall_rating - 70)), 99), 15))
     self.set_player_integer_field('PIMP', index, importance)
     
     # PROL: Check for these roles IN THIS ORDER: 1) injury_prone, 2) team_distraction, 3) project_player, 4) 
@@ -570,7 +569,7 @@ def create_halfback(self, player_dict, index):
             role_one = 4
         elif player_roles.is_fumble_prone(role_one, carrying):
             role_one = 15
-        elif player_roles.is_feature_back(role_one, awareness, speed, acceleration, agility, strength, 
+        elif player_roles.is_feature_back(role_one, awareness, speed, acceleration, agility, 
                                           break_tackles, carrying, overall_rating):
             role_one = 34
         elif player_roles.is_power_back(role_one, strength, break_tackles):
@@ -608,7 +607,7 @@ def create_halfback(self, player_dict, index):
             role_two = 4
         elif player_roles.is_fumble_prone(role_one, carrying):
             role_two = 15
-        elif player_roles.is_feature_back(role_one, awareness, speed, acceleration, agility, strength, 
+        elif player_roles.is_feature_back(role_one, awareness, speed, acceleration, agility, 
                                           break_tackles, carrying, overall_rating):
             role_two = 34
         elif player_roles.is_power_back(role_one, strength, break_tackles):

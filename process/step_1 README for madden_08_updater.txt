@@ -277,9 +277,9 @@ validating the roster file and polishing it up before creating a new franchise.
 
                                             Step 5: Update the roster file.
 
-1.  In a command window, run the second script, "step_5_update_roster_file.py": 
+1.  In a command window, run the second script, "step_5_update_roster_file.py" as so: 
     
-    E:\Gaming\madden_08_updater\process> python step_5_update_roster_file.py
+        E:\Gaming\madden_08_updater\process>python step_5_update_roster_file.py
     
     Then take the output (the altered roster file "latest.ros") and test it in Madden NFL 08 to make sure it can be 
     read and used in setting up a franchise mode. 

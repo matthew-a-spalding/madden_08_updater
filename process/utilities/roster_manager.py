@@ -8,7 +8,7 @@ r"""roster_manager.py
 # ---------------------------------------- IMPORTS, SETTINGS, AND CONSTANTS -------------------------------------------
 # 1 - Standard library imports
 import csv, logging, os, sys
-from ctypes import byref, cast, c_bool, c_wchar, c_wchar_p, c_int, POINTER, Structure, WinDLL
+from ctypes import ArgumentError, byref, cast, c_bool, c_wchar, c_wchar_p, c_int, POINTER, Structure, WinDLL
 from shutil import copyfile
 
 # 2 - Third-party imports

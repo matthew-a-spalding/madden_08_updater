@@ -1,9 +1,9 @@
 r"""dump_roster_to_csv.py
     
-    This file currently: opens the file "latest.ros" (found in "[BASE_MADDEN_PATH]\process\outputs\step5\"); calls 
+    This file currently: opens the file "current.ros" (found in "[BASE_MADDEN_PATH]\process\outputs\step5\"); calls 
     method TDBTableGetProperties on each of the tables; gets the properties of each field in table 6 (the "PLAY" 
     table, with player attribute info); and then writes all of the 110 attributes of each player to 
-    "[BASE_MADDEN_PATH]\docs\Roster dumps\latest.csv".
+    "[BASE_MADDEN_PATH]\docs\Roster dumps\current.csv".
 """
 
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------
@@ -36,7 +36,7 @@ BASE_MADDEN_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 TDBACCESS_DLL = WinDLL(os.path.join(BASE_MADDEN_PATH, r"process\utilities\tdbaccess\old\tdbaccess.dll"))
 
 # Open the roster file through the DLL and get its index.
-DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\step5\latest.ros").encode('utf-8'))
+DB_INDEX = TDBACCESS_DLL.TDBOpen(os.path.join(BASE_MADDEN_PATH, r"process\outputs\step5\current.ros").encode('utf-8'))
 
 
 # ----------------------------------------------------- SECTION 2 -----------------------------------------------------
@@ -186,7 +186,7 @@ for i in range(table_property_structs_list[6].RecordCount):
 
 # Open a file to write to.
 player_attributes_file = open(
-    os.path.join(BASE_MADDEN_PATH, r"docs\Roster dumps\latest.csv"), "w", newline=''
+    os.path.join(BASE_MADDEN_PATH, r"docs\Roster dumps\current.csv"), "w", newline=''
 )
 
 # Create our DictWriter.
