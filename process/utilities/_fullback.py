@@ -279,95 +279,256 @@ def create_fullback(self, player_dict, index):
     # Here is where we set the main attributes used by this position. See the file 'Methods for Setting Field 
     # Values.xlsx' for details on the calculations used.
     
-    speed = int(max(min(int(player_dict["speed"]), 95), 60))
+    if player_dict["speed"]:
+        speed = int(max(min(int(player_dict["speed"]), 95), 60))
+    else:
+        # A random distribution from 70 to 88, where the most likely values are 74 - 80.
+        elements = list(range(70, 89))
+        weights = [1, 3, 5, 7, 9, 9, 9, \
+                   10, 9, 9, 9, 7, 5, \
+                   3, 1, 1, 1, 1, 1]
+        speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
-    strength = int(max(min(int(player_dict["strength"]), 95), 55))
+    if player_dict["strength"]:
+        strength = int(max(min(int(player_dict["strength"]), 95), 60))
+    else:
+        # A random distribution from 67 to 88, where the most likely values are 72 - 77.
+        elements = list(range(67, 89))
+        weights = [1, 1, 3, 5, 7, 10, 10, 10, \
+                   10, 10, 10, 7, 5, 3, 1, \
+                   1, 1, 1, 1, 1, 1, 1]
+        strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
-    awareness = int(max(min(int(player_dict["awareness"]), 99), 45))
+    if player_dict["awareness"]:
+        awareness = int(max(min(int(player_dict["awareness"]), 99), 45))
+    else:
+        # A random distribution from 45 to 70, where the most likely values are 49 - 57.
+        elements = list(range(45, 71))
+        weights = [3, 4, 5, 6, 7, 7, 7, 7, 7, \
+                   7, 7, 7, 7, 5, 3, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1]
+        awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
-    agility = int(max(min(int(player_dict["agility"]), 95), 50))
+    if player_dict["agility"]:
+        agility = int(max(min(int(player_dict["agility"]), 95), 55))
+    else:
+        # A random distribution from 65 to 88, where the most likely values are 69 - 74.
+        elements = list(range(65, 89))
+        weights = [3, 4, 5, 7, 9, 9, 9, 9, \
+                   9, 9, 7, 5, 3, 2, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1]
+        agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
-    acceleration = int(max(min(int(player_dict["acceleration"]), 95), 50))
+    if player_dict["acceleration"]:
+        acceleration = int(max(min(int(player_dict["acceleration"]), 95), 65))
+    else:
+        # A random distribution from 75 to 90, where the most likely values are 79 - 84.
+        elements = list(range(75, 91))
+        weights = [1, 2, 4, 9, 11, 11, 11, 11, \
+                   11, 11, 9, 4, 2, 1, 1, 1]
+        acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
-    carrying = int(max(min(int(player_dict["carrying"]), 99), 60))
+    if player_dict["carrying"]:
+        carrying = int(max(min(int(player_dict["carrying"]), 99), 60))
+    else:
+        # A random distribution from 65 to 85, where the most likely values are 66 - 73.
+        elements = list(range(65, 86))
+        weights = [4, 9, 9, 9, 9, 9, 9, \
+                   9, 9, 7, 5, 3, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1]
+        carrying = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCAR', index, carrying)
     
-    catching = int(max(min(int(player_dict["catching"]), 95), 45))
+    if player_dict["catching"]:
+        catching = int(max(min(int(player_dict["catching"]), 95), 45))
+    else:
+        # A random distribution from 50 to 72, where the most likely values are 54 - 61.
+        elements = list(range(50, 73))
+        weights = [1, 3, 4, 6, 8, 8, 8, 8, \
+                   8, 8, 8, 8, 6, 4, 3, 2, \
+                   1, 1, 1, 1, 1, 1, 1]
+        catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     
-    jumping = int(max(min(int(player_dict["jumping"]), 95), 45))
+    if player_dict["jumping"]:
+        jumping = int(max(min(int(player_dict["jumping"]), 95), 55))
+    else:
+        # A random distribution from 60 to 90, where the most likely values are 65 - 78.
+        elements = list(range(60, 91))
+        weights = [1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, \
+                   5, 5, 5, 5, 5, 5, 5, 5, 4, 3, \
+                   2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+        jumping = get_weighted_random(elements, weights)
     self.set_player_integer_field('PJMP', index, jumping)
     
-    break_tackles = int(max(min(
-        (math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2) + 5), 
-        99
-    ), 55))
+    if player_dict["elusiveness"] and player_dict["trucking"]:
+        break_tackles = int(max(min(
+            (math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2) + 5), 
+            99), 55))
+    else:
+        # A random distribution from 55 to 80, where the most likely values are 58 - 66.
+        elements = list(range(55, 81))
+        weights = [1, 3, 5, 7, 7, 7, 7, 7, 7, \
+                   7, 7, 7, 6, 5, 4, 3, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1]
+        break_tackles = get_weighted_random(elements, weights)
     self.set_player_integer_field('PBTK', index, break_tackles)
     
-    tackle = int(max(min(int(player_dict["tackle"]), 80), 10))
+    if player_dict["tackle"]:
+        tackle = int(max(min(int(player_dict["tackle"]), 85), 30))
+    else:
+        # A random distribution from 35 to 75, where the most likely values are 38 - 47.
+        elements = list(range(35, 76))
+        weights = [3, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, \
+                   5, 5, 4, 4, 3, 3, 2, 2, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
-    throw_power = int(max(min(int(player_dict["throw_power"]), 80), 20))
+    if player_dict["throw_power"]:
+        throw_power = int(max(min(int(player_dict["throw_power"]) + 5, 80), 20))
+    else:
+        # A random distribution from 20 to 60, where the most likely values are 24 - 35.
+        elements = list(range(20, 61))
+        weights = [1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, \
+                   5, 5, 5, 5, 5, 4, 3, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        throw_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTHP', index, throw_power)
     
-    throw_accuracy = int(max(min(math.ceil(
-        ((2 * (
-            int(player_dict["throw_accuracy_short"]) + 
-            int(player_dict["throw_accuracy_mid"]) + 
-            int(player_dict["throw_accuracy_deep"]) + 
-            int(player_dict["throw_on_the_run"]) + 
-            int(player_dict["playaction"])
-        )
-         ) - min(
-             int(player_dict["throw_accuracy_short"]), 
-             int(player_dict["throw_accuracy_mid"]), 
-             int(player_dict["throw_accuracy_deep"]), 
-             int(player_dict["throw_on_the_run"]), 
-             int(player_dict["playaction"])
-         )
-        ) / 9
-    ), 80), 20))
+    if (player_dict["throw_accuracy_short"] and player_dict["throw_accuracy_mid"] 
+            and player_dict["throw_accuracy_deep"] and player_dict["throw_on_the_run"] and player_dict["playaction"]):
+        throw_accuracy = int(max(min(math.ceil(
+            ((2 * (
+                int(player_dict["throw_accuracy_short"]) + 
+                int(player_dict["throw_accuracy_mid"]) + 
+                int(player_dict["throw_accuracy_deep"]) + 
+                int(player_dict["throw_on_the_run"]) + 
+                int(player_dict["playaction"])
+            )
+             ) - min(
+                 int(player_dict["throw_accuracy_short"]), 
+                 int(player_dict["throw_accuracy_mid"]), 
+                 int(player_dict["throw_accuracy_deep"]), 
+                 int(player_dict["throw_on_the_run"]), 
+                 int(player_dict["playaction"])
+             )
+            ) / 9
+        ) + 10, 80), 15))
+    else:
+        # A random distribution from 20 to 65, where the most likely values are 20 - 29.
+        elements = list(range(20, 66))
+        weights = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 3, 3, 2, 2, \
+                   2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        throw_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTHA', index, throw_accuracy)
     
-    pass_block = int(max(min(math.ceil(
-        (
-            int(player_dict["pass_block"]) + 
-            int(player_dict["pass_block_power"]) + 
-            int(player_dict["pass_block_finesse"])
-        ) / 3
-    ), 85), 45))
+    if player_dict["pass_block"] and player_dict["pass_block_power"] and player_dict["pass_block_finesse"]:
+        pass_block = int(max(min(math.ceil(
+            (
+                int(player_dict["pass_block"]) + 
+                int(player_dict["pass_block_power"]) + 
+                int(player_dict["pass_block_finesse"])
+            ) / 3
+        ), 75), 40))
+    else:
+        # A random distribution from 40 to 60, where the most likely values are 40 - 48.
+        elements = list(range(40, 61))
+        weights = [8, 8, 8, 8, 8, 8, 8, \
+                   8, 8, 6, 5, 4, 3, 2, \
+                   2, 1, 1, 1, 1, 1, 1]
+        pass_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PPBK', index, pass_block)
     
-    run_block = int(max(min(math.ceil(
-        (
-            int(player_dict["run_block"]) + 
-            int(player_dict["run_block_power"]) + 
-            int(player_dict["run_block_finesse"])
-        ) / 3
-    ), 85), 45))
+    if player_dict["run_block"] and player_dict["run_block_power"] and player_dict["run_block_finesse"]:
+        run_block = int(max(min(math.ceil(
+            (
+                int(player_dict["run_block"]) + 
+                int(player_dict["run_block_power"]) + 
+                int(player_dict["run_block_finesse"])
+            ) / 3
+        ), 85), 45))
+    else:
+        # A random distribution from 45 to 65, where the most likely values are 45 - 53.
+        elements = list(range(45, 66))
+        weights = [8, 8, 8, 8, 8, 8, 8, \
+                   8, 8, 6, 5, 4, 3, 2, \
+                   2, 1, 1, 1, 1, 1, 1]
+        run_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PRBK', index, run_block)
     
-    kick_power = int(max(min(int(player_dict["kick_power"]), 50), 10))
+    if player_dict["kick_power"]:
+        kick_power = int(max(min(int(player_dict["kick_power"]), 45), 10))
+    else:
+        # A random distribution from 10 to 40, where the most likely values are 15 - 20.
+        elements = list(range(10, 41))
+        weights = [2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, \
+                   6, 5, 4, 3, 3, 2, 2, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        kick_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKPR', index, kick_power)
     
-    kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 50), 5))
+    if player_dict["kick_accuracy"]:
+        kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 40), 5))
+    else:
+        # A random distribution from 5 to 35, where the most likely values are 10 - 15.
+        elements = list(range(5, 36))
+        weights = [2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, \
+                   6, 5, 4, 3, 3, 2, 2, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        kick_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     
-    kick_return = int(max(min(int(player_dict["kick_return"]), 85), 15))
+    if player_dict["kick_return"]:
+        kick_return = int(max(min(int(player_dict["kick_return"]), 85), 15))
+    else:
+        # A random distribution from 15 to 65, where the most likely values are 15 - 25.
+        elements = list(range(15, 66))
+        weights = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, \
+                   3, 3, 3, 3, 3, 2, 2, 2, 2, 2, \
+                   2, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        kick_return = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKRT', index, kick_return)
     
-    stamina = int(max(min(int(player_dict["stamina"]), 99), 60))
+    if player_dict["stamina"]:
+        stamina = int(max(min(int(player_dict["stamina"]), 99), 70))
+    else:
+        # A random distribution from 80 to 90, where the most likely values are 81 - 85.
+        elements = list(range(80, 91))
+        weights = [5, 14, 14, 14, 14, 14, 10, 7, 5, 2, 1]
+        stamina = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTA', index, stamina)
     
-    injury = int(max(min(int(player_dict["injury"]), 99), 45))
+    if player_dict["injury"]:
+        injury = int(max(min(int(player_dict["injury"]), 99), 65))
+    else:
+        # A random distribution from 75 to 95, where the most likely values are 83 - 90.
+        elements = list(range(75, 96))
+        weights = [2, 2, 3, 3, 4, 4, 5, \
+                   5, 7, 7, 7, 7, 7, 7, \
+                   7, 7, 5, 4, 3, 2, 2]
+        injury = get_weighted_random(elements, weights)
     self.set_player_integer_field('PINJ', index, injury)
     
-    toughness = int(max(min(int(player_dict["toughness"]), 99), 45))
+    if player_dict["toughness"]:
+        toughness = int(max(min(int(player_dict["toughness"]), 99), 60))
+    else:
+        # A random distribution from 65 to 95, where the most likely values are 75 - 84.
+        elements = list(range(65, 96))
+        weights = [1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, \
+                   6, 6, 6, 6, 6, 6, 6, 6, 6, 5, \
+                   4, 3, 1, 1, 1, 1, 1, 1, 1, 1]
+        toughness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTGH', index, toughness)
     
     

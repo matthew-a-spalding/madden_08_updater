@@ -1,32 +1,37 @@
-    This document explains how to use the files in this folder to update the working "base" (already somewhat edited) 
-Madden NFL '08 Roster file (entitled "base.ros") with the latest information from NFL.com, the most recent Madden NFL 
-player ratings from EA, and my previous year's final player ratings file, entitled "My 20XX NFL Ratings - Final.csv".
+    This document explains how to use the files in this folder to update the working 'base' (already somewhat edited) 
+Madden NFL '08 Roster file, entitled "base.ros", with the latest information from NFL.com, the most recent Madden NFL 
+player ratings from EA, and my previous year's final player ratings file, entitled "My 20[XX] Player Attributes - 
+FINAL 20[XX]_MM_DD.csv".
+
+
+                                        Step 1: Reading this README
 
     Reading this document is the first step, as indicated by this file's name. The next step, as seen in the filename 
 of another file in this folder, is to download and clean the latest Madden ratings from EA Sports. Step 3 is to run 
 the script "step_3_scrape_NFL_rosters.py" from inside the virtual environment in \process\scraping, the process for 
-which is detailed below. The fourth step is to manually edit the file output by Step 3, 'NFL rosters.csv,' until it is 
-in a finished state. The fifth step is to run "step_5_update_roster_file.py", which leads to the final step of 
-validating the roster file and polishing it up before creating a new franchise.
+which is detailed below. The fourth step is to manually edit the file output by Step 3, "My 20[XX] Player Attributes - 
+Initial.csv", until it is in a finished state. The fifth step is to run "step_5_update_roster_file.py", which 
+generates a roster file, "current.ros", and leads to the sixth and final step of validating and polishing the roster 
+file before creating a new franchise.
 
     The full instructions for each remaining step follow:
 
 
                             Step 2: Download and clean the latest Madden ratings from EA.
 
-1. Get the most recent Madden NFL player ratings into a CSV file. 
+A. Get the most recent Madden NFL player ratings into a CSV file.
     
-    a. These can usually be found online at sites like http://maddenratings.weebly.com or OperationSports at 
+    1. These can usually be found online at sites like http://maddenratings.weebly.com or OperationSports at 
     https://forums.operationsports.com/forums/madden-nfl-football/. Put the original file in the folder 
     "docs\EA ratings\originals", and immediately export a copy of the original as a CSV file named "Madden [XX] Player 
-    Ratings.csv" (where [XX] is the last two digits of the year) into the folder "docs\EA ratings\edited". Flatten the 
-    player ratings file into one sheet (if it wasn't already), remove any stat columns that we are not interested in 
-    using, and validate the data (check for missing fields, invalid values like birthdates which aren't dates, etc.). 
-    Once cleaned, make a copy of that file in the folder "\process\inputs\step3" and rename it to "Latest Madden 
-    Ratings.csv", overwriting any previous copy there.
+    Ratings.csv" (where [XX] is the last two digits of the year) into the folder "docs\EA ratings\edited". 
     
-    b.  The columns to keep in the file "Madden [XX] Player Ratings.csv" / "Latest Madden Ratings.csv" (with fields 
-    capitalized and punctuated exactly as shown - no lower_case underscore-connected fields) are:
+    2. Flatten the "Madden [XX] Player Ratings.csv" player ratings file into one sheet (if it wasn't already), remove 
+    any stat columns that we are not interested in using, and validate the data (check for missing fields, invalid 
+    values like birthdates which aren't dates, etc.). 
+    
+    The columns to keep in the file "Madden [XX] Player Ratings.csv" / "Latest Madden Ratings.csv" (with fields 
+    capitalized and punctuated exactly as shown - NOT lower_case underscore-connected fields) are:
         Team
         First Name
         Last Name
@@ -59,7 +64,7 @@ validating the roster file and polishing it up before creating a new franchise.
         Run Block Finesse
         Pass Block Power
         Pass Block Finesse
-        Break Tackle*           Not in 2017's attribute files.
+        Break Tackle*           May not be in the original file.
         Toughness
         Handedness
         Jersey Number
@@ -72,25 +77,41 @@ validating the roster file and polishing it up before creating a new franchise.
         Total Salary
         Signing Bonus
 
+    3. Once cleaned, copy "Madden [XX] Player Ratings.csv" into the folder "\process\inputs\step3" and rename it to 
+    "Latest Madden Ratings.csv", overwriting any previous copy there.
+    
+
 
                                 Step 3: Scrape the current rosters from NFL.com.
 
-1.  Make sure that the LOG_LEVEL in "process\scraping\settings.py" is set to "INFO" to start with, as this will 
+A.  1. We need to update the file "Previous Player Attributes.csv," which sits alongside the file "Latest Madden 
+    Ratings.csv," in the "\process\inputs\step3" folder, as it is required for the scraping to work. To do this:
+        a) Delete any existing "Previous Player Attributes.csv" file (in "\process\inputs\step3").
+        b) Copy the file "Current Player Attributes.csv" from "process\inputs\step5" (which should be the same file as 
+        last year's "My 20[XX] Player Attributes - FINAL 20[XX_MM_DD].csv") and put it in the "\process\inputs\step3" 
+        folder, renaming it to "Previous Player Attributes.csv".
+    
+    * NOTE! Looking at the new "Previous Player Attributes.csv" file may seem to indicate that we should also update 
+    the years_pro column (adding 1 to each player's number of years in the league) to account for the new season, but 
+    the code in "process\scraping\spiders\nfl_spider.py" already handles for this, adding one to the value from the 
+    "years_pro" column in "Previous Player Attributes.csv" before comparing it with the NFL's 'years pro' field.
+    
+    2. Make sure that the LOG_LEVEL in "process\scraping\settings.py" is set to "INFO" to start with, as this will 
     give us the most information, which we will want to see on the first few runs of "step_3_scrape_NFL_rosters.py".
 
-2.  Activate the venv in "process\scraping" so we can use Scrapy. To do this:
-    a. Open a CMD window.
+B.  Activate the venv in "process\scraping" so we can use Scrapy. To do this:
+    1. Open a CMD window.
         CTRL-R -> cmd
-    b. Change to the process folder:
-        cd C:\Home\madden_08_updater_venv\
-    c. Activate the virtual environment: 
-        .\Scripts\activate.bat
-    d. Change drive letters to the letter assigned to the USB thumb drive "Working Files": "E:" or "G:" or whatever:
+    2. Change drive letters to the letter assigned to the USB thumb drive "Working Files": "E:" or "G:" or whatever:
         E:
-    e. Go into the madden_08_updater\process directory.
-        cd E:\Gaming\madden_08_updater\process
+    3. Change to the process folder:
+        cd e:\Gaming\madden_08_updater\venv\
+    3. Activate the virtual environment: 
+        .\Scripts\activate.bat
+    4. Go into the madden_08_updater\process directory.
+        cd :\Gaming\madden_08_updater\process
 
-3.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\process" DIRECTORY, OR SCRAPY WILL SAY THAT 
+C.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\process" DIRECTORY, OR SCRAPY WILL SAY THAT 
     IT CANNNOT FIND THE SPIDER "nfl_rosters". In the command prompt window, do:
     
     python step_3_scrape_NFL_rosters.py
@@ -100,31 +121,33 @@ validating the roster file and polishing it up before creating a new franchise.
     apparently had been changed from CrawlerPROCESS to CrawlerProcess, the casing of which Python cares about.
     
     If the format of the HTML on the NFL and OverTheCap sites has not changed, the step 3 script should have created a 
-    file "My [year] NFL Ratings.csv" in "Gaming\madden_08_updater\process\outputs". If there is no file there, or if 
+    file "My 20[XX] Player Attributes - Initial.csv" in "process\outputs\step3". If there is no file there, or if 
     Scrapy threw any error(s) in the CMD window, debug until the script correctly produces the file. (In case of an 
     error, it may simply be that the NFL has finally changed the layout of their website or the HTML within their 
     pages, or the Madden player attribute fields have changed again.) In order to get all the players that are 
-    currently on actual NFL rosters, it may be necessary to iterate over the run of step_3_scrape_NFL_rosters.py by 
-    altering code in "process\scraping\settings.py" to set the LOG_LEVEL to "INFO" first, then "WARNING", and finally 
-    "ERROR" (and only if absolutely necessary, DEBUG), while choosing which new players not found in the "Latest 
-    Madden Ratings.csv" to add or skip.
+    currently on actual NFL rosters, it will likely be necessary to iterate over the run of 
+    "step_3_scrape_NFL_rosters.py" by altering code in "process\scraping\settings.py" to alter the LOG_LEVEL from the 
+    initial value of "INFO" to "WARNING", and finally "ERROR" (or if absolutely necessary, DEBUG), while choosing 
+    which new players not found in the "Latest Madden Ratings.csv" to add or skip. You might also want to limit the 
+    number of teams which are included in early runs, to help with debugging/filtering. This is done by commenting/
+    uncommenting lines in the NFL_TEAMS list in "process\scraping\settings.py".
 
 
                             Step 4: Manually edit my ratings file until it is complete.
 
-1.  Once the script for step 3 has created the file "My 20XX Player Attributes - Initial.csv," copy the file into 
-    "docs\My Ratings\20XX" and make another copy as "My 20XX Player Attributes - In Progress 20XX_MM_DD.csv." Manually 
-    edit (and save revisions of) the file to:
-    a. Resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT. 
-    b. Add important 'missing' (defaulted) values, particularly for new players in areas like Face ID, Hair Style, etc.
-    c. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
+A.  Once the script for step 3 has created the file "My 20[XX] Player Attributes - Initial.csv," copy the file into 
+    "docs\My Ratings\20[XX]" and make another copy as "My 20[XX] Player Attributes - In Progress 20[XX]_MM_DD.csv". 
+    Manually edit (and save revision BAKs of) the file to:
+    1. Resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT. 
+    2. Add important 'missing' (defaulted) values, particularly for new players in areas like Face ID, Hair Style, etc.
+    3. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
         * TO FIND MISSING FIELDS (BLANK CELLS IN EXCEL):
         - Select the entire range where there should be no blank cells.
         - Press F5 (fn-F5 on the Mac keyboard). 
         - This brings up a "Go To" window. Here, click on the "Special..." button at the bottom.
         - Select the radio button for Blanks and click OK.
             It should show the first empty cell (if any) or say "No cells were found."
-    d. Fill out roster numbers at each position to be slightly more than what they were in the original roster,
+    4. Fill out roster numbers at each position to be slightly more than what they were in the original roster,
     "docs\Roster dumps\roster_default08_NFL_ONLY.csv," as below:
     
         - QBs: Were 106 in original ros, w/ 16 FAs. Goal: 110
@@ -271,27 +294,30 @@ validating the roster file and polishing it up before creating a new franchise.
         
         Current total: 
     
-2.  Once the file is complete, save a final copy as "My 20XX Player Attributes - FINAL 20XX_MM_DD.csv" and also put a 
-    copy of the file into "process\inputs\step5" as "Current Player Attributes.csv" (overwriting the previous copy).
+B.  Once the file is complete, save a final copy under "docs\My Ratings\20[XX]" as 
+    "My 20[XX] Player Attributes - FINAL 20[XX]_MM_DD.csv". Also put a renamed copy of the file into 
+    "process\inputs\step5" as "Current Player Attributes.csv" (overwriting the previous copy).
 
 
                                             Step 5: Update the roster file.
 
-1.  In a command window, run the second script, "step_5_update_roster_file.py" as so: 
+A.  In a command window, run the second script, "step_5_update_roster_file.py" as so: 
     
         E:\Gaming\madden_08_updater\process>python step_5_update_roster_file.py
     
-    Then take the output (the altered roster file "latest.ros") and test it in Madden NFL 08 to make sure it can be 
+    Then take the output (the altered roster file "current.ros") and test it in Madden NFL 08 to make sure it can be 
     read and used in setting up a franchise mode. 
 
 
                                     Step 6: Validate the contents of the roster file.
 
-1.  Do final checks on the roster file by:
+A.  Do final checks on the roster file by:
     
-    a. Running "process\utilities\dump_roster_to_csv.py" which will dump the contents of the newly created roster file 
-    (process\outputs\step5\latest.ros) to docs\Roster dumps\latest.csv. Then look at the CSV file to:
-        1) Check all PROL and PRL2s to see that at least someone get one of each role. In particular, 
-        any: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 
+    1. Running "process\utilities\dump_roster_to_csv.py", which will dump the contents of the newly created roster 
+    file ("process\outputs\step5\current.ros") to "docs\Roster dumps\current.csv". Then look at the CSV file to:
+        a) Check all PROL and PRL2s to see that at least someone get one of each role. In particular, there should be 
+        at least one: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 
         team_leader (6), etc. Well, yeah... basically, just check for all of them.
-        2) Make any further refinements to the altered roster file through the MaddenAmp application.
+        b) Make any further refinements to the altered roster file through the MaddenAmp application.
+
+That's it! Go play Madden NFL '08 with this "current.ros" roster and start a new franchise!

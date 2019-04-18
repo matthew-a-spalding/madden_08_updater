@@ -285,94 +285,337 @@ def create_quarterback(self, player_dict, index):
     # Here is where we set the main attributes used by this position. See the file 'Methods for Setting Field 
     # Values.xlsx' for details on the calculations used.
     
-    speed = int(max(min(int(player_dict["speed"]), 95), 45))
+    # The QB's type starts out as unknown.
+    qb_type = -1
+    
+    if player_dict["speed"]:
+        speed = int(max(min(int(player_dict["speed"]), 95), 55))
+    else:
+        # A random distribution from 61 to 87, where the most likely values are 71 - 75.
+        elements = list(range(61, 88))
+        weights = [1, 1, 1, 2, 2, 2, 2, 3, 4, \
+                   5, 7, 7, 7, 7, 7, 6, 5, 4, \
+                   3, 3, 3, 2, 2, 6, 4, 3, 1]
+        speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
-    strength = int(max(min(int(player_dict["strength"]), 80), 45))
+    if player_dict["strength"]:
+        strength = int(max(min(int(player_dict["strength"]), 80), 45))
+    else:
+        # A random distribution from 50 to 80, where the most likely values are 52 - 61.
+        elements = list(range(50, 81))
+        weights = [1, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, \
+                   6, 5, 5, 4, 3, 3, 2, 2, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
-    awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
+    if player_dict["awareness"]:
+        awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
+    else:
+        if speed > 83:
+            # Scrambler. Limit awareness range to 43 - 55, where the most likely values are 45 - 48.
+            qb_type = 1 # scrambling
+            elements = list(range(43, 56))
+            weights = [6, 8, 11, 11, 11, 11, 9, 8, 7, 6, 5, 4, 3]
+        elif speed < 70:
+            # Pocket passer. Allow for awareness from 54 up to 62, where the most likely values are 56 - 59.
+            qb_type = 0 # pocket passer
+            elements = list(range(54, 63))
+            weights = [7, 11, 15, 15, 15, 15, 11, 7, 4]
+        else:
+            # Allow awareness to range from 49 up to 59.
+            qb_type = 2 # balanced
+            elements = list(range(49, 60))
+            weights = [15, 15, 15, 15, 13, 9, 7, 5, 3, 2, 1]
+        awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
-    agility = int(max(min(int(player_dict["agility"]), 97), 50))
+    if player_dict["agility"]:
+        agility = int(max(min(int(player_dict["agility"]), 98), 45))
+    else:
+        if qb_type == 1:
+            # Scrambler. Agility needs to be in the range 81 - 92, where the most likely values are 81 - 85.
+            elements = list(range(81, 93))
+            weights = [13, 13, 13, 13, 13, 11, 9, 7, 4, 2, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Agility needs to be in the range 50 - 74, where the most likely values are 58 - 65.
+            elements = list(range(50, 75))
+            weights = [1, 1, 1, 1, 2, 4, 5, 6, 7, \
+                       7, 7, 7, 7, 7, 7, 7, 6, \
+                       5, 4, 3, 1, 1, 1, 1, 1]
+        else:
+            # Allow agility to range from 70 to 84, with the most likely values being 71 - 80.
+            elements = list(range(70, 85))
+            weights = [7, 8, 8, 8, 8, 8, 8, 8, \
+                       8, 8, 8, 6, 4, 2, 1]
+        agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
-    acceleration = int(max(min(int(player_dict["acceleration"]), 95), 40))
+    if player_dict["acceleration"]:
+        acceleration = int(max(min(int(player_dict["acceleration"]), 95), 55))
+    else:
+        if qb_type == 1:
+            # Scrambler. Acceleration needs to be in the range 81 - 90, where the most likely values are 81 - 85.
+            elements = list(range(81, 91))
+            weights = [13, 13, 13, 13, 13, 11, 9, 7, 5, 3]
+        elif qb_type == 0:
+            # Pocket passer. Acceleration needs to be in the range 62 - 84, where the most likely values are 69 - 77.
+            elements = list(range(62, 85))
+            weights = [1, 1, 1, 2, 3, 4, 6, 7, \
+                       7, 7, 7, 7, 7, 7, 7, 7, \
+                       6, 4, 3, 2, 2, 1, 1]
+        else:
+            # Allow acceleration to range from 75 to 87, with the most likely values being 77 - 82.
+            elements = list(range(75, 88))
+            weights = [5, 8, 11, 11, 11, 11, 11, 11, 8, 6, 4, 2, 1]
+        acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
-    carrying = int(max(min(int(player_dict["carrying"]), 80), 25))
+    if player_dict["carrying"]:
+        carrying = int(max(min(int(player_dict["carrying"]), 80), 40))
+    else:
+        if qb_type == 1:
+            # Scrambler. Carrying needs to be in the range 45 - 75, where the most likely values are 57 - 64.
+            elements = list(range(45, 76))
+            weights = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, \
+                       5, 6, 6, 6, 6, 6, 6, 6, 6, 5, \
+                       4, 3, 3, 3, 2, 2, 1, 1, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Carrying needs to be in the range 45 - 70, where the most likely values are 52 - 60.
+            elements = list(range(45, 71))
+            weights = [1, 1, 1, 1, 2, 4, 6, 7, 7, \
+                       7, 7, 7, 7, 7, 7, 7, 6, 4, \
+                       3, 2, 1, 1, 1, 1, 1, 1]
+        else:
+            # Allow carrying to range from 45 to 72, with the most likely values being 56 - 61.
+            elements = list(range(45, 73))
+            weights = [1, 1, 1, 1, 1, 2, 3, 4, 4, 5, \
+                       6, 7, 7, 7, 7, 7, 7, 6, 5, \
+                       4, 4, 3, 2, 1, 1, 1, 1, 1]
+        carrying = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCAR', index, carrying)
     
-    catching = int(max(min(int(player_dict["catching"]), 85), 15))
+    if player_dict["catching"]:
+        catching = int(max(min(int(player_dict["catching"]), 85), 15))
+    else:
+        # A random distribution from 20 to 70, where the most likely values are 30 - 39.
+        elements = list(range(20, 71))
+        weights = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, \
+                   4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 2, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     
-    jumping = int(max(min(int(player_dict["jumping"]), 95), 40))
+    if player_dict["jumping"]:
+        jumping = int(max(min(int(player_dict["jumping"]), 95), 40))
+    else:
+        if qb_type == 1:
+            # Scrambler. Jumping needs to be in the range 70 - 90, where the most likely values are 75 - 84.
+            elements = list(range(70, 91))
+            weights = [1, 1, 2, 4, 6, 7, 7, 7, 7, 7, 7, \
+                       7, 7, 7, 7, 6, 4, 2, 2, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Jumping needs to be in the range 43 - 78, where the most likely values are 55 - 64.
+            elements = list(range(43, 79))
+            weights = [1, 1, 1, 1, 1, 2, 2, 2, 3, \
+                       3, 3, 4, 5, 5, 5, 5, 5, 5, \
+                       5, 5, 5, 5, 4, 3, 3, 3, 2, \
+                       2, 2, 1, 1, 1, 1, 1, 1, 1]
+        else:
+            # Allow jumping to range from 50 to 85, with the most likely values being 64 - 71.
+            elements = list(range(50, 86))
+            weights = [1, 1, 1, 1, 1, 1, 1, 1, 2, \
+                       2, 2, 3, 4, 5, 6, 6, 6, 6, \
+                       6, 6, 6, 6, 5, 4, 3, 2, 2, \
+                       2, 1, 1, 1, 1, 1, 1, 1, 1]
+        jumping = get_weighted_random(elements, weights)
     self.set_player_integer_field('PJMP', index, jumping)
     
-    break_tackles = int(max(min(
-        math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2), 85
-        ), 25))
+    if player_dict["elusiveness"] and player_dict["trucking"]:
+        break_tackles = int(max(min(
+            math.ceil(((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2) + 7), 
+            90), 20))
+    else:
+        if qb_type == 1:
+            # Scrambler. Break_tackles needs to be in the range 50 - 85, where the most likely values are 55 - 62.
+            elements = list(range(50, 86))
+            weights = [1, 1, 1, 2, 4, 6, 6, 6, 6, \
+                       6, 6, 6, 6, 5, 5, 4, 4, 3, \
+                       3, 2, 2, 1, 1, 1, 1, 1, 1, \
+                       1, 1, 1, 1, 1, 1, 1, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Break_tackles needs to be in the range 25 - 54, where the most likely values are 30 - 35.
+            elements = list(range(25, 55))
+            weights = [2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 6, 5, 4, 3, \
+                       2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        else:
+            # Allow break_tackles to range from 32 to 80, with the most likely values being 40 - 49.
+            elements = list(range(32, 81))
+            weights = [1, 1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4,\
+                       4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, \
+                       2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        break_tackles = get_weighted_random(elements, weights)
     self.set_player_integer_field('PBTK', index, break_tackles)
     
-    tackle = int(max(min(int(player_dict["tackle"]), 50), 10))
+    if player_dict["tackle"]:
+        tackle = int(max(min(int(player_dict["tackle"]), 65), 10))
+    else:
+        # A random distribution from 15 to 40, where the most likely values are 20 - 29.
+        elements = list(range(15, 41))
+        weights = [1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, \
+                   6, 6, 5, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1]
+        tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
-    throw_power = int(max(min(int(player_dict["throw_power"]), 99), 70))
+    if player_dict["throw_power"]:
+        throw_power = int(max(min(int(player_dict["throw_power"]), 99), 70))
+    else:
+        if qb_type == 1:
+            # Scrambler. Throw_power needs to be in the range 78 - 94, where the most likely values are 84 - 88.
+            elements = list(range(78, 95))
+            weights = [1, 1, 2, 4, 6, 8, 11, 11, 11, 11, 11, 9, 6, 4, 2, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Throw_power needs to be in the range 80 to 95, where the most likely values are 85 - 88.
+            elements = list(range(80, 96))
+            weights = [1, 2, 4, 7, 9, 11, 12, 12, 11, 9, 8, 6, 4, 2, 1, 1]
+        else:
+            # Allow throw_power to range from 78 to 95, with the most likely values being 84 - 88.
+            elements = list(range(78, 96))
+            weights = [1, 1, 3, 5, 7, 9, 10, 10, 10, 10, 10, 8, 6, 4, 2, 2, 1, 1]
+        throw_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTHP', index, throw_power)
     
-    throw_accuracy = int(max(min(math.ceil(
-        ((2 * (
-            int(player_dict["throw_accuracy_short"]) + 
-            int(player_dict["throw_accuracy_mid"]) + 
-            int(player_dict["throw_accuracy_deep"]) + 
-            int(player_dict["throw_on_the_run"]) + 
-            int(player_dict["playaction"])
-        )
-         ) - (2 * min(
-             int(player_dict["throw_accuracy_short"]), 
-             int(player_dict["throw_accuracy_mid"]), 
-             int(player_dict["throw_accuracy_deep"]), 
-             int(player_dict["throw_on_the_run"]), 
-             int(player_dict["playaction"])
-         ))
-        ) / 8
-    ), 99), 60))
+    if (player_dict["throw_accuracy_short"] and player_dict["throw_accuracy_mid"] 
+            and player_dict["throw_accuracy_deep"] and player_dict["throw_on_the_run"] and player_dict["playaction"]):
+        throw_accuracy = int(max(min(math.ceil(
+            ((2 * (
+                int(player_dict["throw_accuracy_short"]) + 
+                int(player_dict["throw_accuracy_mid"]) + 
+                int(player_dict["throw_accuracy_deep"]) + 
+                int(player_dict["throw_on_the_run"]) + 
+                int(player_dict["playaction"])
+            )) - (2 * min(
+                int(player_dict["throw_accuracy_short"]), 
+                int(player_dict["throw_accuracy_mid"]), 
+                int(player_dict["throw_accuracy_deep"]), 
+                int(player_dict["throw_on_the_run"]), 
+                int(player_dict["playaction"])
+            ))
+            ) / 8
+        ), 99), 60))
+    else:
+        if qb_type == 1:
+            # Scrambler. Throw_accuracy needs to be in the range 70 - 85, where the most likely values are 72 - 77.
+            elements = list(range(70, 86))
+            weights = [3, 7, 10, 10, 10, 10, 10, 10, 8, 6, 5, 4, 3, 2, 1, 1]
+        elif qb_type == 0:
+            # Pocket passer. Throw_power needs to be in the range 72 to 87, where the most likely values are 74 - 79.
+            elements = list(range(72, 88))
+            weights = [3, 7, 10, 10, 10, 10, 10, 10, 8, 6, 5, 4, 3, 2, 1, 1]
+        else:
+            # Allow throw_power to range from 70 to 87, with the most likely values being 73 - 78.
+            elements = list(range(70, 88))
+            weights = [2, 4, 7, 10, 10, 10, 10, 10, 10, 8, 6, 4, 3, 2, 1, 1, 1, 1]
+        throw_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTHA', index, throw_accuracy)
     
-    pass_block = int(max(min(math.ceil(
-        (
-            int(player_dict["pass_block"]) + 
-            int(player_dict["pass_block_power"]) + 
-            int(player_dict["pass_block_finesse"])
-        ) / 3
-    ), 60), 5))
+    if player_dict["pass_block"] and player_dict["pass_block_power"] and player_dict["pass_block_finesse"]:
+        pass_block = int(max(min(math.ceil(
+            (
+                int(player_dict["pass_block"]) + 
+                int(player_dict["pass_block_power"]) + 
+                int(player_dict["pass_block_finesse"])
+            ) / 3
+        ), 45), 5))
+    else:
+        # A random distribution from 10 to 30, where the most likely values are 13 - 16.
+        elements = list(range(10, 31))
+        weights = [7, 7, 7, 8, 8, 8, 8, 7, 7, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1]
+        pass_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PPBK', index, pass_block)
     
-    run_block = int(max(min(math.ceil(
-        (
-            int(player_dict["run_block"]) + 
-            int(player_dict["run_block_power"]) + 
-            int(player_dict["run_block_finesse"])
-        ) / 3
-    ), 60), 10))
+    if player_dict["run_block"] and player_dict["run_block_power"] and player_dict["run_block_finesse"]:
+        run_block = int(max(min(math.ceil(
+            (
+                int(player_dict["run_block"]) + 
+                int(player_dict["run_block_power"]) + 
+                int(player_dict["run_block_finesse"])
+            ) / 3
+        ), 50), 10))
+    else:
+        # A random distribution from 10 to 35, where the most likely values are 13 - 20.
+        elements = list(range(10, 36))
+        weights = [1, 3, 5, 8, 8, 8, 8, 8, 8, 8, 8, 6, 4, \
+                   3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        run_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PRBK', index, run_block)
     
-    kick_power = int(max(min(int(player_dict["kick_power"]), 75), 5))
+    if player_dict["kick_power"]:
+        kick_power = int(max(min(int(player_dict["kick_power"]), 75), 5))
+    else:
+        # A random distribution from 10 to 50, where the most likely values are 15 - 20.
+        elements = list(range(10, 51))
+        weights = [1, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, \
+                   6, 5, 4, 3, 2, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        kick_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKPR', index, kick_power)
     
-    kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 75), 5))
+    if player_dict["kick_accuracy"]:
+        kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 75), 5))
+    else:
+        # A random distribution from 10 to 50, where the most likely values are 15 - 20.
+        elements = list(range(10, 51))
+        weights = [1, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, \
+                   6, 5, 4, 3, 2, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        kick_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     
-    kick_return = int(max(min(int(player_dict["kick_return"]), 60), 5))
+    if player_dict["kick_return"]:
+        kick_return = int(max(min(int(player_dict["kick_return"]), 85), 5))
+    else:
+        # A random distribution from 5 to 25, where the most likely values are 10 - 15.
+        elements = list(range(5, 26))
+        weights = [3, 3, 4, 5, 6, 8, 8, 8, 8, 8, 8, \
+                   7, 6, 5, 4, 3, 2, 1, 1, 1, 1]
+        kick_return = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKRT', index, kick_return)
     
-    stamina = int(max(min(int(player_dict["stamina"]), 99), 65))
+    if player_dict["stamina"]:
+        stamina = int(max(min(int(player_dict["stamina"]), 99), 75))
+    else:
+        # A random distribution from 75 to 95, where the most likely values are 87 - 93.
+        elements = list(range(75, 96))
+        weights = [1, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, \
+                   7, 8, 8, 8, 8, 8, 8, 8, 6, 4]
+        stamina = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTA', index, stamina)
     
-    injury = int(max(min(int(player_dict["injury"]), 99), 50))
+    if player_dict["injury"]:
+        injury = int(max(min(int(player_dict["injury"]), 99), 60))
+    else:
+        # A random distribution from 75 to 97, where the most likely values are 83 - 90.
+        elements = list(range(75, 98))
+        weights = [1, 1, 1, 1, 1, 3, 4, 6, 8, 8, 8, 8, \
+                   8, 8, 8, 8, 6, 4, 3, 2, 1, 1, 1]
+        injury = get_weighted_random(elements, weights)
     self.set_player_integer_field('PINJ', index, injury)
     
-    toughness = int(max(min(int(player_dict["toughness"]), 99), 45))
+    if player_dict["toughness"]:
+        toughness = int(max(min(int(player_dict["toughness"]), 99), 55))
+    else:
+        # A random distribution from 68 to 99, where the most likely values are 84 - 89.
+        elements = list(range(68, 100))
+        weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+                   2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, \
+                   6, 5, 4, 3, 3, 2, 1, 1, 1, 1]
+        toughness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTGH', index, toughness)
     
     
