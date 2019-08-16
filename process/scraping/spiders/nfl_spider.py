@@ -135,6 +135,22 @@ class NFLSpider(CrawlSpider):
         #-------------------------------------------  Part 1: NFL.com info  -------------------------------------------
         
         # Start by populating the team field. The NFL page will be authoritative here; no need to check Madden.
+
+
+
+        # DEBUGGING
+        # If we don't even have the team name, we are most likely at the nfl.com/players page, 
+        # because the link from the team roster page to this player's page was busted.
+        if not response.xpath("//div[@class=\"article-decorator\"]/h1/a/text()").extract():
+            logging.error("response.xpath(\"//div[@class=\"article-decorator\"]/h1/a/text()\").extract() is: %s \n", 
+                          response.xpath("//div[@class=\"article-decorator\"]/h1/a/text()").extract())
+            logging.error("\t\tSkipping player record altogether!\n")
+            player = NFLPlayer()
+            return player
+        # END DEBUGGING
+
+
+
         player["team"] = response.xpath(
             "//div[@class=\"article-decorator\"]/h1/a/text()"
             ).extract()[0].split()[-1] # eg. "Colts"
@@ -257,6 +273,7 @@ class NFLSpider(CrawlSpider):
                 regex_match_object = re.match("\d+", experience_strings[1])
                 # eg. <_sre.SRE_Match object at 0x032D8100>
                 #logging.info("NFL.com: regex_match_object = %s", regex_match_object)
+                #logging.info("NFL.com: regex_match_object.group(0) = %s", regex_match_object.group(0))
                 
                 # Since the numbers on NFL.com generally include this season, we want one less than what they say.
                 # ... However, when NFL.com says 1st season, they usually mean second.
@@ -1841,10 +1858,11 @@ class NFLSpider(CrawlSpider):
         
         # Get this player's number of years pro by calculating the differnce between this (football) year 
         # and the year he was (un)drafted.
-        this_football_year = datetime.datetime.now().year if (datetime.datetime.now().month > 4) else \
+        this_football_year = datetime.datetime.now().year if (datetime.datetime.now().month > 1) else \
                 (datetime.datetime.now().year - 1)
         # The player's year of entry is always the second string in the text when split on whitespace.
-        player["years_pro"] = this_football_year - int(otc_draft_text.split()[1])
+        years_pro = this_football_year - int(otc_draft_text.split()[1])
+        player["years_pro"] = years_pro if (years_pro >= 0) else 0
         
         # The year this player will be a free agent is in the third <li> after the one with class="league-entry".
         otc_year_free_agency_list = response.xpath(
@@ -1856,7 +1874,7 @@ class NFLSpider(CrawlSpider):
             if len(otc_year_free_agency) == 5:
                 otc_year_free_agency = otc_year_free_agency[:-1]
             
-            # The year the current contract was signed is in the first <li> after the one with class="eague-entry".
+            # The year the current contract was signed is in the first <li> after the one with class="league-entry".
             otc_year_contract_signed_list = response.xpath(
                 "//li[@class=\"league-entry\"]/following-sibling::*[1]/text()"
             ).extract()

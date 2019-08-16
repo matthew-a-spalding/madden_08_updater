@@ -9,6 +9,7 @@ r"""roster_manager.py
 # 1 - Standard library imports
 import csv, logging, os, sys
 from ctypes import ArgumentError, byref, cast, c_bool, c_wchar, c_wchar_p, c_int, POINTER, Structure, WinDLL
+from datetime import datetime
 from shutil import copyfile
 
 # 2 - Third-party imports
@@ -89,20 +90,47 @@ class RosterManager:
         
         # Read colleges_and_ids.csv into a list of dicts.
         with open(os.path.join(
-            RosterManager.base_madden_path, 
-            r"process\utilities\colleges_and_ids.csv")
-                 ) as colleges_file: 
+                RosterManager.base_madden_path, 
+                r"process\utilities\colleges_and_ids.csv")
+                 ) as colleges_file:
             # Get a DictReader to read the rows into dicts using the header row as keys.
             colleges_dict_reader = csv.DictReader(colleges_file)
             # Pull our records into a list so we can count them and iterate over them as often as needed.
             self.colleges_list = list(colleges_dict_reader)
         
         # Read teams_and_ids.csv into a list of dicts.
-        with open(os.path.join(RosterManager.base_madden_path, r"process\utilities\teams_and_ids.csv")) as teams_file: 
+        with open(os.path.join(RosterManager.base_madden_path, r"process\utilities\teams_and_ids.csv")) as teams_file:
             # Get a DictReader to read the rows into dicts using the header row as keys.
             teams_dict_reader = csv.DictReader(teams_file)
             # Pull our records into a list so we can count them and iterate over them as often as needed.
             self.teams_list = list(teams_dict_reader)
+        
+        # Get the path to the per-year pay helper files specific to this year.
+        time_now = datetime.now()
+        pay_path = RosterManager.base_madden_path + r"\docs\Pay Calculations\{0}".format(time_now.year)
+        
+        # Read this year's pay_adjustments.csv into a list of dicts.
+        with open(os.path.join(pay_path, r"pay_adjustments.csv")) as pay_adjustments_file:
+            # Get a DictReader to read the rows into dicts using the header row as keys.
+            pay_adjustments_dict_reader = csv.DictReader(pay_adjustments_file)
+            
+            # Loop over the (two) rows and put them into our two dicts.
+            for adjustment_dict in pay_adjustments_dict_reader:
+                
+            
+            
+            
+            
+            
+            # Pull our records into a list so we can count them and iterate over them as often as needed.
+            self.pay_adjustments_list = list(pay_adjustments_dict_reader)
+        
+        # Read this year's pay_curve_params.csv into a list of dicts.
+        with open(os.path.join(pay_path, r"pay_curve_params.csv")) as pay_curve_params_file:
+            # Get a DictReader to read the rows into dicts using the header row as keys.
+            pay_curve_params_dict_reader = csv.DictReader(pay_curve_params_file)
+            # Pull our records into a list so we can count them and iterate over them as often as needed.
+            self.pay_curve_params_list = list(pay_curve_params_dict_reader)
     
     def __del__(self):
         if self.db_index > -1:
@@ -277,6 +305,28 @@ class RosterManager:
         if college_dict is not None:
             return int(college_dict["id"])
         return 265
+    
+    def get_salary_adjustment(self, tier):
+        """ Returns the decimal corresponding to the percentage by which to decrease salary for a given tier. """
+        # Use the generator expression 'next' to get the SALARY row, or None if not found.
+        tier_dict = next(
+            (pay_type for pay_type in self.pay_adjustments_list if pay_type["type"].upper() == "SALARY"), 
+            None
+        )
+        if tier_dict is not None:
+            return tier_dict[tier]
+        return 0.0
+    
+    def get_bonus_adjustment(self, tier):
+        """ Returns the decimal corresponding to the percentage by which to decrease bonus for a given tier. """
+        # Use the generator expression 'next' to get the BONUS row, or None if not found.
+        tier_dict = next(
+            (pay_type for pay_type in self.pay_adjustments_list if pay_type["type"].upper() == "BONUS"), 
+            None
+        )
+        if tier_dict is not None:
+            return tier_dict[tier]
+        return 0.0
     
     from ._quarterback import create_quarterback
     

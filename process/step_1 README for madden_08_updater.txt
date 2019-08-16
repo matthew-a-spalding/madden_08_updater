@@ -4,21 +4,20 @@ player ratings from EA, and my previous year's final player ratings file, entitl
 FINAL 20[XX]_MM_DD.csv".
 
 
-                                        Step 1: Reading this README
-
+                                            Step 1: Reading this README
+=======================================================================================================================
     Reading this document is the first step, as indicated by this file's name. The next step, as seen in the filename 
 of another file in this folder, is to download and clean the latest Madden ratings from EA Sports. Step 3 is to run 
 the script "step_3_scrape_NFL_rosters.py" from inside the virtual environment in \process\scraping, the process for 
-which is detailed below. The fourth step is to manually edit the file output by Step 3, "My 20[XX] Player Attributes - 
-Initial.csv", until it is in a finished state. The fifth step is to run "step_5_update_roster_file.py", which 
-generates a roster file, "current.ros", and leads to the sixth and final step of validating and polishing the roster 
-file before creating a new franchise.
+which is detailed below. The fourth step is to edit and process the file output by Step 3, "My 20[XX] Player Attributes 
+- Initial.csv", until it is in a finished state. The fifth and final step is to run "step_5_update_roster_file.py", 
+which generates a roster file, "current.ros". Once validated, use that roster file to create a new franchise!
 
     The full instructions for each remaining step follow:
 
 
                             Step 2: Download and clean the latest Madden ratings from EA.
-
+=======================================================================================================================
 A. Get the most recent Madden NFL player ratings into a CSV file.
     
     1. These can usually be found online at sites like http://maddenratings.weebly.com or OperationSports at 
@@ -44,6 +43,7 @@ A. Get the most recent Madden NFL player ratings into a CSV file.
         Elusiveness
         Carrying
         Trucking
+        Break Tackle*           May not be in the original file.
         Catching
         Jumping
         Throw Power
@@ -54,17 +54,16 @@ A. Get the most recent Madden NFL player ratings into a CSV file.
         Playaction
         Pass Block
         Run Block
+        Pass Block Power
+        Pass Block Finesse
+        Run Block Power
+        Run Block Finesse
         Tackle
         Kick Power
         Kick Accuracy
         Kick Return
         Stamina
         Injury
-        Run Block Power
-        Run Block Finesse
-        Pass Block Power
-        Pass Block Finesse
-        Break Tackle*           May not be in the original file.
         Toughness
         Handedness
         Jersey Number
@@ -83,7 +82,7 @@ A. Get the most recent Madden NFL player ratings into a CSV file.
 
 
                                 Step 3: Scrape the current rosters from NFL.com.
-
+=======================================================================================================================
 A.  1. We need to update the file "Previous Player Attributes.csv," which sits alongside the file "Latest Madden 
     Ratings.csv," in the "\process\inputs\step3" folder, as it is required for the scraping to work. To do this:
         a) Delete any existing "Previous Player Attributes.csv" file (in "\process\inputs\step3").
@@ -109,7 +108,7 @@ B.  Activate the venv in "process\scraping" so we can use Scrapy. To do this:
     3. Activate the virtual environment: 
         .\Scripts\activate.bat
     4. Go into the madden_08_updater\process directory.
-        cd :\Gaming\madden_08_updater\process
+        cd e:\Gaming\madden_08_updater\process
 
 C.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\process" DIRECTORY, OR SCRAPY WILL SAY THAT 
     IT CANNNOT FIND THE SPIDER "nfl_rosters". In the command prompt window, do:
@@ -133,191 +132,68 @@ C.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\proce
     uncommenting lines in the NFL_TEAMS list in "process\scraping\settings.py".
 
 
-                            Step 4: Manually edit my ratings file until it is complete.
-
+                                Step 4: Process my ratings file until it is complete.
+=======================================================================================================================
 A.  Once the script for step 3 has created the file "My 20[XX] Player Attributes - Initial.csv," copy the file into 
     "docs\My Ratings\20[XX]" and make another copy as "My 20[XX] Player Attributes - In Progress 20[XX]_MM_DD.csv". 
     Manually edit (and save revision BAKs of) the file to:
-    1. Resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT. 
-    2. Add important 'missing' (defaulted) values, particularly for new players in areas like Face ID, Hair Style, etc.
-    3. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
+    
+    1. Make SURE to resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT, and then 
+    SORT THE CSV FILE by 1)team 2)position 3)jersey number. Only after making sure ALL players have a final position 
+    (no 'CONFLICT' in the file) and it is sorted properly, then ...
+    
+    2. ...Run the add_missing_jersey_and_draft.py script to fill in any blanks for draft and jersey numbers:
+        python add_missing_jersey_and_draft.py
+    
+    3. Run calculate_
+    
+    
+    
+    
+    
+    .py to add missing contract info:
+        python add_missing_draft_and_contract_info.py
+
+    4. Add other important missing/defaulted values, particularly for new players, like Face ID, Hair Style, etc.
+    
+    5. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
         * TO FIND MISSING FIELDS (BLANK CELLS IN EXCEL):
         - Select the entire range where there should be no blank cells.
-        - Press F5 (fn-F5 on the Mac keyboard). 
+        - Press F5 (fn-F5 on the Mac's keyboard). 
         - This brings up a "Go To" window. Here, click on the "Special..." button at the bottom.
         - Select the radio button for Blanks and click OK.
             It should show the first empty cell (if any) or say "No cells were found."
-    4. Fill out roster numbers at each position to be slightly more than what they were in the original roster,
-    "docs\Roster dumps\roster_default08_NFL_ONLY.csv," as below:
     
-        - QBs: Were 106 in original ros, w/ 16 FAs. Goal: 110
-            Baker Mayfield - DONE+
-            Sam Darnold - DONE+
-            Josh Allen - DONE+
-            Josh Rosen - DONE+
-            Lamar Jackson - DONE+
-            Mason Rudolph - DONE+
-            Kyle Lauletta - DONE+
-            Mike White - DONE+
-            Luke Falk - DONE+
-            Tanner Lee - DONE+
-            Danny Etling - DONE+
-            Alex McGough - DONE+
-            Logan Woodside - DONE+
-            Nic Shimonek - DONE+
-            Kurt Benkert - DONE+
-            Tim Boyle - DONE-
-            J.T. Barrett - DONE+
-            Chase Litton - DONE-
-            Kyle Allen - DONE-
-            Peter Pujals - DONE-
-            
-            RETIRED:
-            Carson Palmer
-            
-        - HBs: Were 129 in original ros, w/ 18 FAs. Goal: 145 - Make some into FBs to get the # down.
-            Saquon Barkley (1st) - DONE+
-            Rashaad Penny (1st) - DONE+
-            Sony Michel (1st) - DONE+
-            Nick Chubb (2nd) - DONE+
-            Ronald Jones (2nd) - DONE+
-            Kerryon Johnson (2nd) - DONE+
-            Derrius Guice (2nd) - DONE+
-            Royce Freeman (3rd) - DONE+
-            Nyheim Hines (4th) - DONE+
-            Mark Walton (4th) - DONE+
-            Ito Smith (4th) - 
-            Kalen Ballage (4th) - 
-            Chase Edmonds (4th) - 
-            Jaylen Samuels (5th) - 
-            Jordan Wilkins (5th) - 
-            John Kelly (6th) - 
-            Boston Scott (6th) - 
-            Trenton Cannon (6th) - 
-            David Williams (7th) - 
-            Bo Scarbrough (7th) - 
-            Nick Bawden (7th) - 
-            Justin Jackson (7th) - 
-            
-            
-            
-            RETIRED:
-            Danny Woodhead
-            
-        - FBs: Were 54 in original ros, w/ 10 FAs. Goal: 55 - Will need some from HBs
-            Dimitri Flowers (FA) - 
-            
-            
-            CHANGED FROM HB:
-            Brandon Bolden (NE)
-            
-            
-        - WRs: Were 201 in original ros, w/ 17 FAs. Goal: 205 
-            
-            
-        - TEs: Were 96 in original ros, w/ 11 FAs. Goal: 110 
-            
-            
-            RETIRED:
-            C.J. Fiedorowicz
-            James Hanna
-            Jason Witten
-            
-        - LTs: Were 73 in original ros, w/ 8 FAs. Goal: 77 
-            
-            
-            RETIRED:
-            Joe Thomas
-            Emmett Cleary
-            
-        - LGs: Were 78 in original ros, w/ 13 FAs. Goal: 77 
-            
-            
-        - Cs: Were 74 in original ros, w/ 8 FAs. Goal: 77 
-            
-            
-        - RGs: Were 82 in original ros, w/ 17 FAs. Goal: 77 
-            
-            
-        - RTs: Were 82 in original ros, w/ 15 FAs. Goal: 77 
-            
-            
-            RETIRED:
-            Zach Strief
-            
-        - LEs: Were 80 in original ros, w/ 6 FAs. Goal: 85 
-            
-            
-        - REs: Were 77 in original ros, w/ 5 FAs. Goal: 85 
-            
-            
-            RETIRED:
-            Dwight Freeney
-            
-        - DTs: Were 138 in original ros, w/ 16 FAs. Goal: 140 
-            
-            
-        - LOLBs: Were 79 in original ros, w/ 9 FAs. Goal: 90 
-            
-            
-        - MLBs: Were 100 in original ros, w/ 16 FAs. Goal: 120 
-            
-            
-            RETIRED:
-            Paul Posluszny
-            Jerrell Freeman
-            
-        - ROLBs: Were 83 in original ros, w/ 11 FAs. Goal: 90 
-            
-            
-            RETIRED:
-            James Harrison
-            
-        - CBs: Were 178 in original ros, w/ 17 FAs. Goal: 190 - Usually need to move many to SS, a few to FS
-            Denzel Ward - DONE
-            
-            
-        - FSs: Were 81 in original ros, w/ 12 FAs. Goal: 90 
-            
-            
-            RETIRED:
-            DeAngelo Hall
-            
-        - SSs: Were 87 in original ros, w/ 17 FAs. Goal: 95 
-            
-            
-        - Ks: Were 41 in original ros, w/ 7 FAs. Goal: 45 
-            
-            
-        - Ps: Were 43 in original ros, w/ 10 FAs. Goal: 45 
-            
-        
-        Current total: 
+    6. Create a copy of the template file "Player Target Numbers by Position.xlsx" (from docs\Templates\) and put it 
+    into the "docs\My Ratings\20[XX]" folder alongside the Player Attributes files. Working through that file, fill 
+    out the roster according to the allotment numbers at each position by retiring, adding, and moving players from 
+    one position to another similar position.
+    
     
 B.  Once the file is complete, save a final copy under "docs\My Ratings\20[XX]" as 
     "My 20[XX] Player Attributes - FINAL 20[XX]_MM_DD.csv". Also put a renamed copy of the file into 
     "process\inputs\step5" as "Current Player Attributes.csv" (overwriting the previous copy).
 
 
-                                            Step 5: Update the roster file.
+                                          Step 5: Update the roster file.
+=======================================================================================================================
 
-A.  In a command window, run the second script, "step_5_update_roster_file.py" as so: 
+A.  1) In a command window, run the second script, "step_5_update_roster_file.py" as so: 
     
         E:\Gaming\madden_08_updater\process>python step_5_update_roster_file.py
     
-    Then take the output (the altered roster file "current.ros") and test it in Madden NFL 08 to make sure it can be 
-    read and used in setting up a franchise mode. 
-
-
-                                    Step 6: Validate the contents of the roster file.
-
-A.  Do final checks on the roster file by:
+    2) Move into the utilities folder and run the "dump_roster_to_csv" script so I can look at the generated roster: 
+        
+        E:\Gaming\madden_08_updater\process>cd utilities
+        E:\Gaming\madden_08_updater\process\utilities>python dump_roster_to_csv.py
+        
+    (The output from this dumping will be in the folder "E:\Gaming\madden_08_updater\docs\Roster dumps\current.csv".) 
     
-    1. Running "process\utilities\dump_roster_to_csv.py", which will dump the contents of the newly created roster 
-    file ("process\outputs\step5\current.ros") to "docs\Roster dumps\current.csv". Then look at the CSV file to:
+    The dumped file should look normal and usable in a real franchise. Inspect the CSV file to:
         a) Check all PROL and PRL2s to see that at least someone get one of each role. In particular, there should be 
-        at least one: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 
-        team_leader (6), etc. Well, yeah... basically, just check for all of them.
-        b) Make any further refinements to the altered roster file through the MaddenAmp application.
-
-That's it! Go play Madden NFL '08 with this "current.ros" roster and start a new franchise!
+            at least one: team_distraction (8), underachiever (4), project_player (7), team_mentor (5), 
+            team_leader (6), etc. Well, yeah... basically, just check for all of them.
+        b) Make any further refinements to the altered roster file through the MaddenAmp application. 
+        
+    3) After scanning the Excel dump for irregularities, take the output (the altered roster file "current.ros") and 
+    test it in Madden NFL '08 to make sure it can be read and used in setting up a franchise mode. 

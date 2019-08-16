@@ -1,6 +1,6 @@
 This step involves several things:
 
-- Check for any players with position set to TBD (or any other erroneous info from the NFL site). 
+- Check for any players with position set to TBD or CONFLICT (or any other erroneous info from the NFL site). 
 These will need to be resolved, probably using the latest Madden Ratings file.
 
 - Set the face IDs and skin tones of any new players.

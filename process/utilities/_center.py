@@ -68,9 +68,6 @@ def create_center(self, player_dict, index):
     
     # For many attributes in 'Latest Player Attributes.csv', we simply use the exact value from the file.
     self.set_player_integer_field('PAGE', index, int(player_dict["age"]))
-    contract_length = int(player_dict["contract_length"])
-    self.set_player_integer_field('PCON', index, contract_length)
-    self.set_player_integer_field('PCYL', index, int(player_dict["contract_years_left"]))
     draft_pick = int(player_dict["draft_pick"])
     self.set_player_integer_field('PDPI', index, draft_pick)
     draft_round = int(player_dict["draft_round"])
@@ -84,7 +81,6 @@ def create_center(self, player_dict, index):
     self.set_player_integer_field('PSKI', index, int(player_dict["skin_color"]))
     self.set_player_integer_field('PTAL', index, int(player_dict["tattoo_left"]))
     self.set_player_integer_field('PTAR', index, int(player_dict["tattoo_right"]))
-    self.set_player_integer_field('PVCO', index, contract_length)
     years_pro = int(player_dict["years_pro"])
     self.set_player_integer_field('PYRP', index, years_pro)
     # This is correct - we are intentionally setting the years with team to the number of years pro.
@@ -832,30 +828,43 @@ def create_center(self, player_dict, index):
             role_two = 12
     self.set_player_integer_field('PRL2', index, role_two)
     
+
+    # PAY
+    # These fields could be empty, so see if we will use existing pay info, or generate our own.
+    if player_dict["contract_length"]:
+        # We should have contract_length, contract_years_left, total_salary, and signing_bonus.
+        contract_length = int(player_dict["contract_length"])
+        self.set_player_integer_field('PCON', index, contract_length)
+        self.set_player_integer_field('PVCO', index, contract_length)
+        self.set_player_integer_field('PCYL', index, int(player_dict["contract_years_left"]))
+        total_salary = int(player_dict["total_salary"])
+        signing_bonus = int(player_dict["signing_bonus"])
+    else:
+        
+
+
     # PTSA & PVTS: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
     # account for inflation.
-    total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
     
     # PSBO & PVSB: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
     # account for inflation.
-    signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

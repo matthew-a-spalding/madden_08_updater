@@ -137,14 +137,31 @@ Setting Field Values.xlsx". Separate out each position into its own Python modul
 always be found in "process\inputs\step3\Previous Player Attributes.csv") alongside the "Latest Madden Ratings.csv" so 
 we can pull in players' info on skin color, hair color, etc. to include in the Step 3 output file for this year.
     
-    
     *** DONE.    ***
-    
     
 - Add code to each of the _[position] helper functions that generates weighted pseudo-random values for player 
 attributes when the attributes were not present in the "Current Player Attributes.csv" file used in step 5.
+    
+    *** DONE.    ***
+    
+- Update (and document) the factors used to translate current salaries and bonuses to 2008 money.
+    
+    ***   IN PROGRESS   ***
+    
+- Write a script to add missing draft and contract info. Draft is easy - just use round 15, pick 63 (undrafted). For 
+missing contract info, write code that will read in the file "My 20[XX] Player Attributes - In Progress 
+20[XX]_MM_DD.csv" [sorted by position, then by overall rating] TWICE - the first time, to put the two pairings of 
+(overall rating, yearly salary) and (overall rating, signing bonus) into four lists and use those lists to feed into 
+scipy's curve_fit to generate two arrays (which we convert to lists) of the a, b, and c parameters for defining a 
+function which will, in turn, allow us to input one overall rating at a time and receive a value which we can then 
+modify within 2 standard deviations (to randomize it a bit more) and serve as the salary / signing bonus for a player. 
+The file will then be read in a second time, and each player without contract info will get a slightly randomized 
+value for their per-year-salary, a reasonable number of years on the contract (taking into account their no. of years 
+pro), the number of years left on the contract (again, taking into account their no. of years pro), and their signing 
+bonus figure. The new record with those values is then written to the "Added Contract Info - My 20[XX] Player 
+Attributes - In Progress 20[XX]_MM_DD.csv" file.
 
-
-    *** CONTINUE HERE - 2018-07-13 ***
-
-    ***  IN PROGRESS. Currently working on _center.py.  ***
+- Finalize "process\inputs\step5\Current Player Attributes.csv" for repeated testing of step 5. This file needs to have 
+all CONFLICTs resolved and missing draft & contract info supplied. Then go into the folder "Testing" and open "Randomly 
+Generated Overall Ratings Distribution.xlsx" to document results. Finally, follow the steps from step_1 file to get 
+into the \process folder and run step 5, followed by the dump utility. 
