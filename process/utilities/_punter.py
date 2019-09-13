@@ -303,10 +303,10 @@ def create_punter(self, player_dict, index):
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 85), 40))
     else:
-        # A random distribution from 48 to 68, where the most likely values are 50 - 58.
-        elements = list(range(48, 69))
-        weights = [2, 4, 6, 8, 8, 8, 8, 8, 8, 8, 7, \
-                   6, 5, 4, 3, 2, 1, 1, 1, 1, 1]
+        # A random distribution from 48 to 67, where the most likely values are 50 - 54.
+        elements = list(range(48, 68))
+        weights = [3, 6, 10, 10, 10, 10, 10, 8, 7, \
+                   6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -458,20 +458,19 @@ def create_punter(self, player_dict, index):
     if player_dict["kick_power"]:
         kick_power = int(max(min(int(player_dict["kick_power"]), 99), 80))
     else:
-        # A random distribution from 84 to 95, where the most likely values are 87 - 91.
-        elements = list(range(84, 96))
-        weights = [4, 7, 9, 12, 12, 12, 12, 12, 8, 6, 4, 2]
+        # A random distribution from 84 to 94, where the most likely values are 85 - 89.
+        elements = list(range(84, 95))
+        weights = [7, 12, 14, 16, 14, 12, 9, 7, 5, 3, 1]
         kick_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKPR', index, kick_power)
     
     if player_dict["kick_accuracy"]:
         kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 99), 70))
     else:
-        # A random distribution from 74 to 92, where the most likely values are 72 - 82.
-        elements = list(range(74, 93))
-        weights = [8, 8, 8, 8, 8, 8, 8, \
-                   8, 8, 7, 6, 5, 3, \
-                   2, 1, 1, 1, 1, 1]
+        # A random distribution from 74 to 88, where the most likely values are 75 - 79.
+        elements = list(range(74, 89))
+        weights = [6, 12, 12, 13, 12, 12, 9, \
+                   7, 5, 4, 3, 2, 1, 1, 1]
         kick_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     
@@ -716,11 +715,11 @@ def create_punter(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -729,13 +728,13 @@ def create_punter(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

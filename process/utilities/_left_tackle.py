@@ -286,52 +286,55 @@ def create_left_tackle(self, player_dict, index):
     if player_dict["speed"]:
         speed = int(max(min(int(player_dict["speed"]), 85), 45))
     else:
-        # A random distribution from 50 to 75, where the most likely values are 57 - 64.
-        elements = list(range(50, 76))
-        weights = [1, 1, 1, 1, 3, 5, 6, 7, 7, \
-                   7, 7, 7, 7, 7, 7, 6, 5, 4, \
-                   3, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 54 to 74, where the most likely values are 60 - 64.
+        elements = list(range(54, 75))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 99), 70))
     else:
-        # A random distribution from 75 to 96, where the most likely values are 81 - 85.
-        elements = list(range(75, 97))
-        weights = [1, 1, 2, 4, 6, 8, 10, \
-                   10, 10, 10, 10, 8, 6, 4, \
-                   2, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 75 to 95, where the most likely values are 81 - 85.
+        elements = list(range(75, 96))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
     else:
-        # A random distribution from 47 to 67, where the most likely values are 52 - 57.
-        elements = list(range(47, 68))
-        weights = [2, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, \
-                   8, 7, 6, 5, 4, 3, 2, 2, 1, 1]
+        # A random distribution from 45 to 65, where the most likely values are 51 - 55.
+        elements = list(range(45, 66))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
     if player_dict["agility"]:
         agility = int(max(min(int(player_dict["agility"]), 85), 40))
     else:
-        # A random distribution from 48 - 71, where the most likely values are 54 - 59.
-        elements = list(range(48, 72))
-        weights = [1, 1, 2, 3, 5, 7, 8, 8, \
-                   8, 8, 8, 8, 7, 6, 5, 4, \
-                   3, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 51 - 71, where the most likely values are 55 - 60.
+        elements = list(range(51, 72))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
     if player_dict["acceleration"]:
         acceleration = int(max(min(int(player_dict["acceleration"]), 90), 60))
     else:
-        # A random distribution from 68 to 85, where the most likely values are 73 - 79.
-        elements = list(range(68, 86))
-        weights = [1, 2, 4, 6, 8, 9, 9, 9, 9, 9, 9, 9, 6, 4, 3, 1, 1, 1]
+        # A random distribution from 66 to 86, where the most likely values are 72 - 76.
+        elements = list(range(66, 87))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -445,11 +448,11 @@ def create_left_tackle(self, player_dict, index):
             ) / 3
         ), 99), 60))
     else:
-        # A random distribution from 66 to 87, where the most likely values are 70 - 73.
-        elements = list(range(66, 88))
-        weights = [2, 4, 6, 8, 10, 10, 10, \
-                   10, 10, 8, 6, 4, 2, 2, 1, \
-                   1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 65 to 85, where the most likely values are 71 - 75.
+        elements = list(range(65, 86))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         pass_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PPBK', index, pass_block)
     
@@ -462,11 +465,11 @@ def create_left_tackle(self, player_dict, index):
             ) / 3
         ), 99), 60))
     else:
-        # A random distribution from 66 to 87, where the most likely values are 70 - 73.
-        elements = list(range(66, 88))
-        weights = [2, 4, 6, 8, 10, 10, 10, \
-                   10, 10, 8, 6, 4, 2, 2, 1, \
-                   1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 66 to 86, where the most likely values are 72 - 76.
+        elements = list(range(66, 87))
+        weights = [4, 4, 5, 5, 5, 5, 6, \
+                   6, 7, 6, 6, 5, 5, 5, \
+                   5, 4, 4, 4, 3, 3, 3]
         run_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PRBK', index, run_block)
     
@@ -826,11 +829,11 @@ def create_left_tackle(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -839,13 +842,13 @@ def create_left_tackle(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

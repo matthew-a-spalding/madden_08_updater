@@ -297,22 +297,22 @@ def create_defensive_tackle(self, player_dict, index):
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 99), 70))
     else:
-        # A random distribution from 75 to 97, where the most likely values are 80 - 85.
-        elements = list(range(75, 98))
-        weights = [1, 3, 4, 6, 7, 9, 9, 9, \
-                   9, 9, 9, 7, 5, 3, 2, 1, \
-                   1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 72 to 92, where the most likely values are 72 - 76.
+        elements = list(range(72, 93))
+        weights = [8, 8, 8, 8, 8, 7, 6, \
+                   6, 5, 5, 5, 4, 4, 4, \
+                   3, 3, 2, 2, 2, 1, 1]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
     else:
-        # A random distribution from 40 to 65, where the most likely values are 49 - 54.
-        elements = list(range(40, 66))
-        weights = [1, 2, 2, 2, 3, 4, 5, 6, 7, \
-                   8, 8, 8, 8, 8, 8, 6, 4, 2, \
-                   1, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 41 to 61, where the most likely values are 41 - 45.
+        elements = list(range(41, 62))
+        weights = [8, 8, 8, 8, 8, 7, 6, \
+                   6, 5, 5, 5, 4, 4, 4, \
+                   3, 3, 2, 2, 2, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -331,11 +331,11 @@ def create_defensive_tackle(self, player_dict, index):
     if player_dict["acceleration"]:
         acceleration = int(max(min(int(player_dict["acceleration"]), 95), 65))
     else:
-        # A random distribution from 65 to 88, where the most likely values are 75 - 80.
-        elements = list(range(65, 89))
-        weights = [1, 1, 2, 2, 3, 4, 4, 5, \
-                   6, 7, 8, 8, 8, 8, 8, 8, \
-                   6, 4, 2, 1, 1, 1, 1, 1]
+        # A random distribution from 66 to 86, where the most likely values are 66 - 70.
+        elements = list(range(66, 87))
+        weights = [8, 8, 8, 8, 8, 7, 6, \
+                   6, 5, 5, 5, 4, 4, 4, \
+                   3, 3, 2, 2, 2, 1, 1]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -392,11 +392,11 @@ def create_defensive_tackle(self, player_dict, index):
     if player_dict["tackle"]:
         tackle = int(max(min(int(player_dict["tackle"]), 99), 65))
     else:
-        # A random distribution from 65 to 90, where the most likely values are 70 - 75.
-        elements = list(range(65, 91))
-        weights = [3, 4, 5, 6, 7, 8, 8, 8, 8, \
-                   8, 8, 6, 5, 3, 2, 1, 1, 1, \
-                   1, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 67 to 87, where the most likely values are 69 - 73.
+        elements = list(range(67, 88))
+        weights = [5, 7, 9, 9, 9, 9, 9, \
+                   8, 7, 6, 5, 4, 3, 2, \
+                   2, 1, 1, 1, 1, 1, 1]
         tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
@@ -836,11 +836,11 @@ def create_defensive_tackle(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -849,13 +849,13 @@ def create_defensive_tackle(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

@@ -519,7 +519,7 @@ for player_dict in player_attribute_dict_reader:
     # Get the length of this player's contract.
     contract_length = int(player_dict["contract_length"])
     # Calculate the player's yearly salary.
-    yearly_salary = round(int(player_dict["total_salary"]) / contract_length)
+    yearly_salary = round((int(player_dict["total_salary"]) / 10000) / contract_length)
     
     # Since we might have issues if we add multiple yearly_salary values with the same exact overall_rating, let's 
     # check for players with the same ratings and incrementally inflate the player's rating by a small amount to 
@@ -546,12 +546,14 @@ for working_position, ratings_and_salaries_dict in dicts_by_position.items():
         overall_ratings_list.append(float(rating))
         yearly_salaries_list.append(salary)
     
+    #sorted_salary_list = sorted(yearly_salaries_list)
+    
     # Now feed these lists into curve_fit() and write the results to our output file.
     popt, pcov = curve_fit(func, overall_ratings_list, yearly_salaries_list)
     
     # TESTING
     # For the first set of data, plot and show both the data and fit curve.
-    if index == 1:
+    if index == 3:
         plt.plot(overall_ratings_list, yearly_salaries_list, "b-", label=f"{working_position} data")
         np.savetxt('center_ratings.txt', overall_ratings_list, fmt='%s')
         np.savetxt('center_salaries.txt', yearly_salaries_list, fmt='%s')

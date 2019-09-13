@@ -304,10 +304,10 @@ def create_kicker(self, player_dict, index):
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 85), 35))
     else:
-        # A random distribution from 45 to 65, where the most likely values are 45 - 54.
-        elements = list(range(45, 66))
-        weights = [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6, \
-                   4, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 45 to 60, where the most likely values are 46 - 51.
+        elements = list(range(45, 61))
+        weights = [5, 9, 10, 10, 10, 10, 9, \
+                   8, 7, 6, 5, 4, 3, 2, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -463,20 +463,20 @@ def create_kicker(self, player_dict, index):
     if player_dict["kick_power"]:
         kick_power = int(max(min(int(player_dict["kick_power"]), 99), 80))
     else:
-        # A random distribution from 85 to 96, where the most likely values are 88 - 92.
-        elements = list(range(85, 97))
-        weights = [5, 7, 9, 11, 11, 11, 11, 11, 9, 7, 5, 3]
+        # A random distribution from 85 to 95, where the most likely values are 87 - 91.
+        elements = list(range(85, 96))
+        weights = [6, 9, 12, 14, 14, 14, 12, 9, 6, 3, 1]
         kick_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKPR', index, kick_power)
     
     if player_dict["kick_accuracy"]:
         kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 99), 70))
     else:
-        # A random distribution from 75 to 93, where the most likely values are 75 - 83.
-        elements = list(range(75, 94))
-        weights = [8, 8, 8, 8, 8, 8, 8, \
-                   8, 8, 7, 6, 5, 3, \
-                   2, 1, 1, 1, 1, 1]
+        # A random distribution from 75 to 92, where the most likely values are 77 - 81.
+        elements = list(range(75, 93))
+        weights = [4, 8, 10, 10, 10, 10, \
+                   10, 8, 7, 6, 5, 4, \
+                   3, 1, 1, 1, 1, 1]
         kick_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     
@@ -727,11 +727,11 @@ def create_kicker(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -740,13 +740,13 @@ def create_kicker(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

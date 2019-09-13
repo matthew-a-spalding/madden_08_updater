@@ -14,12 +14,12 @@ BOT_NAME = "scripted_bot"
 SPIDER_MODULES = ["scraping.spiders"]
 NEWSPIDER_MODULE = "scraping.spiders"
 
-LOG_LEVEL = "INFO"
+LOG_LEVEL = "ERROR"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "tutorial (+http://www.yourdomain.com)"
 USER_AGENT = "Mozilla/5.0 (Windows; U; MSIE 10.0; Windows NT 9.0; en-US)"
-DOWNLOAD_DELAY = 0.3
+DOWNLOAD_DELAY = 0.15
 
 # Per docs at http://doc.scrapy.org/en/latest/topics/item-pipeline.html#topics-item-pipeline
 ITEM_PIPELINES = {
@@ -46,7 +46,7 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"denver", "[SHORT_LOCATION]":"den", "[NICKNAME]":"broncos"},
     # {"[FULL_LOCATION]":"kansascity", "[SHORT_LOCATION]":"kc", "[NICKNAME]":"chiefs"},
     # {"[FULL_LOCATION]":"oakland", "[SHORT_LOCATION]":"oak", "[NICKNAME]":"raiders"},
-    {"[FULL_LOCATION]":"losangeles", "[SHORT_LOCATION]":"lac", "[NICKNAME]":"chargers"},
+    # {"[FULL_LOCATION]":"losangeles", "[SHORT_LOCATION]":"lac", "[NICKNAME]":"chargers"},
     # {"[FULL_LOCATION]":"dallas", "[SHORT_LOCATION]":"dal", "[NICKNAME]":"cowboys"},
     # {"[FULL_LOCATION]":"newyork", "[SHORT_LOCATION]":"nyg", "[NICKNAME]":"giants"},
     # {"[FULL_LOCATION]":"philadelphia", "[SHORT_LOCATION]":"phi", "[NICKNAME]":"eagles"},
@@ -55,14 +55,14 @@ NFL_TEAMS = [
     # {"[FULL_LOCATION]":"detroit", "[SHORT_LOCATION]":"det", "[NICKNAME]":"lions"},
     # {"[FULL_LOCATION]":"greenbay", "[SHORT_LOCATION]":"gb", "[NICKNAME]":"packers"},
     # {"[FULL_LOCATION]":"minnesota", "[SHORT_LOCATION]":"min", "[NICKNAME]":"vikings"},
-    # {"[FULL_LOCATION]":"atlanta", "[SHORT_LOCATION]":"atl", "[NICKNAME]":"falcons"},
-    # {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
-    # {"[FULL_LOCATION]":"neworleans", "[SHORT_LOCATION]":"no", "[NICKNAME]":"saints"},
-    # {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
-    # {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
+    {"[FULL_LOCATION]":"atlanta", "[SHORT_LOCATION]":"atl", "[NICKNAME]":"falcons"},
+    {"[FULL_LOCATION]":"carolina", "[SHORT_LOCATION]":"car", "[NICKNAME]":"panthers"},
+    {"[FULL_LOCATION]":"neworleans", "[SHORT_LOCATION]":"no", "[NICKNAME]":"saints"},
+    {"[FULL_LOCATION]":"tampabay", "[SHORT_LOCATION]":"tb", "[NICKNAME]":"buccaneers"},
+    {"[FULL_LOCATION]":"arizona", "[SHORT_LOCATION]":"ari", "[NICKNAME]":"cardinals"},
     {"[FULL_LOCATION]":"losangeles", "[SHORT_LOCATION]":"la", "[NICKNAME]":"rams"},
-    # {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
-    # {"[FULL_LOCATION]":"seattle", "[SHORT_LOCATION]":"sea", "[NICKNAME]":"seahawks"},
+    {"[FULL_LOCATION]":"sanfrancisco", "[SHORT_LOCATION]":"sf", "[NICKNAME]":"49ers"},
+    {"[FULL_LOCATION]":"seattle", "[SHORT_LOCATION]":"sea", "[NICKNAME]":"seahawks"},
 ]
 
 # The RegEx to use to find the links to follow from the NFL roster pages to the player profile pages.

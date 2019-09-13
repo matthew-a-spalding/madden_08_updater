@@ -75,7 +75,11 @@ A. Get the most recent Madden NFL player ratings into a CSV file.
         College
         Total Salary
         Signing Bonus
-
+    
+    NOTE: Be sure to remove any special formatting on the file or columns, like the Total Salary and Signing Bonus 
+        fields, which often have the Currency formatting applied, resulting in "$X,XXX,XXX.XX" being saved and passed 
+        on in Step 3.
+    
     3. Once cleaned, copy "Madden [XX] Player Ratings.csv" into the folder "\process\inputs\step3" and rename it to 
     "Latest Madden Ratings.csv", overwriting any previous copy there.
     
@@ -96,7 +100,9 @@ A.  1. We need to update the file "Previous Player Attributes.csv," which sits a
     "years_pro" column in "Previous Player Attributes.csv" before comparing it with the NFL's 'years pro' field.
     
     2. Make sure that the LOG_LEVEL in "process\scraping\settings.py" is set to "INFO" to start with, as this will 
-    give us the most information, which we will want to see on the first few runs of "step_3_scrape_NFL_rosters.py".
+    give us the most information, which we will want to see on the first few runs of "step_3_scrape_NFL_rosters.py". 
+    Also comment out all but a few teams in the "NFL_TEAMS" list in settings.py. Then start the iterative process of 
+    running step_3's code and scraping NFL.com.
 
 B.  Activate the venv in "process\scraping" so we can use Scrapy. To do this:
     1. Open a CMD window.
@@ -115,48 +121,51 @@ C.  Run the Scrapy script. THIS MUST BE RUN FROM THE "...madden_08_updater\proce
     
     python step_3_scrape_NFL_rosters.py
     
-    IF THERE ARE ERRORS FROM SCRAPY: Check the changelogs for Scrapy to see if anything has changed out from under me. 
-    This happened the last time I tried to perform a fresh install of Scrapy - the class name in Scrapy's crawler.py 
-    apparently had been changed from CrawlerPROCESS to CrawlerProcess, the casing of which Python cares about.
+    IF THERE ARE PYTHON ERRORS FROM SCRAPY: Check the changelogs for Scrapy to see if anything has changed out from 
+    under me. This happened one time when I tried to perform a fresh install of Scrapy - the class name in Scrapy's 
+    crawler.py script had been changed from CrawlerPROCESS to CrawlerProcess, the casing of which Python cares about.
     
     If the format of the HTML on the NFL and OverTheCap sites has not changed, the step 3 script should have created a 
     file "My 20[XX] Player Attributes - Initial.csv" in "process\outputs\step3". If there is no file there, or if 
     Scrapy threw any error(s) in the CMD window, debug until the script correctly produces the file. (In case of an 
     error, it may simply be that the NFL has finally changed the layout of their website or the HTML within their 
-    pages, or the Madden player attribute fields have changed again.) In order to get all the players that are 
-    currently on actual NFL rosters, it will likely be necessary to iterate over the run of 
-    "step_3_scrape_NFL_rosters.py" by altering code in "process\scraping\settings.py" to alter the LOG_LEVEL from the 
-    initial value of "INFO" to "WARNING", and finally "ERROR" (or if absolutely necessary, DEBUG), while choosing 
-    which new players not found in the "Latest Madden Ratings.csv" to add or skip. You might also want to limit the 
-    number of teams which are included in early runs, to help with debugging/filtering. This is done by commenting/
-    uncommenting lines in the NFL_TEAMS list in "process\scraping\settings.py".
+    pages, or the Madden player attribute fields have changed again.) 
+    
+D.  Iterate over the run of "step_3_scrape_NFL_rosters.py" by wokring with "process\scraping\settings.py" to alter the 
+    LOG_LEVEL from the initial value of "INFO" (or if absolutely necessary, "DEBUG") to "WARNING" and finally "ERROR", 
+    while limiting the number of teams which are included in early runs. Once the script seems to generally run 
+    without technical issue, the focus of all iterations but the final one will be to update player info in the Excel 
+    file from "docs\EA ratings\edited\" for the year, which was used to create the Latest Madden Ratings.csv file. The 
+    most likely changes needed will be:
+        1) Fixes to player birthdates where Madden, NFL.com, or both got it wrong (typos?). These will usually be 
+            noted by the error "NFL & [source]: Likely match by full name, position, and birthdate w/o year for ..."
+        2) Player names which are longer than 11 characters (for first names) or 13 chars (for last names). 
+    IMPORTANT! For each such player found, I must do 2 things:
+            a. Add an 'if' clause to 'check_for_shortened_[first/last]_name' in nfl_spider.py (for next year).
+            b. All abbreviated versions of names I decide upon will also need to be put into the ultimate output file 
+                "My 20[XX] Player Attributes - Initial.xlsx" MANUALLY after the final interation, as the code only 
+                serves to warn of the problems such names pose - the script does NOT resolve the issues in the output.
 
 
                                 Step 4: Process my ratings file until it is complete.
 =======================================================================================================================
 A.  Once the script for step 3 has created the file "My 20[XX] Player Attributes - Initial.csv," copy the file into 
     "docs\My Ratings\20[XX]" and make another copy as "My 20[XX] Player Attributes - In Progress 20[XX]_MM_DD.csv". 
-    Manually edit (and save revision BAKs of) the file to:
+    The steps for manually editing (and save revision BAKs of) the file are:
     
-    1. Make SURE to resolve any conflicts, meaning those fields whose values are shown as TBD or CONFLICT, and then 
-    SORT THE CSV FILE by 1)team 2)position 3)jersey number. Only after making sure ALL players have a final position 
-    (no 'CONFLICT' in the file) and it is sorted properly, then ...
+    1. Resolve all conflicts, meaning those fields whose values are shown as "CONFLICT".
     
-    2. ...Run the add_missing_jersey_and_draft.py script to fill in any blanks for draft and jersey numbers:
+    2. Fill in all blanks for fields "age" and "brithdate".
+    
+    3. SORT THE CSV FILE by 1)team 2)position 3)jersey number. Check once more to make sure there are no 'CONFLICT's 
+        in the file and it is sorted properly.
+    
+    4. Run the add_missing_jersey_and_draft.py script to fill in any blanks for draft and jersey numbers:
         python add_missing_jersey_and_draft.py
     
-    3. Run calculate_
+    5. Add other important missing/defaulted values, particularly for new players, like Face ID, Hair Style, etc.
     
-    
-    
-    
-    
-    .py to add missing contract info:
-        python add_missing_draft_and_contract_info.py
-
-    4. Add other important missing/defaulted values, particularly for new players, like Face ID, Hair Style, etc.
-    
-    5. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
+    6. Sort by each field to make sure we get a range we expect, and that there are no empty or invalid values.
         * TO FIND MISSING FIELDS (BLANK CELLS IN EXCEL):
         - Select the entire range where there should be no blank cells.
         - Press F5 (fn-F5 on the Mac's keyboard). 
@@ -164,15 +173,15 @@ A.  Once the script for step 3 has created the file "My 20[XX] Player Attributes
         - Select the radio button for Blanks and click OK.
             It should show the first empty cell (if any) or say "No cells were found."
     
-    6. Create a copy of the template file "Player Target Numbers by Position.xlsx" (from docs\Templates\) and put it 
+    7. Create a copy of the template file "Player Target Numbers by Position.xlsx" (from docs\Templates\) and put it 
     into the "docs\My Ratings\20[XX]" folder alongside the Player Attributes files. Working through that file, fill 
     out the roster according to the allotment numbers at each position by retiring, adding, and moving players from 
     one position to another similar position.
     
     
-B.  Once the file is complete, save a final copy under "docs\My Ratings\20[XX]" as 
-    "My 20[XX] Player Attributes - FINAL 20[XX]_MM_DD.csv". Also put a renamed copy of the file into 
-    "process\inputs\step5" as "Current Player Attributes.csv" (overwriting the previous copy).
+B.  Once the file is complete, save a final copy under "docs\My Ratings\20[XX]" as "My 20[XX] Player Attributes - 
+    FINAL 20[XX]_MM_DD.csv". Also put a renamed copy of the file into "process\inputs\step5" as "Current Player 
+    Attributes.csv" (overwriting the previous copy).
 
 
                                           Step 5: Update the roster file.

@@ -68,6 +68,9 @@ def create_center(self, player_dict, index):
     
     # For many attributes in 'Latest Player Attributes.csv', we simply use the exact value from the file.
     self.set_player_integer_field('PAGE', index, int(player_dict["age"]))
+    contract_length = int(player_dict["contract_length"])
+    self.set_player_integer_field('PCON', index, contract_length)
+    self.set_player_integer_field('PCYL', index, int(player_dict["contract_years_left"]))
     draft_pick = int(player_dict["draft_pick"])
     self.set_player_integer_field('PDPI', index, draft_pick)
     draft_round = int(player_dict["draft_round"])
@@ -81,6 +84,7 @@ def create_center(self, player_dict, index):
     self.set_player_integer_field('PSKI', index, int(player_dict["skin_color"]))
     self.set_player_integer_field('PTAL', index, int(player_dict["tattoo_left"]))
     self.set_player_integer_field('PTAR', index, int(player_dict["tattoo_right"]))
+    self.set_player_integer_field('PVCO', index, contract_length)
     years_pro = int(player_dict["years_pro"])
     self.set_player_integer_field('PYRP', index, years_pro)
     # This is correct - we are intentionally setting the years with team to the number of years pro.
@@ -282,43 +286,40 @@ def create_center(self, player_dict, index):
     if player_dict["speed"]:
         speed = int(max(min(int(player_dict["speed"]), 85), 45))
     else:
-        # A random distribution from 50 to 80, where the most likely values are 56 - 66.
-        elements = list(range(50, 81))
-        weights = [2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 5, \
-                   5, 5, 5, 5, 5, 5, 4, 4, 4, 3, \
-                   3, 2, 2, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 54 to 79, where the most likely values are 61 - 65.
+        elements = list(range(54, 80))
+        weights = [1, 2, 3, 4, 5, 6, 6, 8, 8, 8, 8, 8, 6, 6, \
+                   5, 4, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 99), 65))
     else:
-        # A random distribution from 70 to 97, where the most likely values are 81 - 85.
-        elements = list(range(70, 98))
-        weights = [1, 1, 1, 1, 2, 3, 5, 5, 5, \
-                   6, 6, 7, 7, 8, 8, 7, 6, 5, \
-                   4, 3, 2, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 67 to 92, where the most likely values are 74 - 78.
+        elements = list(range(67, 93))
+        weights = [1, 2, 3, 4, 5, 6, 6, 8, 8, 8, 8, 8, 6, 6, \
+                   5, 4, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
     else:
-        # A random distribution from 45 to 65, where the most likely values are 53 - 58.
-        elements = list(range(45, 66))
-        weights = [1, 1, 2, 2, 3, 5, 6, 7, 8, 8, 8, \
-                   8, 8, 8, 7, 6, 5, 3, 2, 1, 1]
+        # A random distribution from 44 to 62, where the most likely values are 51 - 54.
+        elements = list(range(44, 63))
+        weights = [1, 2, 3, 4, 5, 6, 7, 9, 9, 9, \
+                   9, 8, 7, 6, 5, 4, 3, 2, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
     if player_dict["agility"]:
         agility = int(max(min(int(player_dict["agility"]), 85), 45))
     else:
-        # A random distribution from 50 - 80, where the most likely values are 56 - 65.
-        elements = list(range(50, 81))
-        weights = [2, 2, 3, 4, 4, 4, 5, 5, 5, 5, 5, \
-                   5, 5, 5, 5, 5, 4, 4, 4, 3, 3, \
-                   2, 2, 2, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 54 to 79, where the most likely values are 61 - 65.
+        elements = list(range(54, 80))
+        weights = [1, 2, 3, 4, 5, 6, 6, 8, 8, 8, 8, 8, 6, 6, \
+                   5, 4, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
@@ -451,11 +452,11 @@ def create_center(self, player_dict, index):
             ) / 3
         ), 99), 60))
     else:
-        # A random distribution from 65 to 95, where the most likely values are 68 - 77.
-        elements = list(range(65, 96))
-        weights = [3, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, \
-                   5, 5, 4, 4, 4, 3, 3, 3, 2, 2, \
-                   2, 2, 2, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 64 to 90, where the most likely values are 66 - 71.
+        elements = list(range(64, 91))
+        weights = [5, 6, 7, 7, 7, 7, 7, 7, 6, \
+                   6, 5, 5, 4, 4, 3, 3, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1]
         pass_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PPBK', index, pass_block)
     
@@ -468,11 +469,11 @@ def create_center(self, player_dict, index):
             ) / 3
         ), 99), 60))
     else:
-        # A random distribution from 65 to 95, where the most likely values are 68 - 77.
-        elements = list(range(65, 96))
-        weights = [3, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, \
-                   5, 5, 4, 4, 4, 3, 3, 3, 2, 2, \
-                   2, 2, 2, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 64 to 90, where the most likely values are 66 - 71.
+        elements = list(range(64, 91))
+        weights = [5, 6, 7, 7, 7, 7, 7, 7, 6, \
+                   6, 5, 5, 4, 4, 3, 3, 1, 1, \
+                   1, 1, 1, 1, 1, 1, 1, 1, 1]
         run_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PRBK', index, run_block)
     
@@ -828,43 +829,30 @@ def create_center(self, player_dict, index):
             role_two = 12
     self.set_player_integer_field('PRL2', index, role_two)
     
-
-    # PAY
-    # These fields could be empty, so see if we will use existing pay info, or generate our own.
-    if player_dict["contract_length"]:
-        # We should have contract_length, contract_years_left, total_salary, and signing_bonus.
-        contract_length = int(player_dict["contract_length"])
-        self.set_player_integer_field('PCON', index, contract_length)
-        self.set_player_integer_field('PVCO', index, contract_length)
-        self.set_player_integer_field('PCYL', index, int(player_dict["contract_years_left"]))
-        total_salary = int(player_dict["total_salary"])
-        signing_bonus = int(player_dict["signing_bonus"])
-    else:
-        
-
-
     # PTSA & PVTS: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
     # account for inflation.
+    total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * get_salary_adjustment("first"))
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * get_salary_adjustment("second"))
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * get_salary_adjustment("third"))
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
     
     # PSBO & PVSB: Use the formula for this year to reduce actual salary and bonus numbers by certain ratios to 
     # account for inflation.
+    signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("first"))
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("second"))
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("third"))
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * get_bonus_adjustment("fourth"))
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

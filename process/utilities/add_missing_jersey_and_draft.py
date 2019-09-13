@@ -2,13 +2,16 @@ r"""add_missing_jersey_and_draft.py
     
     This file opens (to read) the file "My 20[XX] Player Attributes - In Progress 20[XX]_MM_DD.csv", found in 
     "[BASE_MADDEN_PATH]docs\My Ratings\20[XX]" (where 20[XX] is the current year and MM_DD is the current date); it 
-    also opens another file to write to, called "UPDATED My 20[XX] Player Attributes - In Progress 20[XX]_MM_DD.csv". 
+    also opens another file to write to, called "Added Jersey and Draft -  My 20[XX] Player Attributes - In Progress 
+    20[XX]_MM_DD.csv". 
     
     The main loop reads each record from the original file, performing a few tasks per row. First, if this player is 
     missing draft info, it sets those fields to the defaults (round 15, pick 63). Then, it checks to see if the 
     'jersey_number' field is blank. If so, it chooses the next number from the list associated with the player's 
     position in the dict POSSIBLE_POSITION_NUMBERS which is not also in assigned_jersey_numbers[team]. It subsequently 
     updates the list of assigned_jersey_numbers[team] and writes the record to the updated output file.
+    
+    IMPORTANT: The input file must not have any missing values or 'CONFLICT's for the field 'position'.
 """
 
 # ----------------------------------------------------- SECTION 1 -----------------------------------------------------

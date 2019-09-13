@@ -283,16 +283,17 @@ def create_tight_end(self, player_dict, index):
     te_type = -1
     
     if player_dict["speed"]:
-        speed = int(max(min(int(player_dict["speed"]), 95), 55))
+        speed = int(max(min(int(player_dict["speed"]), 95), 60))
     else:
-        # A random distribution from 63 to 85, where the most likely values are 71 - 80.
-        elements = list(range(63, 86))
-        weights = [1, 1, 1, 1, 2, 3, 4, 5, 7, 7, 7, 7, \
-                   7, 7, 7, 7, 7, 7, 5, 3, 2, 1, 1]
+        # A random distribution from 69 to 88, where the most likely values are 71 - 74.
+        elements = list(range(69, 89))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
-    if speed > 80:
+    if speed > 72:
         # This TE will be a receiving TE. Catching should be higher, blocking lower.
         te_type = 0
     else:
@@ -302,43 +303,44 @@ def create_tight_end(self, player_dict, index):
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 90), 55))
     else:
-        # A random distribution from 61 to 78, where the most likely values are 66 - 72.
-        elements = list(range(61, 79))
-        weights = [1, 1, 3, 5, 7, 9, 9, 9, 10, \
-                   9, 9, 9, 7, 5, 3, 2, 1, 1]
+        # A random distribution from 65 to 84, where the most likely values are 67 - 70.
+        elements = list(range(65, 85))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 35))
     else:
-        # A random distribution from 40 to 65, where the most likely values are 49 - 56.
-        elements = list(range(40, 66))
-        weights = [1, 1, 1, 1, 1, 2, 4, 5, 6, \
-                   7, 7, 7, 7, 7, 7, 7, 7, 6, \
-                   5, 4, 2, 1, 1, 1, 1, 1]
+        # A random distribution from 40 to 59, where the most likely values are 42 - 45.
+        elements = list(range(40, 60))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
     if player_dict["agility"]:
         agility = int(max(min(int(player_dict["agility"]), 95), 55))
     else:
-        # A random distribution from 60 to 83, where the most likely values are 64 - 72.
-        elements = list(range(60, 84))
-        weights = [1, 1, 3, 5, 7, 7, 7, 7, \
-                   7, 7, 7, 7, 7, 6, 5, 4, \
-                   3, 2, 2, 1, 1, 1, 1, 1]
+        # A random distribution from 65 to 84, where the most likely values are 67 - 70.
+        elements = list(range(65, 85))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
     if player_dict["acceleration"]:
         acceleration = int(max(min(int(player_dict["acceleration"]), 95), 60))
     else:
-        # A random distribution from 65 to 88, where the most likely values are 75 - 83.
-        elements = list(range(65, 89))
-        weights = [1, 1, 1, 1, 1, 2, 3, 4, \
-                   5, 6, 7, 7, 7, 7, 7, 7, \
-                   7, 7, 7, 5, 3, 2, 1, 1]
+        # A random distribution from 70 to 89, where the most likely values are 72 - 75.
+        elements = list(range(70, 90))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -357,17 +359,17 @@ def create_tight_end(self, player_dict, index):
         catching = int(max(min(int(player_dict["catching"]), 99), 45))
     else:
         if te_type == 1:
-            # Blocker. Catching can be in the range 49 - 79, where the most likely values are 62 - 69.
-            elements = list(range(49, 80))
-            weights = [1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, \
-                       4, 5, 6, 6, 6, 6, 6, 6, 6, 6, \
-                       5, 4, 3, 3, 2, 2, 1, 1, 1, 1]
+            # Blocker. Catching can be in the range 56 - 75, where the most likely values are 58 - 61.
+            elements = list(range(56, 76))
+            weights = [6, 7, 8, 9, 9, 8, 7, \
+                       7, 6, 6, 5, 5, 4, 3, \
+                       3, 2, 2, 1, 1, 1]
         else:
-            # Receiver. Catching should be in the range 64 - 89, where the most likely values are 72 - 78.
-            elements = list(range(64, 90))
-            weights = [1, 2, 3, 3, 4, 4, 5, 5, 6, \
-                       6, 6, 6, 6, 6, 6, 5, 5, 4, \
-                       4, 3, 3, 2, 2, 1, 1, 1]
+            # Receiver. Catching should be in the range 61 - 80, where the most likely values are 63 - 66.
+            elements = list(range(61, 81))
+            weights = [6, 7, 8, 9, 9, 8, 7, \
+                       7, 6, 6, 5, 5, 4, 3, \
+                       3, 2, 2, 1, 1, 1]
         catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     
@@ -385,14 +387,13 @@ def create_tight_end(self, player_dict, index):
     if player_dict["elusiveness"] and player_dict["trucking"]:
         break_tackles = int(max(min(
             (math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2) + 5), 
-            95), 20))
+            95), 25))
     else:
-        # A random distribution from 30 to 70, where the most likely values are 53 - 60.
-        elements = list(range(30, 71))
-        weights = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-                   1, 1, 1, 2, 2, 2, 3, 3, 3, 4, \
-                   4, 4, 5, 5, 5, 5, 5, 5, 5, 5, \
-                   4, 3, 3, 2, 2, 1, 1, 1, 1, 1]
+        # A random distribution from 37 to 56, where the most likely values are 39 - 42.
+        elements = list(range(37, 57))
+        weights = [6, 7, 8, 9, 9, 8, 7, \
+                   7, 6, 6, 5, 5, 4, 3, \
+                   3, 2, 2, 1, 1, 1]
         break_tackles = get_weighted_random(elements, weights)
     self.set_player_integer_field('PBTK', index, break_tackles)
     
@@ -458,15 +459,17 @@ def create_tight_end(self, player_dict, index):
         ), 80), 35))
     else:
         if te_type == 1:
-            # Blocker. Pass block can be in the range 47 - 66, where the most likely values are 51 - 57.
-            elements = list(range(47, 67))
-            weights = [1, 3, 4, 6, 8, 8, 8, 8, 8, 8, \
-                       8, 7, 6, 5, 4, 3, 2, 1, 1, 1]
+            # Blocker. Pass block can be in the range 51 - 72, where the most likely values are 53 - 57.
+            elements = list(range(51, 73))
+            weights = [6, 7, 8, 9, 10, 9, 7, \
+                       6, 5, 4, 4, 3, 3, 3, 2, \
+                       2, 2, 2, 2, 2, 2, 2]
         else:
-            # Receiver. Pass block should be in the range 41 - 60, where the most likely values are 45 - 51.
-            elements = list(range(41, 61))
-            weights = [1, 3, 4, 6, 8, 8, 8, 8, 8, 8, \
-                       8, 7, 6, 5, 4, 3, 2, 1, 1, 1]
+            # Receiver. Pass block should be in the range 46 - 67, where the most likely values are 48 - 51.
+            elements = list(range(46, 68))
+            weights = [6, 7, 8, 9, 10, 9, 7, \
+                       6, 5, 4, 4, 3, 3, 3, 2, \
+                       2, 2, 2, 2, 2, 2, 2]
         pass_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PPBK', index, pass_block)
     
@@ -480,15 +483,17 @@ def create_tight_end(self, player_dict, index):
         ), 85), 35))
     else:
         if te_type == 1:
-            # Blocker. Run block can be in the range 45 - 72, where the most likely values are 52 - 60.
-            elements = list(range(45, 73))
-            weights = [1, 1, 1, 1, 2, 4, 6, 7, 7, 7, 7, 7, 7, 7, \
-                       7, 7, 6, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            # Blocker. Run block can be in the range 51 - 72, where the most likely values are 53 - 57.
+            elements = list(range(51, 73))
+            weights = [6, 7, 8, 9, 10, 9, 7, \
+                       6, 5, 4, 4, 3, 3, 3, 2, \
+                       2, 2, 2, 2, 2, 2, 2]
         else:
-            # Receiver. Run block should be in the range 38 - 65, where the most likely values are 45 - 53.
-            elements = list(range(38, 66))
-            weights = [1, 1, 1, 1, 2, 4, 6, 7, 7, 7, 7, 7, 7, 7, \
-                       7, 7, 6, 4, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            # Receiver. Run block should be in the range 46 - 67, where the most likely values are 48 - 51.
+            elements = list(range(46, 68))
+            weights = [6, 7, 8, 9, 10, 9, 7, \
+                       6, 5, 4, 4, 3, 3, 3, 2, \
+                       2, 2, 2, 2, 2, 2, 2]
         run_block = get_weighted_random(elements, weights)
     self.set_player_integer_field('PRBK', index, run_block)
     
@@ -863,11 +868,11 @@ def create_tight_end(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -876,13 +881,13 @@ def create_tight_end(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

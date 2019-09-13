@@ -176,9 +176,9 @@ class NFLSpider(CrawlSpider):
         
         
         # Use this section to only process one specific player for debugging.
-        #if nfl_last_name != 'Davenport':
-        #    logging.info("Skipping all players but Davenport.")
-        #    return player
+        # if nfl_last_name != 'Liggins':
+        #     logging.info("Skipping all players but Liggins.")
+        #     return player
         
         
         # Use this section to turn on verbose logging for a specific player.
@@ -248,8 +248,8 @@ class NFLSpider(CrawlSpider):
             nfl_age = age_strings[1] # eg. "25"
             if verbose_output:
                 logging.info("NFL.com: nfl_height_inches = %d", nfl_height_inches)
-                logging.info("NFL.com: nfl_weight = %d", nfl_weight)
-                logging.info("NFL.com: nfl_age = %d", nfl_age)
+                logging.info("NFL.com: nfl_weight = %d", int(nfl_weight))
+                logging.info("NFL.com: nfl_age = %d", int(nfl_age))
             
             # Get the player's college. The NFL.com pages report "No College" if they don't have that info.
             college_strings = response.xpath("//div[@class=\"player-info\"]/p[5]/text()").extract()[0].split(None, 1) 
@@ -257,7 +257,7 @@ class NFLSpider(CrawlSpider):
             #logging.info("NFL.com: college_strings = %s", college_strings)
             nfl_college = college_strings[1] # eg. "Stanford"
             if verbose_output:
-                logging.info("NFL.com: nfl_college = %d", nfl_college)
+                logging.info("NFL.com: nfl_college = %s", nfl_college)
             
             # Get the player's number of years of experience.
             experience_strings = response.xpath(
@@ -280,7 +280,7 @@ class NFLSpider(CrawlSpider):
                 nfl_years_pro = (int(regex_match_object.group(0)) - 1) if (int(regex_match_object.group(0)) > 1) else 1
                 
             if verbose_output:
-                logging.info("NFL.com: nfl_years_pro = %d", nfl_years_pro)
+                logging.info("NFL.com: nfl_years_pro = %d", int(nfl_years_pro))
             
         elif len(player_info_p_strong_tags) == 5:
             # The age info is missing, and we have no birth date <p> either.
@@ -301,8 +301,8 @@ class NFLSpider(CrawlSpider):
             nfl_height_inches = (int(height_strings[1][0]) * 12) + int(height_strings[1][2:])
             nfl_weight = weight_strings[1] # eg. "255"
             if verbose_output:
-                logging.info("NFL.com: nfl_height_inches = %d", nfl_height_inches)
-                logging.info("NFL.com: nfl_weight = %d", nfl_weight)
+                logging.info("NFL.com: nfl_height_inches = %d", int(nfl_height_inches))
+                logging.info("NFL.com: nfl_weight = %d", int(nfl_weight))
             
             # Get the player's college. The NFL.com pages currently say "No College" when they don't have that info.
             college_strings = response.xpath("//div[@class=\"player-info\"]/p[4]/text()").extract()[0].split(None, 1) 
@@ -310,7 +310,7 @@ class NFLSpider(CrawlSpider):
             #logging.info("NFL.com: college_strings = %s", college_strings)
             nfl_college = college_strings[1] # eg. "Stanford"
             if verbose_output:
-                logging.info("NFL.com: nfl_college = %d", nfl_college)
+                logging.info("NFL.com: nfl_college = %s", nfl_college)
             
             # Get the player's number of years of experience.
             experience_strings = response.xpath(
@@ -328,7 +328,7 @@ class NFLSpider(CrawlSpider):
                 nfl_years_pro = (int(regex_match_object.group(0)) - 1) if (int(regex_match_object.group(0)) > 1) else 1
             
             if verbose_output:
-                logging.info("NFL.com: nfl_years_pro = %d", nfl_years_pro)
+                logging.info("NFL.com: nfl_years_pro = %d", int(nfl_years_pro))
         
         else:
             # We have yet another configuration, which we should investigate.
@@ -391,15 +391,15 @@ class NFLSpider(CrawlSpider):
                             nfl_birthdate == player_dict["Birthdate"] and 
                             positions_are_similar(nfl_position, player_dict["Position"])):
                         
-                        logging.warning("NFL & Madden: Likely match by birthdate, position, last name, and first "
-                                        "initial for %s %s, %s %s.", 
-                                        nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                        logging.warning("Madden CSV values: %s %s, %s %s", 
-                                        player_dict["First Name"], 
-                                        player_dict["Last Name"], 
-                                        player_dict["Team"], 
-                                        player_dict["Position"])
-                        logging.warning("NFL profile page: %s \n", response.url)
+                        logging.info("NFL & Madden: Likely match by birthdate, position, last name, and first "
+                                     "initial for %s %s, %s %s.", 
+                                     nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                        logging.info("Madden CSV values: %s %s, %s %s", 
+                                     player_dict["First Name"], 
+                                     player_dict["Last Name"], 
+                                     player_dict["Team"], 
+                                     player_dict["Position"])
+                        logging.info("NFL profile page: %s \n", response.url)
                         
                         madden_player_dict = player_dict
                         
@@ -423,15 +423,15 @@ class NFLSpider(CrawlSpider):
                                 player_dict["Birthdate"][:len(player_dict["Birthdate"])-4] and 
                                 positions_are_similar(nfl_position, player_dict["Position"])):
                             
-                            logging.warning("NFL & Madden: Likely match by full name, position, and birthdate w/o "
-                                            "year for %s %s, %s %s.", 
-                                            nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                            logging.warning("Madden CSV values: %s %s, %s %s", 
-                                            player_dict["First Name"], 
-                                            player_dict["Last Name"], 
-                                            player_dict["Team"], 
-                                            player_dict["Position"])
-                            logging.warning("NFL profile page: %s \n", response.url)
+                            logging.error("NFL & Madden: Likely match by full name, position, and birthdate w/o "
+                                          "year for %s %s, %s %s.", 
+                                          nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                            logging.error("Madden CSV values: %s %s, %s %s", 
+                                          player_dict["First Name"], 
+                                          player_dict["Last Name"], 
+                                          player_dict["Team"], 
+                                          player_dict["Position"])
+                            logging.error("NFL profile page: %s \n", response.url)
                             
                             madden_player_dict = player_dict
                             
@@ -490,7 +490,7 @@ class NFLSpider(CrawlSpider):
                     logging.info("NFL.com: Player profile page url: %s\n", response.url)
         
         else:
-            logging.info("NFL.com: No birthdate or age for %s %s, %s %s.", 
+            logging.info("NFL.com: No birthdate or age for %s %s, %s %s.\n", 
                          nfl_first_name, nfl_last_name, player["team"], nfl_position)
             
             # Loop over the rows in the Madden file to compare them with the NFL.com info.
@@ -587,15 +587,15 @@ class NFLSpider(CrawlSpider):
                             nfl_birthdate == existing_dict["birthdate"] and 
                             positions_are_similar(nfl_position, existing_dict["position"])):
                         
-                        logging.warning("NFL & Last Year: Likely match by birthdate, position, last name, and first "
-                                        "initial for %s %s, %s %s.",
-                                        nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                        logging.warning("Last year's values: %s %s, %s %s", 
-                                        existing_dict["first_name"], 
-                                        existing_dict["last_name"], 
-                                        existing_dict["team"], 
-                                        existing_dict["position"])
-                        logging.warning("NFL profile page: %s \n", response.url)
+                        logging.info("NFL & Last Year: Likely match by birthdate, position, last name, and first "
+                                     "initial for %s %s, %s %s.",
+                                     nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                        logging.info("Last year's values: %s %s, %s %s", 
+                                     existing_dict["first_name"], 
+                                     existing_dict["last_name"], 
+                                     existing_dict["team"], 
+                                     existing_dict["position"])
+                        logging.info("NFL profile page: %s \n", response.url)
                         
                         existing_player_dict = existing_dict
                         
@@ -625,15 +625,15 @@ class NFLSpider(CrawlSpider):
                                 existing_dict["birthdate"][:len(existing_dict["birthdate"])-4] and 
                                 positions_are_similar(nfl_position, existing_dict["position"])):
                             
-                            logging.warning("NFL & Last Year: Likely match by full name, position, and birthdate w/o "
-                                            "year for %s %s, %s %s.", 
-                                            nfl_first_name, nfl_last_name, player["team"], nfl_position)
-                            logging.warning("Last year's values: %s %s, %s %s", 
-                                            existing_dict["first_name"], 
-                                            existing_dict["last_name"], 
-                                            existing_dict["team"], 
-                                            existing_dict["position"])
-                            logging.warning("NFL profile page: %s \n", response.url)
+                            logging.error("NFL & Last Year: Likely match by full name, position, and birthdate w/o "
+                                          "year for %s %s, %s %s.", 
+                                          nfl_first_name, nfl_last_name, player["team"], nfl_position)
+                            logging.error("Last year's values: %s %s, %s %s", 
+                                          existing_dict["first_name"], 
+                                          existing_dict["last_name"], 
+                                          existing_dict["team"], 
+                                          existing_dict["position"])
+                            logging.error("NFL profile page: %s \n", response.url)
                             
                             existing_player_dict = existing_dict
                             
@@ -758,7 +758,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               existing_player_dict["position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_first_name, "
+                              "but do NOT change the inputs. \n")
             
             player["last_name"] = existing_player_dict["last_name"]
             if len(existing_player_dict["last_name"]) > 13:
@@ -768,7 +769,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               existing_player_dict["position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_last_name, "
+                              "but do NOT change the inputs. \n")
             
             # If the player's position has changed since last year, we only want to keep it as what it was before if
             # the player was listed as a FB in our previous file and HB in the current Madden.
@@ -834,7 +836,6 @@ class NFLSpider(CrawlSpider):
                         logging.info("Years pro in NFL: %s; in Madden: %s", 
                                      nfl_years_pro, madden_player_dict["Years Pro"])
                         logging.info("NFL profile page: %s \n", response.url)
-
                 player["years_pro"] = "CONFLICT"
             else:
                 player["years_pro"] = madden_player_dict["Years Pro"]
@@ -936,7 +937,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               existing_player_dict["position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_first_name, "
+                              "but do NOT change the inputs. \n")
             
             player["last_name"] = existing_player_dict["last_name"]
             if len(existing_player_dict["last_name"]) > 13:
@@ -946,7 +948,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               existing_player_dict["position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_last_name, "
+                              "but do NOT change the inputs. \n")
             
             # Choose the best position for this player.
             player["position"] = choose_best_position(
@@ -1041,10 +1044,10 @@ class NFLSpider(CrawlSpider):
             player["kick_return"] = existing_player_dict["kick_return"]
             player["stamina"] = existing_player_dict["stamina"]
             player["injury"] = existing_player_dict["injury"]
-            player["run_block_power"] = existing_player_dict["run_block_strength"]
-            player["run_block_finesse"] = existing_player_dict["run_block_footwork"]
-            player["pass_block_power"] = existing_player_dict["pass_block_strength"]
-            player["pass_block_finesse"] = existing_player_dict["pass_block_footwork"]
+            player["run_block_power"] = existing_player_dict["run_block_power"]
+            player["run_block_finesse"] = existing_player_dict["run_block_finesse"]
+            player["pass_block_power"] = existing_player_dict["pass_block_power"]
+            player["pass_block_finesse"] = existing_player_dict["pass_block_finesse"]
             player["break_tackle"] = -1
             player["toughness"] = existing_player_dict["toughness"]
             player["handedness"] = existing_player_dict["handedness"]
@@ -1108,7 +1111,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               madden_player_dict["Position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_first_name, "
+                              "but do NOT change the inputs. \n")
             
             player["last_name"] = madden_player_dict["Last Name"]
             if len(madden_player_dict["Last Name"]) > 13:
@@ -1118,7 +1122,8 @@ class NFLSpider(CrawlSpider):
                               player["team"], 
                               madden_player_dict["Position"])
                 logging.error("NFL profile page: %s", response.url)
-                logging.error("Fix this in the output file, but NOT in the inputs. \n")
+                logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_last_name, "
+                              "but do NOT change the inputs. \n")
             
             # Choose the best position for the player using our helper function.
             player["position"] = choose_best_position(
@@ -1265,9 +1270,9 @@ class NFLSpider(CrawlSpider):
         
         
         # We couldn't find a match for this player in either last year's file or the current Madden.
-        logging.warning("NFL & BOTH FILES: Unable to find a match for %s %s, %s %s.", 
-                        nfl_first_name, nfl_last_name, player["team"], nfl_position)
-        logging.warning("NFL.com: Player profile page url: %s\n", response.url)
+        logging.info("NFL & BOTH FILES: Unable to find a match for %s %s, %s %s.", 
+                     nfl_first_name, nfl_last_name, player["team"], nfl_position)
+        logging.info("NFL.com: Player profile page url: %s\n", response.url)
         
         # All attributes will be either from NFL.com, OTC.com, or the default values.
         player["first_name"] = nfl_first_name
@@ -1278,7 +1283,7 @@ class NFLSpider(CrawlSpider):
                           player["team"], 
                           nfl_position)
             logging.error("NFL profile page: %s", response.url)
-            logging.error("Fix this in the output file. \n")
+            logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_first_name.\n")
         
         player["last_name"] = nfl_last_name
         if len(nfl_last_name) > 13:
@@ -1288,7 +1293,7 @@ class NFLSpider(CrawlSpider):
                           player["team"], 
                           nfl_position)
             logging.error("NFL profile page: %s", response.url)
-            logging.error("Fix this in the output file. \n")
+            logging.error("Fix this in the output file and add to nfl_spider's check_for_shortened_last_name.\n")
         
         player["position"] = choose_best_position(
             nfl_position, 
@@ -1335,8 +1340,8 @@ class NFLSpider(CrawlSpider):
             player["birthdate"] = nfl_birthdate
         player["years_pro"] = nfl_years_pro
         player["college"] = nfl_college
-        player["total_salary"] = 0
-        player["signing_bonus"] = 0
+        player["total_salary"] = ""
+        player["signing_bonus"] = ""
         player["role_one"] = 45
         player["role_two"] = 45
         player["pro_bowl"] = 0
@@ -2030,6 +2035,32 @@ def check_for_shortened_last_name(existing_last_name):
         return "Roethlisberger"
     if existing_last_name == "Smith-Schstr.":
         return "Smith-Schuster"
+    if existing_last_name == "Franklin-M.":
+        return "Franklin-Myers"
+    if existing_last_name == "Woodson-Lstr.":
+        return "Woodson-Luster"
+    if existing_last_name == "Ratliff-Wlms.":
+        return "Ratliff-Williams"
+    if existing_last_name == "Scotland-Wlm.":
+        return "Scotland-Williamson"
+    if existing_last_name == "Sheehy-Guisp.":
+        return "Sheehy-Guiseppi"
+    if existing_last_name == "Flannigan-F.":
+        return "Flannigan-Fowles"
+    if existing_last_name == "Murphy-Buntg.":
+        return "Murphy-Bunting"
+    if existing_last_name == "Gardner-Jhns.":
+        return "Gardner-Johnson"
+    if existing_last_name == "Tuioti-Mar.":
+        return "Tuioti-Mariner"
+    if existing_last_name == "Valdes-Scant.":
+        return "Valdes-Scantling"
+    if existing_last_name == "Williams-Lmb.":
+        return "Williams-Lambert"
+    if existing_last_name == "Arcega-Whtsd.":
+        return "Arcega-Whiteside"
+    if existing_last_name == "Bushell-Beat.":
+        return "Bushell-Beatty"
     return existing_last_name
 
 
@@ -2091,12 +2122,13 @@ def report_position_disagreement(severity, nfl_position, second_position, first_
     and includes details on the player's name and reported positions.
     """
     if severity.upper() == "INFO":
-        logging.info("choose_best_position: NFL and Madden in general agreement, but not matching for %s %s.", 
+        logging.info("choose_best_position: NFL and Madden / previous year are in general agreement, "
+                     "but not matching for %s %s.", 
                      first_name, last_name)
         logging.info("nfl_position.upper() = %s", nfl_position.upper())
         logging.info("second_position.upper() = %s\n", second_position.upper())
     else:
-        logging.error("choose_best_position: NFL and Madden are in conflict for %s %s.", 
+        logging.error("choose_best_position: NFL and Madden / previous year are in conflict for %s %s.", 
                       first_name, last_name)
         logging.error("nfl_position.upper() = %s", nfl_position.upper())
         logging.error("second_position.upper() = %s\n", second_position.upper())

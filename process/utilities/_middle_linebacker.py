@@ -297,20 +297,21 @@ def create_middle_linebacker(self, player_dict, index):
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 99), 60))
     else:
-        # A random distribution from 62 to 80, where the most likely values are 65 - 73.
-        elements = list(range(62, 81))
-        weights = [2, 4, 6, 8, 8, 8, 8, 8, 8, 8, \
-                   8, 8, 6, 4, 2, 1, 1, 1, 1]
+        # A random distribution from 66 to 85, where the most likely values are 69 - 73.
+        elements = list(range(66, 86))
+        weights = [1, 2, 3, 4, 5, 7, 8, 9, 10, \
+                   9, 8, 7, 6, 5, 4, 4, 3, 2, 2, 1]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 35))
     else:
-        # A random distribution from 40 to 65, where the most likely values are 47 - 56.
-        elements = list(range(40, 66))
-        weights = [1, 1, 1, 1, 2, 3, 5, 7, 7, 7, 7, 7, 7, \
-                   7, 7, 7, 7, 5, 3, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 41 to 61, where the most likely values are 45 - 49.
+        elements = list(range(41, 62))
+        weights = [4, 5, 6, 7, 8, 8, 8, \
+                   8, 8, 7, 6, 5, 4, 3, \
+                   3, 3, 2, 2, 1, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -326,9 +327,9 @@ def create_middle_linebacker(self, player_dict, index):
     if player_dict["acceleration"]:
         acceleration = int(max(min(int(player_dict["acceleration"]), 95), 75))
     else:
-        # A random distribution from 80 to 88, where the most likely values are 83 - 86.
-        elements = list(range(80, 89))
-        weights = [4, 7, 11, 15, 15, 15, 15, 11, 7]
+        # A random distribution from 79 to 89, where the most likely values are 82 - 86.
+        elements = list(range(79, 90))
+        weights = [6, 8, 10, 11, 11, 11, 11, 11, 9, 7, 5]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -380,10 +381,10 @@ def create_middle_linebacker(self, player_dict, index):
     if player_dict["tackle"]:
         tackle = int(max(min(int(player_dict["tackle"]), 99), 65))
     else:
-        # A random distribution from 70 to 89, where the most likely values are 76 - 82.
-        elements = list(range(70, 90))
-        weights = [1, 1, 1, 3, 5, 7, 9, 9, 9, 9, \
-                   9, 9, 9, 7, 5, 3, 1, 1, 1, 1]
+        # A random distribution from 75 to 93, where the most likely values are 75 - 78.
+        elements = list(range(75, 94))
+        weights = [8, 8, 8, 8, 7, 7, 7, 6, 6, \
+                   6, 5, 5, 4, 4, 3, 3, 2, 2, 1]
         tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
@@ -824,11 +825,11 @@ def create_middle_linebacker(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -837,13 +838,13 @@ def create_middle_linebacker(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

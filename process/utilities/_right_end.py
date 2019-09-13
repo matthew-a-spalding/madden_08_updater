@@ -288,29 +288,31 @@ def create_right_end(self, player_dict, index):
     if player_dict["speed"]:
         speed = int(max(min(int(player_dict["speed"]), 90), 55))
     else:
-        # A random distribution from 59 to 86, where the most likely values are 66 - 75.
-        elements = list(range(59, 87))
-        weights = [1, 1, 1, 2, 3, 4, 5, 6, 6, 6, \
-                   6, 6, 6, 6, 6, 6, 6, 5, 4, \
-                   3, 3, 2, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 56 to 79, where the most likely values are 60 - 61 and 72 - 73.
+        elements = list(range(56, 80))
+        weights = [1, 2, 5, 7, 9, 9, 7, 5, \
+                   2, 1, 1, 1, 2, 3, 4, 8, \
+                   9, 9, 6, 4, 2, 1, 1, 1]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
     if player_dict["strength"]:
         strength = int(max(min(int(player_dict["strength"]), 99), 60))
     else:
-        if speed > 75:
-            # Pass-rushing end. Allow strength to range from 62 to 81, where the most likely values are 64 - 67.
+        if speed > 70:
+            # Pass-rushing end. Allow strength to range from 60 to 80, where the most likely values are 63 - 65.
             de_type = 0
-            elements = list(range(62, 82))
-            weights = [3, 7, 10, 10, 10, 10, 9, 8, 7, 6, \
-                       5, 4, 3, 2, 1, 1, 1, 1, 1, 1]
+            elements = list(range(60, 81))
+            weights = [5, 6, 7, 8, 8, 8, 7, \
+                       6, 6, 5, 5, 5, 4, 4, \
+                       3, 3, 3, 2, 2, 2, 1]
         else:
-            # Run-stopping end. Allow strength to range from 66 to 85, where the most likely values are 68 - 71.
+            # Run-stopping end. Allow strength to range from 65 to 85, where the most likely values are 68 - 70.
             de_type = 1
-            elements = list(range(66, 86))
-            weights = [3, 7, 10, 10, 10, 10, 9, 8, 7, 6, \
-                       5, 4, 3, 2, 1, 1, 1, 1, 1, 1]
+            elements = list(range(65, 86))
+            weights = [5, 6, 7, 8, 8, 8, 7, \
+                       6, 6, 5, 5, 5, 4, 4, \
+                       3, 3, 3, 2, 2, 2, 1]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
@@ -319,8 +321,7 @@ def create_right_end(self, player_dict, index):
     else:
         # A random distribution from 40 to 56, where the most likely values are 43 - 47.
         elements = list(range(40, 57))
-        weights = [4, 6, 8, 9, 9, 9, 9, 9, 8, \
-                   7, 6, 5, 4, 3, 2, 1, 1]
+        weights = [15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -328,15 +329,15 @@ def create_right_end(self, player_dict, index):
         agility = int(max(min(int(player_dict["agility"]), 90), 45))
     else:
         if de_type == 0:
-            # Pass-rushing end. Allow agility to range from 63 to 82, where the most likely values are 68 - 74.
-            elements = list(range(63, 83))
-            weights = [1, 1, 3, 5, 7, 9, 9, 9, 9, 9, \
-                       9, 9, 7, 5, 3, 1, 1, 1, 1, 1]
+            # Pass-rushing end. Allow agility to range from 62 to 83, where the most likely values are 68 - 74.
+            elements = list(range(62, 84))
+            weights = [1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, \
+                       7, 7, 6, 5, 4, 4, 3, 3, 2, 2, 1]
         else:
-            # Run-stopping end. Allow agility to range from 53 to 72, where the most likely values are 58 - 64.
-            elements = list(range(53, 73))
-            weights = [1, 1, 3, 5, 7, 9, 9, 9, 9, 9, \
-                       9, 9, 7, 5, 3, 1, 1, 1, 1, 1]
+            # Run-stopping end. Allow agility to range from 52 to 73, where the most likely values are 58 - 64.
+            elements = list(range(52, 74))
+            weights = [1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, \
+                       7, 7, 6, 5, 4, 4, 3, 3, 2, 2, 1]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
@@ -344,13 +345,13 @@ def create_right_end(self, player_dict, index):
         acceleration = int(max(min(int(player_dict["acceleration"]), 95), 65))
     else:
         if de_type == 0:
-            # Pass-rushing end. Allow acceleration to range from 76 to 85, where the most likely values are 79 - 82.
-            elements = list(range(76, 86))
-            weights = [5, 8, 11, 13, 13, 13, 13, 10, 8, 6]
+            # Pass-rushing end. Allow acceleration to range from 70 to 86, where the most likely values are 70 - 73.
+            elements = list(range(70, 87))
+            weights = [15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1]
         else:
-            # Run-stopping end. Allow acceleration to range from 72 to 81, where the most likely values are 75 - 78.
-            elements = list(range(72, 82))
-            weights = [5, 8, 11, 13, 13, 13, 13, 10, 8, 6]
+            # Run-stopping end. Allow acceleration to range from 65 to 81, where the most likely values are 65 - 68.
+            elements = list(range(65, 82))
+            weights = [15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -409,13 +410,13 @@ def create_right_end(self, player_dict, index):
         tackle = int(max(min(int(player_dict["tackle"]), 99), 60))
     else:
         if de_type == 0:
-            # Pass-rushing end. Allow tackle to range from 62 to 75, where the most likely values are 64 - 67.
-            elements = list(range(62, 76))
-            weights = [7, 10, 13, 13, 13, 13, 11, 7, 5, 3, 2, 1, 1, 1]
+            # Pass-rushing end. Allow tackle to range from 60 to 76, where the most likely values are 60 - 63.
+            elements = list(range(60, 77))
+            weights = [15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1]
         else:
-            # Run-stopping end. Allow tackle to range from 69 to 82, where the most likely values are 71 - 74.
-            elements = list(range(69, 83))
-            weights = [7, 10, 13, 13, 13, 13, 11, 7, 5, 3, 2, 1, 1, 1]
+            # Run-stopping end. Allow tackle to range from 67 to 83, where the most likely values are 67 - 70.
+            elements = list(range(67, 84))
+            weights = [15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 1, 1, 1]
         tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
@@ -854,11 +855,11 @@ def create_right_end(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -867,13 +868,13 @@ def create_right_end(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))

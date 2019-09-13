@@ -113,25 +113,9 @@ class RosterManager:
         with open(os.path.join(pay_path, r"pay_adjustments.csv")) as pay_adjustments_file:
             # Get a DictReader to read the rows into dicts using the header row as keys.
             pay_adjustments_dict_reader = csv.DictReader(pay_adjustments_file)
-            
-            # Loop over the (two) rows and put them into our two dicts.
-            for adjustment_dict in pay_adjustments_dict_reader:
-                
-            
-            
-            
-            
-            
             # Pull our records into a list so we can count them and iterate over them as often as needed.
             self.pay_adjustments_list = list(pay_adjustments_dict_reader)
         
-        # Read this year's pay_curve_params.csv into a list of dicts.
-        with open(os.path.join(pay_path, r"pay_curve_params.csv")) as pay_curve_params_file:
-            # Get a DictReader to read the rows into dicts using the header row as keys.
-            pay_curve_params_dict_reader = csv.DictReader(pay_curve_params_file)
-            # Pull our records into a list so we can count them and iterate over them as often as needed.
-            self.pay_curve_params_list = list(pay_curve_params_dict_reader)
-    
     def __del__(self):
         if self.db_index > -1:
             self.compact_save_close_db()
@@ -314,7 +298,7 @@ class RosterManager:
             None
         )
         if tier_dict is not None:
-            return tier_dict[tier]
+            return float(tier_dict[tier])
         return 0.0
     
     def get_bonus_adjustment(self, tier):
@@ -325,7 +309,7 @@ class RosterManager:
             None
         )
         if tier_dict is not None:
-            return tier_dict[tier]
+            return float(tier_dict[tier])
         return 0.0
     
     from ._quarterback import create_quarterback

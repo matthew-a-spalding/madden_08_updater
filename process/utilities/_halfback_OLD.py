@@ -281,8 +281,8 @@ def create_halfback(self, player_dict, index):
     else:
         # A random distribution from 81 to 96, where the most likely values are 84 - 89.
         elements = list(range(81, 97))
-        weights = [9, 9, 9, 9, 8, 6, 5, 5, \
-                   5, 5, 5, 5, 5, 5, 5, 5]
+        weights = [5, 6, 7, 8, 9, 10, 10, 9, \
+                   8, 7, 6, 5, 4, 3, 2, 1]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
@@ -312,11 +312,11 @@ def create_halfback(self, player_dict, index):
     if player_dict["agility"]:
         agility = int(max(min(int(player_dict["agility"]), 99), 70))
     else:
-        # A random distribution from 74 to 94, where the most likely values are 80 - 84.
-        elements = list(range(74, 95))
-        weights = [9, 9, 8, 7, 6, 5, 4, \
-                   4, 3, 3, 3, 3, 3, 3, \
-                   3, 4, 4, 4, 5, 5, 5]
+        # A random distribution from 73 to 95, where the most likely values are 80 - 84.
+        elements = list(range(73, 96))
+        weights = [1, 2, 3, 4, 5, 6, 7, 8, \
+                   8, 8, 8, 8, 7, 6, 5, 4, \
+                   3, 2, 1, 1, 1, 1, 1]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
@@ -325,19 +325,19 @@ def create_halfback(self, player_dict, index):
     else:
         # A random distribution from 82 to 96, where the most likely values are 84 - 89.
         elements = list(range(82, 97))
-        weights = [10, 10, 9, 8, 7, 6, 5, \
-                   5, 5, 5, 6, 6, 6, 6, 6]
+        weights = [5, 7, 9, 9, 9, 9, 9, \
+                   9, 8, 7, 6, 5, 4, 3, 1]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
     if player_dict["carrying"]:
         carrying = int(max(min(int(player_dict["carrying"]), 99), 60))
     else:
-        # A random distribution from 65 to 94, where the most likely values are 75 - 83.
-        elements = list(range(65, 95))
-        weights = [7, 7, 6, 6, 5, 5, 4, 4, 3, 3, \
-                   3, 3, 3, 3, 3, 2, 2, 2, 2, 2, \
-                   2, 2, 2, 2, 2, 3, 3, 3, 3, 3]
+        # A random distribution from 62 to 94, where the most likely values are 75 - 83.
+        elements = list(range(62, 95))
+        weights = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, \
+                   4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, \
+                   4, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
         carrying = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCAR', index, carrying)
     
@@ -346,9 +346,9 @@ def create_halfback(self, player_dict, index):
     else:
         # A random distribution from 50 to 79, where the most likely values are 61 - 66.
         elements = list(range(50, 80))
-        weights = [7, 7, 6, 6, 5, 5, 4, 4, 3, 3, \
-                   3, 3, 3, 3, 3, 2, 2, 2, 2, 2, \
-                   2, 2, 2, 2, 2, 3, 3, 3, 3, 3]
+        weights = [1, 1, 1, 2, 2, 3, 3, 4, 4, 5, \
+                   5, 6, 6, 6, 6, 6, 6, 5, 5, 4, \
+                   4, 3, 3, 2, 2, 1, 1, 1, 1, 1]
         catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     

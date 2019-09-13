@@ -291,13 +291,13 @@ def create_wide_receiver(self, player_dict, index):
     if player_dict["speed"]:
         speed = int(max(min(int(player_dict["speed"]), 99), 80))
     else:
-        # A random distribution from 85 to 94, where the most likely values are 88 - 89.
-        elements = list(range(85, 95))
-        weights = [7, 12, 14, 17, 17, 14, 9, 5, 3, 2]
+        # A random distribution from 82 to 95, where the most likely values are 82 - 85.
+        elements = list(range(82, 96))
+        weights = [10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 4]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
-    if speed < 89:
+    if speed < 86:
         wr_type = 0 # possession
     else:
         wr_type = 1 # speed
@@ -306,28 +306,28 @@ def create_wide_receiver(self, player_dict, index):
         strength = int(max(min(int(player_dict["strength"]), 85), 35))
     else:
         if wr_type == 0:
-            # Posession. Strength should be in the range 45 - 76, where the most likely values are 58 - 62.
-            elements = list(range(45, 77))
-            weights = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, \
-                       5, 5, 6, 6, 6, 6, 6, 5, 5, 4, 4, \
-                       3, 3, 2, 2, 1, 1, 1, 1, 1, 1]
+            # Posession. Strength should be in the range 42 - 64, where the most likely values are 42 - 46.
+            elements = list(range(42, 65))
+            weights = [8, 7, 7, 6, 6, 5, 5, 5, \
+                       5, 5, 4, 4, 3, 3, 3, 3, \
+                       3, 3, 3, 3, 3, 3, 3]
         else:
-            # Speed. Strength can be in the range 40 - 71, where the most likely values are 53 - 57.
-            elements = list(range(40, 72))
-            weights = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, \
-                       5, 5, 6, 6, 6, 6, 6, 5, 5, 4, 4, \
-                       3, 3, 2, 2, 1, 1, 1, 1, 1, 1]
+            # Speed. Strength can be in the range 37 - 59, where the most likely values are 37 - 41.
+            elements = list(range(37, 60))
+            weights = [8, 7, 7, 6, 6, 5, 5, 5, \
+                       5, 5, 4, 4, 3, 3, 3, 3, \
+                       3, 3, 3, 3, 3, 3, 3]
         strength = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSTR', index, strength)
     
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 35))
     else:
-        # A random distribution from 40 to 65, where the most likely values are 45 - 49.
-        elements = list(range(40, 66))
-        weights = [1, 1, 2, 4, 6, 8, 8, 8, 8, \
-                   8, 7, 6, 6, 5, 4, 4, 3, 2, \
-                   2, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 36 to 59, where the most likely values are 38 - 41.
+        elements = list(range(36, 60))
+        weights = [13, 11, 9, 7, 6, 5, 4, 4, \
+                   4, 4, 4, 3, 3, 3, 3, 2, \
+                   2, 2, 2, 2, 2, 2, 2, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -335,13 +335,13 @@ def create_wide_receiver(self, player_dict, index):
         agility = int(max(min(int(player_dict["agility"]), 99), 75))
     else:
         if wr_type == 0:
-            # Posession type. Agility should be in the range 80 - 91, where the most likely values are 83 - 85.
-            elements = list(range(80, 92))
-            weights = [5, 8, 12, 14, 14, 14, 12, 9, 6, 3, 2, 1]
+            # Posession type. Agility should be in the range 77 - 90, where the most likely values are 77 - 80.
+            elements = list(range(77, 91))
+            weights = [10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 4]
         else:
-            # Speed type. Agility can be in the range 84 - 95, where the most likely values are 87 - 89.
-            elements = list(range(84, 96))
-            weights = [5, 8, 12, 14, 14, 14, 12, 9, 6, 3, 2, 1]
+            # Speed type. Agility can be in the range 81 - 94, where the most likely values are 81 - 84.
+            elements = list(range(81, 95))
+            weights = [10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 4]
         agility = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAGI', index, agility)
     
@@ -349,13 +349,13 @@ def create_wide_receiver(self, player_dict, index):
         acceleration = int(max(min(int(player_dict["acceleration"]), 99), 75))
     else:
         if wr_type == 0:
-            # Posession type. Acceleration should be in the range 83 - 91, where the most likely values are 85 - 87.
-            elements = list(range(83, 92))
-            weights = [5, 13, 19, 19, 19, 13, 8, 3, 1]
+            # Posession type. Acceleration should be in the range 77 - 90, where the most likely values are 77 - 80.
+            elements = list(range(77, 91))
+            weights = [10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 4]
         else:
-                # Speed type. Acceleration can be in the range 87 - 95, where the most likely values are 89 - 91.
-            elements = list(range(87, 96))
-            weights = [5, 13, 19, 19, 19, 13, 8, 3, 1]
+                # Speed type. Acceleration can be in the range 81 - 94, where the most likely values are 81 - 84.
+            elements = list(range(81, 95))
+            weights = [10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 4]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -373,25 +373,26 @@ def create_wide_receiver(self, player_dict, index):
         catching = int(max(min(int(player_dict["catching"]), 99), 65))
     else:
         if wr_type == 0:
-            # Posession type. Catching should be in the range 77 - 92, where the most likely values are 82 - 85.
-            elements = list(range(77, 93))
-            weights = [2, 4, 6, 8, 9, 10, 10, 10, \
-                       10, 9, 8, 6, 4, 2, 1, 1]
+            # Posession type. Catching should be in the range 72 - 88, where the most likely values are 72 - 76.
+            elements = list(range(72, 89))
+            weights = [9, 9, 8, 8, 7, 6, 6, 6, 6, \
+                       5, 5, 5, 4, 4, 4, 4, 4]
         else:
-            # Speed type. Catching can be in the range 74 - 89, where the most likely values are 79 - 82.
-            elements = list(range(74, 90))
-            weights = [2, 4, 6, 8, 9, 10, 10, 10, \
-                       10, 9, 8, 6, 4, 2, 1, 1]
+            # Speed type. Catching can be in the range 66 - 82, where the most likely values are 66 - 70.
+            elements = list(range(66, 83))
+            weights = [9, 9, 8, 8, 7, 6, 6, 6, 6, \
+                       5, 5, 5, 4, 4, 4, 4, 4]
         catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     
     if player_dict["jumping"]:
         jumping = int(max(min(int(player_dict["jumping"]), 99), 65))
     else:
-        # A random distribution from 75 to 93, where the most likely values are 81 - 85.
-        elements = list(range(75, 94))
-        weights = [1, 1, 2, 3, 5, 7, 9, 9, 9, 9, \
-                   9, 8, 7, 6, 5, 4, 3, 2, 1]
+        # A random distribution from 67 to 93, where the most likely values are 67 - 71.
+        elements = list(range(67, 94))
+        weights = [9, 8, 7, 6, 6, 5, 5, 4, 4, \
+                   4, 4, 3, 3, 3, 3, 3, 3, 2, \
+                   2, 2, 2, 2, 2, 2, 2, 2, 2]
         jumping = get_weighted_random(elements, weights)
     self.set_player_integer_field('PJMP', index, jumping)
     
@@ -400,11 +401,11 @@ def create_wide_receiver(self, player_dict, index):
             math.ceil((int(player_dict["elusiveness"]) + int(player_dict["trucking"])) / 2), 
             80), 35))
     else:
-        # A random distribution from 50 to 75, where the most likely values are 55 - 60.
-        elements = list(range(50, 76))
-        weights = [1, 1, 2, 4, 6, 7, 7, 7, 7, \
-                   7, 7, 6, 5, 5, 4, 4, 4, 3, \
-                   3, 2, 2, 2, 1, 1, 1, 1]
+        # A random distribution from 40 to 60, where the most likely values are 40 - 45.
+        elements = list(range(40, 61))
+        weights = [10, 9, 8, 8, 7, 7, 6, \
+                   5, 4, 3, 3, 3, 3, 3, \
+                   3, 3, 3, 3, 3, 3, 3]
         break_tackles = get_weighted_random(elements, weights)
     self.set_player_integer_field('PBTK', index, break_tackles)
     
@@ -816,11 +817,11 @@ def create_wide_receiver(self, player_dict, index):
     # account for inflation.
     total_salary = int(player_dict["total_salary"])
     if total_salary > 10000000:
-        total_salary = round((total_salary / 10000) * 0.725)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("first"))
     elif total_salary > 1000000:
-        total_salary = round((total_salary / 10000) * 0.58)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("second"))
     else:
-        total_salary = round((total_salary / 10000) * 0.43)
+        total_salary = round((total_salary / 10000) * self.get_salary_adjustment("third"))
     
     self.set_player_integer_field('PTSA', index, total_salary)
     self.set_player_integer_field('PVTS', index, total_salary)
@@ -829,13 +830,13 @@ def create_wide_receiver(self, player_dict, index):
     # account for inflation.
     signing_bonus = int(player_dict["signing_bonus"])
     if signing_bonus > 10000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.4)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("first"))
     elif signing_bonus > 1000000:
-        signing_bonus = round((signing_bonus / 10000) * 0.5)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("second"))
     elif signing_bonus > 100000:
-        signing_bonus = round((signing_bonus / 10000) * 0.65)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("third"))
     else:
-        signing_bonus = round((signing_bonus / 10000) * 0.8)
+        signing_bonus = round((signing_bonus / 10000) * self.get_bonus_adjustment("fourth"))
     # PSBO must always be in multiples of PCON (contract_length).
     if signing_bonus % contract_length > 0:
         signing_bonus += (contract_length - (signing_bonus % contract_length))
