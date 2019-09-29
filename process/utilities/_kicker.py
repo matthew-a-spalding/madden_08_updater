@@ -304,10 +304,10 @@ def create_kicker(self, player_dict, index):
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 85), 35))
     else:
-        # A random distribution from 45 to 60, where the most likely values are 46 - 51.
-        elements = list(range(45, 61))
-        weights = [5, 9, 10, 10, 10, 10, 9, \
-                   8, 7, 6, 5, 4, 3, 2, 1, 1]
+        # A random distribution from 43 to 57, where the most likely values are 44 - 49.
+        elements = list(range(43, 58))
+        weights = [6, 9, 10, 10, 10, 10, 9, \
+                   8, 7, 6, 5, 4, 3, 2, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -463,20 +463,20 @@ def create_kicker(self, player_dict, index):
     if player_dict["kick_power"]:
         kick_power = int(max(min(int(player_dict["kick_power"]), 99), 80))
     else:
-        # A random distribution from 85 to 95, where the most likely values are 87 - 91.
-        elements = list(range(85, 96))
-        weights = [6, 9, 12, 14, 14, 14, 12, 9, 6, 3, 1]
+        # A random distribution from 84 to 94, where the most likely values are 87 - 91.
+        elements = list(range(84, 95))
+        weights = [6, 8, 10, 13, 15, 15, 13, 10, 6, 3, 1]
         kick_power = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKPR', index, kick_power)
     
     if player_dict["kick_accuracy"]:
         kick_accuracy = int(max(min(int(player_dict["kick_accuracy"]), 99), 70))
     else:
-        # A random distribution from 75 to 92, where the most likely values are 77 - 81.
-        elements = list(range(75, 93))
-        weights = [4, 8, 10, 10, 10, 10, \
-                   10, 8, 7, 6, 5, 4, \
-                   3, 1, 1, 1, 1, 1]
+        # A random distribution from 76 to 91, where the most likely values are 78 - 82.
+        elements = list(range(76, 92))
+        weights = [7, 9, 10, 11, 11, \
+                   11, 10, 8, 6, 5, \
+                   4, 3, 2, 1, 1, 1]
         kick_accuracy = get_weighted_random(elements, weights)
     self.set_player_integer_field('PKAC', index, kick_accuracy)
     

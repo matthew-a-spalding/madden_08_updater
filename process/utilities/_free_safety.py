@@ -288,9 +288,9 @@ def create_free_safety(self, player_dict, index):
     if player_dict["speed"]:
         speed = int(max(min(int(player_dict["speed"]), 99), 75))
     else:
-        # A random distribution from 80 to 90, where the most likely values are 82 - 85.
-        elements = list(range(80, 91))
-        weights = [7, 11, 14, 14, 14, 14, 10, 7, 5, 3, 1]
+        # A random distribution from 80 to 92, where the most likely values are 82 - 86.
+        elements = list(range(80, 93))
+        weights = [13, 12, 11, 10, 8, 6, 6, 6, 6, 6, 6, 5, 5]
         speed = get_weighted_random(elements, weights)
     self.set_player_integer_field('PSPD', index, speed)
     
@@ -308,11 +308,11 @@ def create_free_safety(self, player_dict, index):
     if player_dict["awareness"]:
         awareness = int(max(min(int(player_dict["awareness"]), 99), 40))
     else:
-        # A random distribution from 42 to 65, where the most likely values are 44 - 50.
+        # A random distribution from 42 to 65, where the most likely values are 42 - 49.
         elements = list(range(42, 66))
-        weights = [3, 5, 8, 8, 8, 8, 8, 8, \
-                   8, 7, 6, 5, 4, 3, 2, 1, \
-                   1, 1, 1, 1, 1, 1, 1, 1]
+        weights = [6, 6, 6, 6, 6, 6, 6, 6, \
+                   5, 5, 5, 5, 5, 5, 4, 4, \
+                   3, 3, 2, 2, 1, 1, 1, 1]
         awareness = get_weighted_random(elements, weights)
     self.set_player_integer_field('PAWR', index, awareness)
     
@@ -329,9 +329,9 @@ def create_free_safety(self, player_dict, index):
     if player_dict["acceleration"]:
         acceleration = int(max(min(int(player_dict["acceleration"]), 99), 80))
     else:
-        # A random distribution from 83 to 92, where the most likely values are 84 - 88.
-        elements = list(range(83, 93))
-        weights = [4, 12, 15, 15, 15, 12, 10, 8, 6, 3]
+        # A random distribution from 82 to 94, where the most likely values are 84 - 88.
+        elements = list(range(82, 95))
+        weights = [13, 12, 11, 10, 8, 6, 6, 6, 6, 6, 6, 5, 5]
         acceleration = get_weighted_random(elements, weights)
     self.set_player_integer_field('PACC', index, acceleration)
     
@@ -348,12 +348,12 @@ def create_free_safety(self, player_dict, index):
     if player_dict["catching"]:
         catching = int(max(min(int(player_dict["catching"]), 95), 35))
     else:
-        # A random distribution from 40 to 71, where the most likely values are 51 - 53.
-        elements = list(range(40, 72))
-        weights = [1, 1, 1, 1, 2, 2, 3, 4, \
-                   5, 6, 7, 9, 9, 9, 7, 6, \
-                   5, 4, 3, 2, 2, 1, 1, 1, \
-                   1, 1, 1, 1, 1, 1, 1, 1]
+        # A random distribution from 42 to 69, where the most likely values are 49 - 55.
+        elements = list(range(42, 70))
+        weights = [1, 2, 2, 3, 4, 5, 5, \
+                   6, 6, 7, 7, 7, 6, 6, \
+                   5, 5, 4, 4, 3, 3, 2, \
+                   1, 1, 1, 1, 1, 1, 1]
         catching = get_weighted_random(elements, weights)
     self.set_player_integer_field('PCTH', index, catching)
     
@@ -386,9 +386,9 @@ def create_free_safety(self, player_dict, index):
     else:
         # A random distribution from 50 to 76, where the most likely values are 58 - 61.
         elements = list(range(50, 77))
-        weights = [1, 1, 1, 1, 2, 3, 5, 7, 9, \
-                   9, 9, 9, 8, 7, 6, 5, 4, 3, \
-                   2, 1, 1, 1, 1, 1, 1, 1, 1]
+        weights = [1, 1, 1, 1, 1, 1, 2, 3, 4, \
+                   5, 6, 7, 8, 9, 9, 8, 7, 6, \
+                   5, 4, 3, 2, 2, 1, 1, 1, 1]
         tackle = get_weighted_random(elements, weights)
     self.set_player_integer_field('PTAK', index, tackle)
     
