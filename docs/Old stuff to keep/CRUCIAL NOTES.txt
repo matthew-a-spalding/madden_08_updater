@@ -1,5 +1,0 @@
-- When editing an existing player into a new one, you MUST update both the PPOS (Player Position 
-ID) AND POPS (Player Other Positions ID), or else the mis-match could cause problems when editing 
-that player in-game. For example, making a WR out of a ROLB without updating his POPS would mean 
-that, if you were to try and further edit his character in the in-game player editer, he would 
-automatically become a DT or something similar, and WR would NOT be an option.
